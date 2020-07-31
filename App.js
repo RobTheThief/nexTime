@@ -1,21 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import * as Permissions from "expo-permissions";
+
+import DrawerNavigator from "./app/navigation/DrawerNavigator";
 
 export default function App() {
+  const requestPermission = async () => {
+    const result = await Permissions.askAsync(Permissions.LOCATION);
+    if (!result.granted)
+      alert(
+        "You will need to enable location permissions to get current location and for the reminders to work."
+      );
+  };
+
+  React.useEffect(() => {
+    requestPermission();
+  });
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <DrawerNavigator />
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
