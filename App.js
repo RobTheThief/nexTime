@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import * as Permissions from "expo-permissions";
 
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
+import nexTheme from "./app/config/drawerTheme";
 
 export default function App() {
   const requestPermission = async () => {
@@ -18,7 +19,7 @@ export default function App() {
   });
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={nexTheme}>
       <DrawerNavigator />
     </NavigationContainer>
   );
