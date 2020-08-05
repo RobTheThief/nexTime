@@ -1,46 +1,56 @@
 import React, { useState, useEffect } from "react";
-import MapView from "react-native-maps";
-import { Marker } from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import {
   StyleSheet,
   View,
-  Dimensions,
   Text,
   TouchableOpacity,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import { FontAwesome5, AntDesign } from "@expo/vector-icons";
 
 import colors from "../config/colors";
 import storage from "../utility/storage";
 
 function MapScreen({ navigation }) {
-  const [markers, setMarkers] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const visibility = () => (visible ? setVisible(false) : setVisible(true));
 
-  useEffect(() => {
-    loadMarkers();
-  }, []);
+  const [markers, setMarkers] = useState([]);
 
   const loadMarkers = async () => {
     const asyncMarkers = await storage.get("asyncMarkers");
     asyncMarkers ? setMarkers(asyncMarkers) : console.log("No saved markers.");
   };
 
-  const storeMarkers = () => {
-    storage.store("asyncMarkers", markers);
+  useEffect(() => {
+    loadMarkers();
+  }, []);
+
+  const addMarker = async (latlng) => {
+    visibility();
+    setPickedLocation(latlng.nativeEvent.coordinate);
+    setId(markers.length + 1);
   };
 
-  const addMarker = (latlng) => {
-    const pickedLocation = latlng.nativeEvent.coordinate;
-    const id = markers.length + 1;
+  const onSubmitMarker = () => {
+    visibility();
     markers.push({
       identifier: id,
-      title: `Picked Location`,
-      description: "Picked Location",
+      title: title,
+      description: description,
       latlng: pickedLocation,
     });
     setMarkers(markers.map((marker) => marker));
-    storeMarkers();
+    storage.store("asyncMarkers", markers);
   };
+
+  const [title, onChangeTitle] = useState();
+  const [pickedLocation, setPickedLocation] = useState();
+  const [id, setId] = useState();
+  const [description, onChangeDesc] = useState();
 
   return (
     <>
@@ -56,7 +66,64 @@ function MapScreen({ navigation }) {
           <Text>Map</Text>
         </View>
       </View>
-      {markers ? (
+
+      {visible ? (
+        <KeyboardAvoidingView
+          behavior={Platform.OS == "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
+          enabled={Platform.OS === "ios" ? true : false}
+        >
+          <View style={styles.inputBox}>
+            <View style={styles.inputText}>
+              <TextInput
+                style={styles.textInput}
+                placeholder={"Title"}
+                onChangeText={(text) => onChangeTitle(text)}
+                onSubmitEditing={() => {
+                  onSubmitMarker();
+                }}
+              />
+              <TextInput
+                style={styles.textInput}
+                placeholder={"Description"}
+                onChangeText={(text) => onChangeDesc(text)}
+                onSubmitEditing={() => {
+                  onSubmitMarker();
+                }}
+              />
+            </View>
+
+            <View style={styles.buttons}>
+              <TouchableOpacity
+                onPress={() => visibility()}
+                style={styles.button}
+              >
+                <AntDesign
+                  name="leftcircleo"
+                  color={colors.primary}
+                  size={25}
+                />
+                <Text style={{ paddingLeft: 5, color: colors.primary }}>
+                  Go Back
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => onSubmitMarker()}
+                style={styles.button}
+              >
+                <FontAwesome5
+                  name="map-marked-alt"
+                  size={24}
+                  color={colors.primary}
+                />
+                <Text style={{ paddingLeft: 5, color: colors.primary }}>
+                  Submit
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      ) : markers ? (
         <MapView
           showsUserLocation={true}
           showsMyLocationButton={true}
@@ -71,7 +138,6 @@ function MapScreen({ navigation }) {
               key={marker.identifier}
               identifier={marker.identifier.toString()}
               pinColor={marker.pinColor}
-              draggable
             />
           ))}
         </MapView>
@@ -90,11 +156,23 @@ function MapScreen({ navigation }) {
 export default MapScreen;
 
 const styles = StyleSheet.create({
-  headContainer: {
-    height: 100,
-    flex: 1,
+  buttons: {
+    marginTop: 20,
     flexDirection: "row",
-    backgroundColor: "#fff",
+    alignItems: "flex-start",
+    justifyContent: "space-evenly",
+    flex: 1,
+    width: "100%",
+    position: "relative",
+  },
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headContainer: {
+    height: "10%",
+    flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "center",
     backgroundColor: colors.primary,
@@ -119,8 +197,28 @@ const styles = StyleSheet.create({
     top: -10,
     right: 100,
   },
+  inputBox: {
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    backgroundColor: colors.secondary,
+    padding: 10,
+  },
+  inputText: {
+    width: "90%",
+    height: "10%",
+    alignItems: "center",
+    marginVertical: 15,
+  },
   mapStyle: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height - 75,
+    width: "100%",
+    height: "100%",
+  },
+  textInput: {
+    borderBottomWidth: 2,
+    borderBottomColor: colors.primary,
+    marginBottom: 20,
+    width: "100%",
   },
 });
