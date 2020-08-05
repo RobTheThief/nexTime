@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, Circle } from "react-native-maps";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
+import AddMarkerDetailsScreen from "./AddMarkerDetailsScreen";
 import colors from "../config/colors";
 import storage from "../utility/storage";
-import AddMarkerDetailsScreen from "./AddMarkerDetailsScreen";
 
 function MapScreen({ navigation }) {
   const [markers, setMarkers] = useState([]);
@@ -63,14 +63,23 @@ function MapScreen({ navigation }) {
           style={styles.mapStyle}
         >
           {markers.map((marker) => (
-            <Marker
-              coordinate={marker.latlng}
-              title={marker.title}
-              description={marker.description}
-              key={marker.identifier}
-              identifier={marker.identifier.toString()}
-              pinColor={marker.pinColor}
-            />
+            <React.Fragment key={marker.identifier}>
+              <Marker
+                coordinate={marker.latlng}
+                title={marker.title}
+                description={marker.description}
+                key={marker.identifier}
+                identifier={marker.identifier.toString()}
+                pinColor={marker.pinColor}
+              />
+              <Circle
+                center={marker.latlng}
+                radius={parseInt(marker.radius, 10)}
+                key={marker.circleId}
+                identifier={marker.circleId.toString()}
+                fillColor={colors.circle}
+              />
+            </React.Fragment>
           ))}
         </MapView>
       ) : (

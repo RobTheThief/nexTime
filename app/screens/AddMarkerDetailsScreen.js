@@ -22,15 +22,17 @@ function AddMarkerDetailsScreen({
 }) {
   const [title, onChangeTitle] = useState();
   const [description, onChangeDesc] = useState();
+  const [radius, onChangeRadius] = useState();
 
   const onSubmitMarker = () => {
     markerDetailVisibility();
-
     markers.push({
       identifier: id,
+      circleId: id + "c",
       title: title,
       description: description,
       latlng: pickedLocation,
+      radius: radius,
     });
     setMarkers(markers.map((marker) => marker));
     storage.store("asyncMarkers", markers);
@@ -56,6 +58,15 @@ function AddMarkerDetailsScreen({
             style={styles.textInput}
             placeholder={"Description"}
             onChangeText={(text) => onChangeDesc(text)}
+            onSubmitEditing={() => {
+              onSubmitMarker();
+            }}
+          />
+          <TextInput
+            style={styles.textInput}
+            keyboardType={"number-pad"}
+            placeholder={"Radius"}
+            onChangeText={(text) => onChangeRadius(text)}
             onSubmitEditing={() => {
               onSubmitMarker();
             }}
@@ -95,7 +106,7 @@ export default AddMarkerDetailsScreen;
 
 const styles = StyleSheet.create({
   buttons: {
-    marginTop: 20,
+    marginTop: 70,
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-evenly",
