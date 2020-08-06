@@ -37,6 +37,7 @@ function AddMarkerDetailsScreen({
       description: description,
       latlng: pickedLocation,
       radius: radius,
+      repeat: isEnabled,
     });
     setMarkers(markers.map((marker) => marker));
     storage.store("asyncMarkers", markers);
@@ -67,7 +68,7 @@ function AddMarkerDetailsScreen({
             <AppText style={styles.repeatText}>Repeat</AppText>
             <Switch
               trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+              thumbColor={isEnabled ? colors.primary : "#f4f3f4"}
               ios_backgroundColor="#3e3e3e"
               onValueChange={toggleSwitch}
               value={isEnabled}
