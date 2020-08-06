@@ -3,16 +3,21 @@ import { StyleSheet, TextInput } from "react-native";
 
 import colors from "../config/colors";
 
-function AppTextInput({ placeholder, onChangeText, keyboardType }) {
+function AppTextInput({
+  placeholder,
+  onChangeText,
+  keyboardType,
+  onSubmitEditing,
+  style,
+  ...otherProps
+}) {
   return (
     <TextInput
-      style={styles.textInput}
+      {...otherProps}
+      style={[styles.textInput, style]}
       placeholder={placeholder}
       onChangeText={onChangeText}
       keyboardType={keyboardType}
-      onSubmitEditing={() => {
-        onSubmitMarker();
-      }}
     />
   );
 }
