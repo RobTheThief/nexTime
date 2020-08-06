@@ -3,13 +3,14 @@ import {
   Platform,
   KeyboardAvoidingView,
   View,
-  TextInput,
   TouchableOpacity,
-  Text,
   StyleSheet,
+  Switch,
 } from "react-native";
 import { FontAwesome5, AntDesign } from "@expo/vector-icons";
 
+import AppText from "../components/AppText";
+import AppTextInput from "../components/AppTextInput";
 import colors from "../config/colors";
 import storage from "../utility/storage";
 
@@ -23,6 +24,9 @@ function AddMarkerDetailsScreen({
   const [title, onChangeTitle] = useState();
   const [description, onChangeDesc] = useState();
   const [radius, onChangeRadius] = useState();
+
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   const onSubmitMarker = () => {
     markerDetailVisibility();
@@ -46,31 +50,29 @@ function AddMarkerDetailsScreen({
     >
       <View style={styles.inputBox}>
         <View style={styles.inputText}>
-          <TextInput
-            style={styles.textInput}
+          <AppTextInput
             placeholder={"Title"}
             onChangeText={(text) => onChangeTitle(text)}
-            onSubmitEditing={() => {
-              onSubmitMarker();
-            }}
           />
-          <TextInput
-            style={styles.textInput}
+          <AppTextInput
             placeholder={"Description"}
             onChangeText={(text) => onChangeDesc(text)}
-            onSubmitEditing={() => {
-              onSubmitMarker();
-            }}
           />
-          <TextInput
-            style={styles.textInput}
+          <AppTextInput
             keyboardType={"number-pad"}
-            placeholder={"Radius"}
+            placeholder={"Custom Radius"}
             onChangeText={(text) => onChangeRadius(text)}
-            onSubmitEditing={() => {
-              onSubmitMarker();
-            }}
           />
+          <View style={styles.switch}>
+            <AppText style={styles.repeatText}>Repeat</AppText>
+            <Switch
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleSwitch}
+              value={isEnabled}
+            />
+          </View>
         </View>
 
         <View style={styles.buttons}>
@@ -79,9 +81,7 @@ function AddMarkerDetailsScreen({
             style={styles.button}
           >
             <AntDesign name="leftcircleo" color={colors.primary} size={25} />
-            <Text style={{ paddingLeft: 5, color: colors.primary }}>
-              Go Back
-            </Text>
+            <AppText style={styles.iconText}>Go Back</AppText>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => onSubmitMarker()}
@@ -92,9 +92,7 @@ function AddMarkerDetailsScreen({
               size={24}
               color={colors.primary}
             />
-            <Text style={{ paddingLeft: 5, color: colors.primary }}>
-              Submit
-            </Text>
+            <AppText style={styles.iconText}>Submit</AppText>
           </TouchableOpacity>
         </View>
       </View>
@@ -106,7 +104,7 @@ export default AddMarkerDetailsScreen;
 
 const styles = StyleSheet.create({
   buttons: {
-    marginTop: 70,
+    marginTop: 90,
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-evenly",
@@ -118,6 +116,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+  },
+  iconText: {
+    paddingLeft: 5,
   },
   inputBox: {
     width: "100%",
@@ -133,10 +134,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 15,
   },
-  textInput: {
-    borderBottomWidth: 2,
-    borderBottomColor: colors.primary,
-    marginBottom: 20,
+  repeatText: {
+    paddingRight: 20,
+    fontSize: 20,
+  },
+  switch: {
+    alignItems: "center",
+    justifyContent: "flex-start",
     width: "100%",
+    flexDirection: "row",
   },
 });
