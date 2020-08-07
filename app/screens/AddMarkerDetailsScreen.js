@@ -15,7 +15,6 @@ import AppTextInput from "../components/AppTextInput";
 import measurementSys from "../config/measurementSys";
 import colors from "../config/colors";
 import storage from "../utility/storage";
-import { color } from "react-native-reanimated";
 
 function AddMarkerDetailsScreen({
   markerDetailVisibility,
@@ -24,13 +23,20 @@ function AddMarkerDetailsScreen({
   id,
   setMarkers,
 }) {
-  const [title, onChangeTitle] = useState();
-  const [description, onChangeDesc] = useState();
-  const [radius, onChangeRadius] = useState(100);
-  const [notes, onChangeNotes] = useState();
+  const [title, setTitle] = useState();
+  const [description, setDesc] = useState();
+  const [radius, setRadius] = useState(100);
+  const [kmOrMilesRadius, setKmOrMilesRadius] = useState(0.1);
+  const [notes, setNotes] = useState();
 
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+
+  const removeFirstZero = (value) => {
+    const tempArr = value.split("");
+    tempArr.splice(0, 1);
+    return tempArr.join("");
+  };
 
   const onSubmitMarker = () => {
     markerDetailVisibility();
@@ -58,11 +64,11 @@ function AddMarkerDetailsScreen({
         <View style={styles.inputText}>
           <AppTextInput
             placeholder={"Title"}
-            onChangeText={(text) => onChangeTitle(text)}
+            onChangeText={(text) => setTitle(text)}
           />
           <AppTextInput
             placeholder={"Description"}
-            onChangeText={(text) => onChangeDesc(text)}
+            onChangeText={(text) => setDesc(text)}
           />
           <AppTextInput
             placeholder={"Notes eg. Shopping list..."}
@@ -70,39 +76,52 @@ function AddMarkerDetailsScreen({
             textAlignVertical={"top"}
             spellCheck={true}
             style={styles.notes}
-            onChangeText={(text) => onChangeNotes(text)}
+            onChangeText={(text) => setNotes(text)}
           />
-          <AppText>
-            {radius < measurementSys.unitDivider
-              ? radius + measurementSys.mOrFt
-              : radius / measurementSys.unitDivider + measurementSys.kmOrMiles}
-          </AppText>
+          <View style={styles.radiInputandTotal}>
+            <AppText style={styles.radiTotal}>
+              {radius < measurementSys.unitDivider
+                ? "=  " + radius + measurementSys.mOrFt
+                : "=  " +
+                  radius / measurementSys.unitDivider +
+                  measurementSys.kmOrMiles}
+            </AppText>
+
+            <View style={styles.radiusInput}>
+              <AppTextInput
+                style={{ width: "100%" }}
+                maxLength={5}
+                keyboardType={"number-pad"}
+                value={kmOrMilesRadius.toString()}
+                onChangeText={(value) => {
+                  //console.log(value[0]);
+                  value[0] == "0" &&
+                    !isNaN(value[1]) &&
+                    (value = removeFirstZero(value));
+                  isNaN(parseInt(value)) && (value = 0);
+                  setKmOrMilesRadius(value);
+                  setRadius(parseFloat(value) * measurementSys.unitDivider);
+                }}
+              />
+              <AppText style={styles.measureText}>
+                {measurementSys.kmOrMiles}
+              </AppText>
+            </View>
+          </View>
           <Slider
             style={styles.slider}
             minimumValue={100}
-            maximumValue={2000}
+            maximumValue={1000}
             step={100}
-            minimumTrackTintColor="#ffa183"
-            maximumTrackTintColor="#000000"
-            thumbTintColor="#ffa183"
+            minimumTrackTintColor={colors.primary}
+            maximumTrackTintColor={colors.black}
+            thumbTintColor={colors.primary}
             value={radius}
             onValueChange={(value) => {
-              onChangeRadius(value);
+              setRadius(value);
+              setKmOrMilesRadius(value / measurementSys.unitDivider);
             }}
           />
-          <View style={styles.radiusInput}>
-            <AppTextInput
-              style={{ width: "100%" }}
-              keyboardType={"number-pad"}
-              value={parseInt(radius, 10).toString()}
-              onChangeText={(value) => {
-                isNaN(parseInt(value)) && (value = 0);
-                onChangeRadius(value);
-              }}
-            />
-            <AppText style={styles.measureText}>{measurementSys.mOrFt}</AppText>
-          </View>
-
           <View style={styles.switchContainer}>
             <AppText style={styles.repeatText}>Repeat</AppText>
             <Switch
@@ -177,7 +196,8 @@ const styles = StyleSheet.create({
   },
   measureText: {
     position: "relative",
-    right: 50,
+    right: 27,
+    top: 5,
   },
   notes: {
     borderColor: colors.primary,
@@ -190,8 +210,19 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     fontSize: 20,
   },
+  radiInputandTotal: {
+    flexDirection: "row-reverse",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    width: "91%",
+  },
+  radiTotal: {
+    paddingLeft: 13,
+    position: "relative",
+    bottom: 5,
+  },
   radiusInput: {
-    width: "100%",
+    width: "30%",
     flexDirection: "row",
   },
   slider: {
