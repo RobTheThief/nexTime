@@ -25,7 +25,8 @@
     "react-native-web": "~0.11.7",
     "expo-permissions": "~9.0.1",
     "@react-native-community/async-storage": "~1.11.0",
-    "@react-native-community/slider": "3.0.0"
+    "@react-native-community/slider": "3.0.0",
+    "expo-location": "~8.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",

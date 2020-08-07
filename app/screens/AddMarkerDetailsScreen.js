@@ -15,6 +15,7 @@ import AppTextInput from "../components/AppTextInput";
 import measurementSys from "../config/measurementSys";
 import colors from "../config/colors";
 import storage from "../utility/storage";
+import useLocation from "../hooks/useLocation";
 
 function AddMarkerDetailsScreen({
   markerDetailVisibility,
@@ -49,7 +50,8 @@ function AddMarkerDetailsScreen({
   };
 
   const handleSubmitMarker = () => {
-    if (radius == 0) return alert("Radius cannot be Zero");
+    if (radius == 0 || title == null)
+      return alert("Radius or Title cannot be Empty!");
     markerDetailVisibility();
     markers.push({
       identifier: id,
@@ -185,7 +187,7 @@ const styles = StyleSheet.create({
     height: "100%",
     alignItems: "center",
     justifyContent: "flex-start",
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.light,
     padding: 10,
   },
   inputText: {
