@@ -32,13 +32,24 @@ function AddMarkerDetailsScreen({
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
-  const removeFirstZero = (value) => {
-    const tempArr = value.split("");
-    tempArr.splice(0, 1);
-    return tempArr.join("");
+  const handleChangeText = (value) => {
+    isNaN(parseFloat(value)) && (value = "");
+    if (value[0] == "0" && !isNaN(value[1])) {
+      const tempArr = value.split("");
+      tempArr.splice(0, 1);
+      value = tempArr.join("");
+    }
+    setKmOrMilesRadius(value);
+    value !== "" && setRadius(parseFloat(value) * measurementSys.unitDivider);
   };
 
-  const onSubmitMarker = () => {
+  const handleChangeSlider = (value) => {
+    setRadius(value);
+    setKmOrMilesRadius(value / measurementSys.unitDivider);
+  };
+
+  const handleSubmitMarker = () => {
+    if (radius == 0) return alert("Radius cannot be Zero");
     markerDetailVisibility();
     markers.push({
       identifier: id,
@@ -90,18 +101,10 @@ function AddMarkerDetailsScreen({
             <View style={styles.radiusInput}>
               <AppTextInput
                 style={{ width: "100%" }}
-                maxLength={5}
+                maxLength={4}
                 keyboardType={"number-pad"}
                 value={kmOrMilesRadius.toString()}
-                onChangeText={(value) => {
-                  //console.log(value[0]);
-                  value[0] == "0" &&
-                    !isNaN(value[1]) &&
-                    (value = removeFirstZero(value));
-                  isNaN(parseInt(value)) && (value = 0);
-                  setKmOrMilesRadius(value);
-                  setRadius(parseFloat(value) * measurementSys.unitDivider);
-                }}
+                onChangeText={(value) => handleChangeText(value)}
               />
               <AppText style={styles.measureText}>
                 {measurementSys.kmOrMiles}
@@ -117,10 +120,7 @@ function AddMarkerDetailsScreen({
             maximumTrackTintColor={colors.black}
             thumbTintColor={colors.primary}
             value={radius}
-            onValueChange={(value) => {
-              setRadius(value);
-              setKmOrMilesRadius(value / measurementSys.unitDivider);
-            }}
+            onValueChange={(value) => handleChangeSlider(value)}
           />
           <View style={styles.switchContainer}>
             <AppText style={styles.repeatText}>Repeat</AppText>
@@ -144,7 +144,7 @@ function AddMarkerDetailsScreen({
             <AppText style={styles.iconText}>Go Back</AppText>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => onSubmitMarker()}
+            onPress={() => handleSubmitMarker()}
             style={styles.button}
           >
             <FontAwesome5
