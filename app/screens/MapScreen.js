@@ -65,7 +65,7 @@ function MapScreen({ navigation }) {
           {markers.map((marker) => (
             <React.Fragment key={marker.identifier}>
               <Marker
-                coordinate={marker.latlng}
+                coordinate={marker.latLng}
                 title={marker.title}
                 description={marker.description}
                 key={marker.identifier}
@@ -73,7 +73,7 @@ function MapScreen({ navigation }) {
                 pinColor={marker.pinColor}
               />
               <Circle
-                center={marker.latlng}
+                center={marker.latLng}
                 radius={parseInt(marker.radius, 10)}
                 key={marker.circleId}
                 identifier={marker.circleId.toString()}

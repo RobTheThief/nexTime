@@ -12,10 +12,10 @@ import Slider from "@react-native-community/slider";
 
 import AppText from "../components/AppText";
 import AppTextInput from "../components/AppTextInput";
-import measurementSys from "../config/measurementSys";
 import colors from "../config/colors";
+import measurementSys from "../config/measurementSys";
 import storage from "../utility/storage";
-import useLocation from "../hooks/useLocation";
+import startCheckLocation from "../utility/taskManager";
 
 function AddMarkerDetailsScreen({
   markerDetailVisibility,
@@ -24,11 +24,11 @@ function AddMarkerDetailsScreen({
   id,
   setMarkers,
 }) {
-  const [title, setTitle] = useState();
   const [description, setDesc] = useState();
-  const [radius, setRadius] = useState(100);
   const [kmOrMilesRadius, setKmOrMilesRadius] = useState(0.1);
   const [notes, setNotes] = useState();
+  const [radius, setRadius] = useState(100);
+  const [title, setTitle] = useState();
 
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
@@ -58,13 +58,14 @@ function AddMarkerDetailsScreen({
       circleId: id + "c",
       title: title,
       description: description,
-      latlng: pickedLocation,
+      latLng: pickedLocation,
       radius: radius,
       repeat: isEnabled,
       notes: notes,
     });
     setMarkers(markers.map((marker) => marker));
     storage.store("asyncMarkers", markers);
+    startCheckLocation();
   };
 
   return (

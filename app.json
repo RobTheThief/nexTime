@@ -17,7 +17,8 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "This app uses the location to help the user pick a location from the map to add a reminder"
+        "NSLocationWhenInUseUsageDescription": "This app uses the location to help the user pick a location from the map to add a reminder",
+        "UIBackgroundModes": ["location", "fetch"]
       }
     },
     "web": {
