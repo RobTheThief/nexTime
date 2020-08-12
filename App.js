@@ -1,9 +1,14 @@
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
+import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
 
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import nexTheme from "./app/config/drawerTheme";
+import {
+  askPermissionsNotifications,
+  sendNotificationImmediately,
+} from "./app/utility/notifications";
 
 export default function App() {
   const requestPermission = async () => {
@@ -16,6 +21,7 @@ export default function App() {
 
   React.useEffect(() => {
     requestPermission();
+    askPermissionsNotifications();
   });
 
   return (
@@ -24,6 +30,16 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    return {
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    };
+  },
+});
 
 /*
 

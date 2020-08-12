@@ -15,7 +15,7 @@ import AppTextInput from "../components/AppTextInput";
 import colors from "../config/colors";
 import measurementSys from "../config/measurementSys";
 import storage from "../utility/storage";
-import startCheckLocation from "../utility/taskManager";
+import startCheckLocation from "../utility/startCheckLocation";
 
 function AddMarkerDetailsScreen({
   markerDetailVisibility,
