@@ -28,25 +28,7 @@ export default startCheckLocation = async () => {
           const message =
             marker.title + " " + marker.identifier + " R" + radius;
           sendNotificationImmediately(message);
-          /////////////////////////////////////
-          var asyncTriggers = await storage.get("triggeredGeofences");
-          if (asyncTriggers == null) {
-            storage.store("triggeredGeofences", [
-              {
-                title: marker.title,
-                id: marker.identifier + " : " + Date(),
-                radius: radius,
-              },
-            ]);
-          } else {
-            asyncTriggers.push({
-              title: marker.title,
-              id: marker.identifier + " : " + Date(),
-              radius: radius,
-            });
-            storage.store("triggeredGeofences", asyncTriggers);
-          }
-          //////////////////////////////////////////
+
           console.log(
             "You've entered region:" + "Title: " + marker.title,
             region

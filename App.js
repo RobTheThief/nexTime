@@ -40,29 +40,3 @@ Notifications.setNotificationHandler({
     };
   },
 });
-
-/*
-
-
-import React from "react";
-import { Text, TouchableOpacity, StyleSheet } from "react-native";
-
-import startCheckLocation from "./app/utility/taskManager";
-
-export default function App() {
-  return (
-    <TouchableOpacity style={styles.button} onPress={startCheckLocation}>
-      <Text>Enable background location</Text>
-    </TouchableOpacity>
-  );
-}
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 50,
-  },
-});
-
-*/

@@ -29,7 +29,6 @@ function AddMarkerDetailsScreen({
   const [notes, setNotes] = useState();
   const [radius, setRadius] = useState(100);
   const [title, setTitle] = useState();
-  const [backupMarkers, setBackupMarkers] = useState(); //DEV ONLY
 
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
@@ -50,8 +49,7 @@ function AddMarkerDetailsScreen({
     setKmOrMilesRadius(value / measurementSys.unitDivider);
   };
 
-  const handleSubmitMarker = async () => {
-    //ASYNC DEV ONLY
+  const handleSubmitMarker = () => {
     if (radius == 0 || title == null)
       return alert("Radius or Title cannot be Empty!");
     markerDetailVisibility();
@@ -69,17 +67,6 @@ function AddMarkerDetailsScreen({
     setMarkers(markers.map((marker) => marker));
     storage.store("asyncMarkers", markers);
     startCheckLocation();
-
-    /////////////////////////DEV ONLY
-    const asyncBackupMarkers = await storage.get("asyncBackupMarkers");
-    if (asyncBackupMarkers) {
-      asyncBackupMarkers.push(markers);
-      storage.store("asyncBackupMarkers", asyncBackupMarkers);
-    } else {
-      storage.store("asyncBackupMarkers", markers);
-    }
-    //setBackupMarkers(asyncBackupMarkers.map((marker) => marker));
-    //////////////////////////////////
   };
 
   return (
