@@ -13,16 +13,26 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "This app uses the location to help the user pick a location from the map to add a reminder",
-        "UIBackgroundModes": ["location", "fetch"]
-      }
+        "UIBackgroundModes": [
+          "location",
+          "fetch"
+        ]
+      },
+      "bundleIdentifier": "com.robthethief.nextime"
     },
     "web": {
       "favicon": "./app/assets/favicon.png"
-    }
+    },
+    "android": {
+      "package": "com.robthethief.nextime"
+    },
+    "entryPoint": "node_modules/expo/AppEntry.js"
   }
 }
