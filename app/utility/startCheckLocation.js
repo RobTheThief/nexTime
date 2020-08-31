@@ -6,7 +6,7 @@ import { sendNotificationImmediately } from "../utility/notifications";
 export default startCheckLocation = async () => {
   const { status } = await Location.requestPermissionsAsync();
   if (status === "granted") {
-    const asyncMarkers = await storage.get("asyncMarkers");
+    var asyncMarkers = await storage.get("asyncMarkers");
     const marker = asyncMarkers[asyncMarkers.length - 1];
     const latLng = marker.latLng;
     const radius = marker.radius;
@@ -26,14 +26,22 @@ export default startCheckLocation = async () => {
         }
         if (eventType === Location.GeofencingEventType.Enter) {
           const message =
-            marker.title + " " + marker.identifier + " R" + radius;
+            "You are entering area for nexTime Reminder: " + marker.title;
           sendNotificationImmediately(message);
+          if (marker.repeat === false) {
+            asyncMarkers.splice(marker.id - 1, 1);
+            storage.store("asyncMarkers", asyncMarkers);
+            asyncMarkers = await storage.get("asyncMarkers");
+          }
 
           console.log(
             "You've entered region:" + "Title: " + marker.title,
             region
           );
         } else if (eventType === Location.GeofencingEventType.Exit) {
+          const message =
+            "You are leaving area for nexTime Reminder: " + marker.title;
+          sendNotificationImmediately(message);
           console.log("You've left region:", region);
         }
       }

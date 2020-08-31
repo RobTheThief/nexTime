@@ -17,16 +17,22 @@ function MapScreen({ navigation }) {
 
   useEffect(() => {
     loadMarkers();
-  }, []);
+  });
 
   const addMarker = async (latlng) => {
-    markerDetailVisibility();
+    addMarkerDetailVisibility();
     setPickedLocation(latlng.nativeEvent.coordinate);
     setId(markers.length + 1);
   };
 
+  const markerDetailsScreen = (e) => {
+    setId(e.nativeEvent.id);
+    const marker = markers[id - 1];
+    console.log(marker.radius);
+  };
+
   const [visible, setVisible] = useState(false);
-  const markerDetailVisibility = () =>
+  const addMarkerDetailVisibility = () =>
     visible ? setVisible(false) : setVisible(true);
 
   const [pickedLocation, setPickedLocation] = useState();
@@ -49,7 +55,7 @@ function MapScreen({ navigation }) {
 
       {visible ? (
         <AddMarkerDetailsScreen
-          markerDetailVisibility={markerDetailVisibility}
+          addMarkerDetailVisibility={addMarkerDetailVisibility}
           id={id}
           pickedLocation={pickedLocation}
           markers={markers}
@@ -71,6 +77,7 @@ function MapScreen({ navigation }) {
                 key={marker.identifier}
                 identifier={marker.identifier.toString()}
                 pinColor={marker.pinColor}
+                onPress={markerDetailsScreen}
               />
               <Circle
                 center={marker.latLng}

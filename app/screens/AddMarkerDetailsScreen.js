@@ -18,7 +18,7 @@ import storage from "../utility/storage";
 import startCheckLocation from "../utility/startCheckLocation";
 
 function AddMarkerDetailsScreen({
-  markerDetailVisibility,
+  addMarkerDetailVisibility,
   pickedLocation,
   markers,
   id,
@@ -50,9 +50,15 @@ function AddMarkerDetailsScreen({
   };
 
   const handleSubmitMarker = () => {
-    if (radius == 0 || title == null)
-      return alert("Radius or Title cannot be Empty!");
-    markerDetailVisibility();
+    if (radius < 100 || title == null)
+      return alert(
+        "Radius cannot be less than " +
+          measurementSys.unitDivider / 10 +
+          " " +
+          measurementSys.mOrFt +
+          " or Title cannot be Empty!"
+      );
+    addMarkerDetailVisibility();
     markers.push({
       identifier: id,
       circleId: id + "c",
@@ -141,7 +147,7 @@ function AddMarkerDetailsScreen({
 
         <View style={styles.buttons}>
           <TouchableOpacity
-            onPress={() => markerDetailVisibility()}
+            onPress={() => addMarkerDetailVisibility()}
             style={styles.button}
           >
             <AntDesign name="leftcircleo" color={colors.primary} size={25} />
@@ -168,7 +174,7 @@ export default AddMarkerDetailsScreen;
 
 const styles = StyleSheet.create({
   buttons: {
-    marginTop: 400,
+    marginTop: 450,
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-evenly",
