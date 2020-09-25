@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MapView, { Marker, Circle } from "react-native-maps";
+import MapView, { Marker, Circle, Callout } from "react-native-maps";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -25,10 +25,9 @@ function MapScreen({ navigation }) {
     setId(markers.length + 1);
   };
 
-  const markerDetailsScreen = (e) => {
+  const setDetails = (e) => {
     setId(e.nativeEvent.id);
     const marker = markers[id - 1];
-    addMarkerDetailVisibility();
     setPickedLocation(e.nativeEvent.coordinate);
   };
 
@@ -78,7 +77,8 @@ function MapScreen({ navigation }) {
                 key={marker.identifier}
                 identifier={marker.identifier.toString()}
                 pinColor={marker.pinColor}
-                onPress={markerDetailsScreen}
+                onPress={setDetails}
+                onCalloutPress={addMarkerDetailVisibility}
               />
               <Circle
                 center={marker.latLng}
