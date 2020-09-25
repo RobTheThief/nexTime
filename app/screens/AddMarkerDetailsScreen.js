@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Switch,
+  Alert,
 } from "react-native";
 import {
   FontAwesome5,
@@ -93,12 +94,28 @@ function AddMarkerDetailsScreen({
   };
 
   const handleDeleteMarker = () => {
-    markers.splice(id - 1, 1);
-    for (let i = 0; i < markers.length; i++) {
-      markers[i].identifier = i + 1;
-      markers[i].circleId = i + 1 + "c";
-    }
-    addMarkerDetailVisibility();
+    Alert.alert(
+      "Delete Reminder",
+      "Are you sure you want to delete this reminder?",
+      [
+        {
+          text: "No",
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: () => {
+            markers.splice(id - 1, 1);
+            for (let i = 0; i < markers.length; i++) {
+              markers[i].identifier = i + 1;
+              markers[i].circleId = i + 1 + "c";
+            }
+            addMarkerDetailVisibility();
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   const setTitleInputValue = () =>
@@ -205,17 +222,19 @@ function AddMarkerDetailsScreen({
             <AntDesign name="leftcircleo" color={colors.primary} size={25} />
             <AppText style={styles.iconText}>Go Back</AppText>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => handleDeleteMarker()}
-            style={styles.button}
-          >
-            <MaterialCommunityIcons
-              name="map-marker-remove-variant"
-              size={30}
-              color={colors.primary}
-            />
-            <AppText style={styles.iconText}>Delete</AppText>
-          </TouchableOpacity>
+          {markers[id - 1] !== undefined && (
+            <TouchableOpacity
+              onPress={() => handleDeleteMarker()}
+              style={styles.button}
+            >
+              <MaterialCommunityIcons
+                name="map-marker-remove-variant"
+                size={30}
+                color={colors.primary}
+              />
+              <AppText style={styles.iconText}>Delete</AppText>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             onPress={() => handleSubmitMarker()}
             style={styles.button}
