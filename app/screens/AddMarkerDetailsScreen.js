@@ -64,9 +64,8 @@ function AddMarkerDetailsScreen({
           measurementSys.mOrFt +
           " or Title cannot be Empty!"
       );
-    addMarkerDetailVisibility();
-    markers[id - 1] !== undefined && markers.splice(id - 1, 1);
-    markers.push({
+
+    const markerObject = {
       identifier: id,
       circleId: id + "c",
       title: title,
@@ -76,10 +75,17 @@ function AddMarkerDetailsScreen({
       repeat: isEnabled,
       notes: notes,
       date: Date(),
-    });
+    };
+
+    markers[id - 1] !== undefined
+      ? markers.splice(id - 1, 1, markerObject)
+      : markers.push(markerObject);
+
     setMarkers(markers.map((marker) => marker));
     storage.store("asyncMarkers", markers);
     startCheckLocation();
+    console.log(markers);
+    addMarkerDetailVisibility();
   };
 
   const setTitleInputValue = () =>
@@ -92,11 +98,16 @@ function AddMarkerDetailsScreen({
     markers[id - 1] !== undefined && markers[id - 1].notes
       ? markers[id - 1].notes
       : "";
+  const setRadiusInputValue = () =>
+    markers[id - 1] !== undefined && markers[id - 1].radius
+      ? markers[id - 1].radius
+      : 100;
 
   useEffect(() => {
     setTitle(setTitleInputValue);
     setDesc(setDescInputValue);
     setNotes(setNotesInputValue);
+    setRadius(setRadiusInputValue);
   }, []);
 
   return (
@@ -142,6 +153,7 @@ function AddMarkerDetailsScreen({
                 keyboardType={"number-pad"}
                 value={kmOrMilesRadius.toString()}
                 onChangeText={(value) => handleChangeText(value)}
+                defaultValue={setRadiusInputValue().toString()}
               />
               <AppText style={styles.measureText}>
                 {measurementSys.kmOrMiles}

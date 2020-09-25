@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MapView, { Marker, Circle, Callout } from "react-native-maps";
+import MapView, { Marker, Circle } from "react-native-maps";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -27,7 +27,7 @@ function MapScreen({ navigation }) {
 
   const setDetails = (e) => {
     setId(e.nativeEvent.id);
-    const marker = markers[id - 1];
+    //const marker = markers[id - 1];
     setPickedLocation(e.nativeEvent.coordinate);
   };
 
