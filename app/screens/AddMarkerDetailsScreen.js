@@ -7,7 +7,11 @@ import {
   StyleSheet,
   Switch,
 } from "react-native";
-import { FontAwesome5, AntDesign } from "@expo/vector-icons";
+import {
+  FontAwesome5,
+  AntDesign,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 
 import AppText from "../components/AppText";
@@ -85,6 +89,15 @@ function AddMarkerDetailsScreen({
     storage.store("asyncMarkers", markers);
     startCheckLocation();
     console.log(markers);
+    addMarkerDetailVisibility();
+  };
+
+  const handleDeleteMarker = () => {
+    markers.splice(id - 1, 1);
+    for (let i = 0; i < markers.length; i++) {
+      markers[i].identifier = i + 1;
+      markers[i].circleId = i + 1 + "c";
+    }
     addMarkerDetailVisibility();
   };
 
@@ -191,6 +204,17 @@ function AddMarkerDetailsScreen({
           >
             <AntDesign name="leftcircleo" color={colors.primary} size={25} />
             <AppText style={styles.iconText}>Go Back</AppText>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => handleDeleteMarker()}
+            style={styles.button}
+          >
+            <MaterialCommunityIcons
+              name="map-marker-remove-variant"
+              size={30}
+              color={colors.primary}
+            />
+            <AppText style={styles.iconText}>Delete</AppText>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => handleSubmitMarker()}

@@ -27,7 +27,6 @@ function MapScreen({ navigation }) {
 
   const setDetails = (e) => {
     setId(e.nativeEvent.id);
-    //const marker = markers[id - 1];
     setPickedLocation(e.nativeEvent.coordinate);
   };
 
