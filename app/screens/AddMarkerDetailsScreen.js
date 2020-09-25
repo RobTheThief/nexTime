@@ -110,6 +110,8 @@ function AddMarkerDetailsScreen({
               markers[i].identifier = i + 1;
               markers[i].circleId = i + 1 + "c";
             }
+            storage.store("asyncMarkers", markers);
+            startCheckLocation();
             addMarkerDetailVisibility();
           },
         },
