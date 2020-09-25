@@ -17,7 +17,7 @@ function MapScreen({ navigation }) {
 
   useEffect(() => {
     loadMarkers();
-  });
+  }, []);
 
   const addMarker = async (latlng) => {
     addMarkerDetailVisibility();
@@ -28,7 +28,8 @@ function MapScreen({ navigation }) {
   const markerDetailsScreen = (e) => {
     setId(e.nativeEvent.id);
     const marker = markers[id - 1];
-    console.log(marker.radius);
+    addMarkerDetailVisibility();
+    setPickedLocation(e.nativeEvent.coordinate);
   };
 
   const [visible, setVisible] = useState(false);

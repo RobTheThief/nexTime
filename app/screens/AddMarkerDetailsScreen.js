@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Platform,
   KeyboardAvoidingView,
@@ -25,12 +25,18 @@ function AddMarkerDetailsScreen({
   setMarkers,
 }) {
   const [description, setDesc] = useState();
-  const [kmOrMilesRadius, setKmOrMilesRadius] = useState(0.1);
+  const [kmOrMilesRadius, setKmOrMilesRadius] = useState(
+    markers[id - 1] == undefined
+      ? 0.1
+      : markers[id - 1].radius / measurementSys.unitDivider
+  );
   const [notes, setNotes] = useState();
   const [radius, setRadius] = useState(100);
   const [title, setTitle] = useState();
 
-  const [isEnabled, setIsEnabled] = useState(false);
+  const [isEnabled, setIsEnabled] = useState(
+    markers[id - 1] == undefined ? false : markers[id - 1].repeat
+  );
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   const handleChangeText = (value) => {
@@ -59,6 +65,7 @@ function AddMarkerDetailsScreen({
           " or Title cannot be Empty!"
       );
     addMarkerDetailVisibility();
+    markers[id - 1] !== undefined && markers.splice(id - 1, 1);
     markers.push({
       identifier: id,
       circleId: id + "c",
@@ -75,6 +82,23 @@ function AddMarkerDetailsScreen({
     startCheckLocation();
   };
 
+  const setTitleInputValue = () =>
+    markers[id - 1] !== undefined ? markers[id - 1].title : "";
+  const setDescInputValue = () =>
+    markers[id - 1] !== undefined && markers[id - 1].description
+      ? markers[id - 1].description
+      : "";
+  const setNotesInputValue = () =>
+    markers[id - 1] !== undefined && markers[id - 1].notes
+      ? markers[id - 1].notes
+      : "";
+
+  useEffect(() => {
+    setTitle(setTitleInputValue);
+    setDesc(setDescInputValue);
+    setNotes(setNotesInputValue);
+  }, []);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -86,10 +110,12 @@ function AddMarkerDetailsScreen({
           <AppTextInput
             placeholder={"Title"}
             onChangeText={(text) => setTitle(text)}
+            defaultValue={setTitleInputValue()}
           />
           <AppTextInput
             placeholder={"Description"}
             onChangeText={(text) => setDesc(text)}
+            defaultValue={setDescInputValue()}
           />
           <AppTextInput
             placeholder={"Notes eg. Shopping list..."}
@@ -98,6 +124,7 @@ function AddMarkerDetailsScreen({
             spellCheck={true}
             style={styles.notes}
             onChangeText={(text) => setNotes(text)}
+            defaultValue={setNotesInputValue()}
           />
           <View style={styles.radiInputandTotal}>
             <AppText style={styles.radiTotal}>
