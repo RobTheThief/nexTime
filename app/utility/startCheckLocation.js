@@ -10,7 +10,7 @@ export default startCheckLocation = async () => {
     var marker = asyncMarkers[asyncMarkers.length - 1];
     var latLng = marker.latLng;
     var radius = marker.radius;
-    var LOCATION_TASK_NAME = marker.title + marker.identifier;
+    var LOCATION_TASK_NAME = marker.title + marker.identifier + Date();
     await Location.startGeofencingAsync(LOCATION_TASK_NAME, [
       {
         ...latLng,

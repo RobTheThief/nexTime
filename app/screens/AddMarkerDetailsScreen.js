@@ -124,7 +124,7 @@ function AddMarkerDetailsScreen({
   };
 
   const setTitleInputValue = () =>
-    markers[id - 1] !== undefined ? markers[id - 1].title : "";
+    markers[id - 1] !== undefined ? markers[id - 1].title : undefined;
   const setDescInputValue = () =>
     markers[id - 1] !== undefined && markers[id - 1].description
       ? markers[id - 1].description
