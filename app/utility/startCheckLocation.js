@@ -10,7 +10,7 @@ export default startCheckLocation = async () => {
     var marker = asyncMarkers[asyncMarkers.length - 1];
     var latLng = marker.latLng;
     var radius = marker.radius;
-    var LOCATION_TASK_NAME = marker.title + marker.identifier + Date();
+    var LOCATION_TASK_NAME = marker.markerTaskName;
     await Location.startGeofencingAsync(LOCATION_TASK_NAME, [
       {
         ...latLng,
@@ -32,9 +32,9 @@ export default startCheckLocation = async () => {
             TaskManager.unregisterTaskAsync(LOCATION_TASK_NAME);
             var taskAsyncMarkers = await storage.get("asyncMarkers");
             var taskMarker = taskAsyncMarkers[taskAsyncMarkers.length - 1];
-            taskAsyncMarkers.splice(taskMarker.identifier - 1, 1);
+            taskAsyncMarkers.splice(taskMarker.markerIndex - 1, 1);
             for (let i = 0; i < taskAsyncMarkers.length; i++) {
-              taskAsyncMarkers[i].identifier = i + 1;
+              taskAsyncMarkers[i].markerIndex = i + 1;
               taskAsyncMarkers[i].circleId = i + 1 + "c";
             }
             await storage.store("asyncMarkers", taskAsyncMarkers);

@@ -72,7 +72,7 @@ function AddMarkerDetailsScreen({
       );
 
     const markerObject = {
-      identifier: id,
+      markerIndex: id,
       circleId: id + "c",
       title: title,
       description: description,
@@ -80,7 +80,7 @@ function AddMarkerDetailsScreen({
       radius: radius,
       repeat: isEnabled,
       notes: notes,
-      date: Date(),
+      markerTaskName: title + Date(),
     };
 
     markers[id - 1] !== undefined
@@ -106,12 +106,10 @@ function AddMarkerDetailsScreen({
         {
           text: "Yes",
           onPress: () => {
-            TaskManager.unregisterTaskAsync(
-              markers[id - 1].title + markers[id - 1].identifier
-            );
+            TaskManager.unregisterTaskAsync(markers[id - 1].markerTaskName);
             markers.splice(id - 1, 1);
             for (let i = 0; i < markers.length; i++) {
-              markers[i].identifier = i + 1;
+              markers[i].markerIndex = i + 1;
               markers[i].circleId = i + 1 + "c";
             }
             storage.store("asyncMarkers", markers);
@@ -128,11 +126,11 @@ function AddMarkerDetailsScreen({
   const setDescInputValue = () =>
     markers[id - 1] !== undefined && markers[id - 1].description
       ? markers[id - 1].description
-      : "";
+      : undefined;
   const setNotesInputValue = () =>
     markers[id - 1] !== undefined && markers[id - 1].notes
       ? markers[id - 1].notes
-      : "";
+      : undefined;
   const setRadiusInputValue = () =>
     markers[id - 1] !== undefined && markers[id - 1].radius
       ? markers[id - 1].radius
@@ -155,7 +153,10 @@ function AddMarkerDetailsScreen({
         <View style={styles.inputText}>
           <AppTextInput
             placeholder={"Title"}
-            onChangeText={(text) => setTitle(text)}
+            onChangeText={(text) => {
+              if (text === "") text = undefined;
+              setTitle(text);
+            }}
             defaultValue={setTitleInputValue()}
           />
           <AppTextInput

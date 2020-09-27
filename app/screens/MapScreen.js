@@ -69,13 +69,13 @@ function MapScreen({ navigation }) {
           style={styles.mapStyle}
         >
           {markers.map((marker) => (
-            <React.Fragment key={marker.identifier}>
+            <React.Fragment key={marker.markerIndex}>
               <Marker
                 coordinate={marker.latLng}
                 title={marker.title}
                 description={marker.description}
-                key={marker.identifier}
-                identifier={marker.identifier.toString()}
+                key={marker.markerIndex}
+                identifier={marker.markerIndex.toString()}
                 pinColor={marker.pinColor}
                 onPress={setDetails}
                 onCalloutPress={addMarkerDetailVisibility}
