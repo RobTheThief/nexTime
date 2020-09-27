@@ -14,6 +14,7 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
+import * as TaskManager from "expo-task-manager";
 
 import AppText from "../components/AppText";
 import AppTextInput from "../components/AppTextInput";
@@ -105,13 +106,15 @@ function AddMarkerDetailsScreen({
         {
           text: "Yes",
           onPress: () => {
+            TaskManager.unregisterTaskAsync(
+              markers[id - 1].title + markers[id - 1].identifier
+            );
             markers.splice(id - 1, 1);
             for (let i = 0; i < markers.length; i++) {
               markers[i].identifier = i + 1;
               markers[i].circleId = i + 1 + "c";
             }
             storage.store("asyncMarkers", markers);
-            startCheckLocation();
             addMarkerDetailVisibility();
           },
         },

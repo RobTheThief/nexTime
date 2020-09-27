@@ -7,10 +7,10 @@ export default startCheckLocation = async () => {
   const { status } = await Location.requestPermissionsAsync();
   if (status === "granted") {
     var asyncMarkers = await storage.get("asyncMarkers");
-    const marker = asyncMarkers[asyncMarkers.length - 1];
-    const latLng = marker.latLng;
-    const radius = marker.radius;
-    const LOCATION_TASK_NAME = marker.title + marker.identifier;
+    var marker = asyncMarkers[asyncMarkers.length - 1];
+    var latLng = marker.latLng;
+    var radius = marker.radius;
+    var LOCATION_TASK_NAME = marker.title + marker.identifier;
     await Location.startGeofencingAsync(LOCATION_TASK_NAME, [
       {
         ...latLng,
@@ -29,9 +29,15 @@ export default startCheckLocation = async () => {
             "You are entering area for nexTime Reminder: " + marker.title;
           sendNotificationImmediately(message);
           if (marker.repeat === false) {
-            asyncMarkers.splice(marker.id - 1, 1);
-            storage.store("asyncMarkers", asyncMarkers);
-            asyncMarkers = await storage.get("asyncMarkers");
+            TaskManager.unregisterTaskAsync(LOCATION_TASK_NAME);
+            var taskAsyncMarkers = await storage.get("asyncMarkers");
+            var taskMarker = taskAsyncMarkers[taskAsyncMarkers.length - 1];
+            taskAsyncMarkers.splice(taskMarker.identifier - 1, 1);
+            for (let i = 0; i < taskAsyncMarkers.length; i++) {
+              taskAsyncMarkers[i].identifier = i + 1;
+              taskAsyncMarkers[i].circleId = i + 1 + "c";
+            }
+            await storage.store("asyncMarkers", taskAsyncMarkers);
           }
 
           console.log(
@@ -39,14 +45,14 @@ export default startCheckLocation = async () => {
             region
           );
         } else if (eventType === Location.GeofencingEventType.Exit) {
-          const message =
+          /* const message =
             "You are leaving area for nexTime Reminder: " + marker.title;
-          sendNotificationImmediately(message);
+          sendNotificationImmediately(message); */
           console.log("You've left region:", region);
         }
       }
     );
     const tasks = await TaskManager.getRegisteredTasksAsync();
-    console.log(tasks);
+    console.log("All Tasks", tasks);
   }
 };

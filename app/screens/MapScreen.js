@@ -17,7 +17,7 @@ function MapScreen({ navigation }) {
 
   useEffect(() => {
     loadMarkers();
-  }, []);
+  });
 
   const addMarker = async (latlng) => {
     addMarkerDetailVisibility();
@@ -28,6 +28,7 @@ function MapScreen({ navigation }) {
   const setDetails = (e) => {
     setId(e.nativeEvent.id);
     setPickedLocation(e.nativeEvent.coordinate);
+    console.log(pickedLocation, id);
   };
 
   const [visible, setVisible] = useState(false);
@@ -44,11 +45,11 @@ function MapScreen({ navigation }) {
           onPress={() => navigation.openDrawer()}
           style={styles.drawerButton}
         >
-          <AntDesign name="rightcircleo" color={colors.black} size={25} />
+          <AntDesign name="rightcircleo" color={colors.light} size={25} />
         </TouchableOpacity>
 
-        <View style={styles.headText}>
-          <Text>Map</Text>
+        <View style={styles.headTextContainer}>
+          <Text style={styles.headText}>Map</Text>
         </View>
       </View>
 
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
     top: -7,
     right: 70,
   },
-  headText: {
+  headTextContainer: {
     fontSize: 30,
     fontWeight: "600",
     flex: 1,
@@ -131,7 +132,9 @@ const styles = StyleSheet.create({
     top: -10,
     right: 100,
   },
-
+  headText: {
+    color: colors.light,
+  },
   mapStyle: {
     width: "100%",
     height: "100%",

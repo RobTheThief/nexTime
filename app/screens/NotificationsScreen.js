@@ -4,6 +4,11 @@ import * as TaskManager from "expo-task-manager";
 import storage from "../utility/storage";
 
 function NotificationsScreen({ navigation }) {
+  const getTasks = async () => {
+    const tasks = await TaskManager.getRegisteredTasksAsync();
+    console.log("All Tasks", tasks);
+  };
+
   return (
     <>
       <View style={styles.container}>
@@ -19,7 +24,7 @@ function NotificationsScreen({ navigation }) {
         />
       </View>
       <View style={styles.container}>
-        <Button onPress={() => navigation.goBack()} title="Go back" />
+        <Button onPress={() => getTasks()} title="log tasks" />
       </View>
     </>
   );
