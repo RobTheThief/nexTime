@@ -45,6 +45,28 @@ function AddMarkerDetailsScreen({
   );
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
+  const setTitleInputValue = () =>
+    markers[id - 1] !== undefined ? markers[id - 1].title : undefined;
+  const setDescInputValue = () =>
+    markers[id - 1] !== undefined && markers[id - 1].description
+      ? markers[id - 1].description
+      : undefined;
+  const setNotesInputValue = () =>
+    markers[id - 1] !== undefined && markers[id - 1].notes
+      ? markers[id - 1].notes
+      : undefined;
+  const setRadiusInputValue = () =>
+    markers[id - 1] !== undefined && markers[id - 1].radius
+      ? markers[id - 1].radius
+      : 100;
+
+  useEffect(() => {
+    setTitle(setTitleInputValue);
+    setDesc(setDescInputValue);
+    setNotes(setNotesInputValue);
+    setRadius(setRadiusInputValue);
+  }, []);
+
   const handleChangeText = (value) => {
     isNaN(parseFloat(value)) && (value = "");
     if (value[0] == "0" && !isNaN(value[1])) {
@@ -71,6 +93,14 @@ function AddMarkerDetailsScreen({
           " or Title cannot be Empty!"
       );
 
+    const makeTaskName = () => {
+      if (markers[id - 1] && markers[id - 1].markerTaskName) {
+        return markers[id - 1].markerTaskName;
+      } else {
+        return title + "" + Date();
+      }
+    };
+
     const markerObject = {
       markerIndex: id,
       circleId: id + "c",
@@ -80,7 +110,7 @@ function AddMarkerDetailsScreen({
       radius: radius,
       repeat: isEnabled,
       notes: notes,
-      markerTaskName: title + Date(),
+      markerTaskName: makeTaskName(),
     };
 
     markers[id - 1] !== undefined
@@ -120,28 +150,6 @@ function AddMarkerDetailsScreen({
       { cancelable: false }
     );
   };
-
-  const setTitleInputValue = () =>
-    markers[id - 1] !== undefined ? markers[id - 1].title : undefined;
-  const setDescInputValue = () =>
-    markers[id - 1] !== undefined && markers[id - 1].description
-      ? markers[id - 1].description
-      : undefined;
-  const setNotesInputValue = () =>
-    markers[id - 1] !== undefined && markers[id - 1].notes
-      ? markers[id - 1].notes
-      : undefined;
-  const setRadiusInputValue = () =>
-    markers[id - 1] !== undefined && markers[id - 1].radius
-      ? markers[id - 1].radius
-      : 100;
-
-  useEffect(() => {
-    setTitle(setTitleInputValue);
-    setDesc(setDescInputValue);
-    setNotes(setNotesInputValue);
-    setRadius(setRadiusInputValue);
-  }, []);
 
   return (
     <KeyboardAvoidingView

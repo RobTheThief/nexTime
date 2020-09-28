@@ -31,8 +31,13 @@ export default startCheckLocation = async () => {
           if (marker.repeat === false) {
             TaskManager.unregisterTaskAsync(LOCATION_TASK_NAME);
             var taskAsyncMarkers = await storage.get("asyncMarkers");
-            var taskMarker = taskAsyncMarkers[taskAsyncMarkers.length - 1];
-            taskAsyncMarkers.splice(taskMarker.markerIndex - 1, 1);
+
+            const markerSearch = (task) => {
+              return task.markerTaskName.includes(LOCATION_TASK_NAME);
+            };
+            var taskMarker = taskAsyncMarkers.findIndex(markerSearch);
+
+            taskAsyncMarkers.splice(taskMarker, 1);
             for (let i = 0; i < taskAsyncMarkers.length; i++) {
               taskAsyncMarkers[i].markerIndex = i + 1;
               taskAsyncMarkers[i].circleId = i + 1 + "c";
@@ -45,10 +50,7 @@ export default startCheckLocation = async () => {
             region
           );
         } else if (eventType === Location.GeofencingEventType.Exit) {
-          /* const message =
-            "You are leaving area for nexTime Reminder: " + marker.title;
-          sendNotificationImmediately(message); */
-          console.log("You've left region:", region);
+          //console.log("You've left region:", region);
         }
       }
     );
