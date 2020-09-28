@@ -14,7 +14,7 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
-import * as TaskManager from "expo-task-manager";
+import * as Location from "expo-location";
 
 import AppText from "../components/AppText";
 import AppTextInput from "../components/AppTextInput";
@@ -40,10 +40,18 @@ function AddMarkerDetailsScreen({
   const [radius, setRadius] = useState(100);
   const [title, setTitle] = useState();
 
-  const [isEnabled, setIsEnabled] = useState(
+  const [repeatReminder, setRepeatReminder] = useState(
     markers[id - 1] == undefined ? false : markers[id - 1].repeat
   );
-  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+  const toggleRepeat = () => {
+    setRepeatReminder((previousState) => !previousState);
+    if (deleteOnTrig === true) toggleDelete();
+  };
+
+  const [deleteOnTrig, setDeleteOnTrig] = useState(
+    markers[id - 1] == undefined ? false : markers[id - 1].delete
+  );
+  const toggleDelete = () => setDeleteOnTrig((previousState) => !previousState);
 
   const setTitleInputValue = () =>
     markers[id - 1] !== undefined ? markers[id - 1].title : undefined;
@@ -94,9 +102,16 @@ function AddMarkerDetailsScreen({
       );
 
     const makeTaskName = () => {
-      if (markers[id - 1] && markers[id - 1].markerTaskName) {
+      if (
+        markers[id - 1] &&
+        markers[id - 1].markerTaskName &&
+        markers[id - 1].taskDeleted === false
+      ) {
         return markers[id - 1].markerTaskName;
       } else {
+        markers[id - 1] && markers[id - 1].taskDeleted
+          ? (markers[id - 1].taskDeleted = false)
+          : console.log("ok");
         return title + "" + Date();
       }
     };
@@ -108,9 +123,11 @@ function AddMarkerDetailsScreen({
       description: description,
       latLng: pickedLocation,
       radius: radius,
-      repeat: isEnabled,
+      repeat: repeatReminder,
+      delete: deleteOnTrig,
       notes: notes,
       markerTaskName: makeTaskName(),
+      taskDeleted: false,
     };
 
     markers[id - 1] !== undefined
@@ -136,7 +153,7 @@ function AddMarkerDetailsScreen({
         {
           text: "Yes",
           onPress: () => {
-            TaskManager.unregisterTaskAsync(markers[id - 1].markerTaskName);
+            Location.stopGeofencingAsync(markers[id - 1].markerTaskName);
             markers.splice(id - 1, 1);
             for (let i = 0; i < markers.length; i++) {
               markers[i].markerIndex = i + 1;
@@ -215,16 +232,30 @@ function AddMarkerDetailsScreen({
             value={radius}
             onValueChange={(value) => handleChangeSlider(value)}
           />
-          <View style={styles.switchContainer}>
-            <AppText style={styles.repeatText}>Repeat</AppText>
-            <Switch
-              style={styles.switch}
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={isEnabled ? colors.primary : "#f4f3f4"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={toggleSwitch}
-              value={isEnabled}
-            />
+          <View style={styles.repeatDeletContainer}>
+            <View style={styles.switchContainer}>
+              <AppText style={styles.repeatText}>Repeat</AppText>
+              <Switch
+                style={styles.switch}
+                trackColor={{ false: "#767577", true: "#81b0ff" }}
+                thumbColor={repeatReminder ? colors.primary : "#f4f3f4"}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={toggleRepeat}
+                value={repeatReminder}
+              />
+            </View>
+            <View style={styles.switchContainer}>
+              <AppText style={styles.repeatText}>Delete on Trigger</AppText>
+              <Switch
+                style={styles.switch}
+                trackColor={{ false: "#767577", true: "#81b0ff" }}
+                thumbColor={deleteOnTrig ? colors.primary : "#f4f3f4"}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={toggleDelete}
+                value={deleteOnTrig}
+                disabled={repeatReminder}
+              />
+            </View>
           </View>
         </View>
 
@@ -331,6 +362,12 @@ const styles = StyleSheet.create({
     width: "30%",
     flexDirection: "row",
   },
+  repeatDeletContainer: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
   slider: {
     width: "100%",
     height: 40,
@@ -342,7 +379,7 @@ const styles = StyleSheet.create({
   switchContainer: {
     alignItems: "center",
     justifyContent: "flex-start",
-    width: "100%",
+    width: "47%",
     flexDirection: "row",
   },
 });
