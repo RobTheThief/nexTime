@@ -3,12 +3,6 @@ import * as Location from "expo-location";
 import storage from "./storage";
 import { sendNotificationImmediately } from "../utility/notifications";
 
-var LOCATION_TASK_NAME = "";
-
-const markerSearch = (task) => {
-  return task.markerTaskName.includes(LOCATION_TASK_NAME);
-};
-
 export default startCheckLocation = async () => {
   const { status } = await Location.requestPermissionsAsync();
   if (status === "granted") {
@@ -16,7 +10,7 @@ export default startCheckLocation = async () => {
     var marker = asyncMarkers[asyncMarkers.length - 1];
     var latLng = marker.latLng;
     var radius = marker.radius;
-    LOCATION_TASK_NAME = marker.markerTaskName;
+    var LOCATION_TASK_NAME = marker.markerTaskName;
     await Location.startGeofencingAsync(LOCATION_TASK_NAME, [
       {
         ...latLng,
@@ -34,18 +28,19 @@ export default startCheckLocation = async () => {
           const message =
             "You are entering area for nexTime Reminder: " + marker.title;
           sendNotificationImmediately(message);
-          if (marker.repeat === false) {
-            var taskAsyncMarkers = await storage.get("asyncMarkers");
-            var taskMarker = taskAsyncMarkers.findIndex(markerSearch);
 
+          const markerSearch = (task) => {
+            return task.markerTaskName.includes(LOCATION_TASK_NAME);
+          };
+          var taskAsyncMarkers = await storage.get("asyncMarkers");
+          var taskMarker = taskAsyncMarkers.findIndex(markerSearch);
+
+          if (marker.repeat === false) {
             taskAsyncMarkers[taskMarker].taskDeleted = true;
             await storage.store("asyncMarkers", taskAsyncMarkers);
             Location.stopGeofencingAsync(LOCATION_TASK_NAME);
           }
           if (marker.delete === true) {
-            var taskAsyncMarkers = await storage.get("asyncMarkers");
-            var taskMarker = taskAsyncMarkers.findIndex(markerSearch);
-
             taskAsyncMarkers.splice(taskMarker, 1);
             for (let i = 0; i < taskAsyncMarkers.length; i++) {
               taskAsyncMarkers[i].markerIndex = i + 1;
