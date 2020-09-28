@@ -48,7 +48,7 @@ export default startCheckLocation = async () => {
             }
             await storage.store("asyncMarkers", taskAsyncMarkers);
           }
-
+          //
           console.log(
             "You've entered region:" + "Title: " + marker.title,
             region
