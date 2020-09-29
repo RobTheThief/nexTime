@@ -5,11 +5,10 @@ import { sendNotificationImmediately } from "../utility/notifications";
 
 const refreshAllTasks = async () => {
   var taskAsyncMarkers = await storage.get("asyncMarkers");
-  console.log(taskAsyncMarkers);
   if (taskAsyncMarkers !== null) {
     for (let i = 0; i < taskAsyncMarkers.length; i++) {
       console.log(taskAsyncMarkers[i]);
-      startCheckLocation(taskAsyncMarkers[i]);
+      await startCheckLocation(taskAsyncMarkers[i]);
     }
   }
 };
