@@ -21,7 +21,7 @@ import AppTextInput from "../components/AppTextInput";
 import colors from "../config/colors";
 import measurementSys from "../config/measurementSys";
 import storage from "../utility/storage";
-import startCheckLocation from "../utility/startCheckLocation";
+import appTasks from "../utility/startCheckLocation";
 
 function AddMarkerDetailsScreen({
   addMarkerDetailVisibility,
@@ -136,7 +136,7 @@ function AddMarkerDetailsScreen({
 
     setMarkers(markers.map((marker) => marker));
     storage.store("asyncMarkers", markers);
-    startCheckLocation(markers[id - 1]);
+    appTasks.startCheckLocation(markers[id - 1]);
     console.log(markers);
     addMarkerDetailVisibility();
   };

@@ -5,10 +5,8 @@ import * as Permissions from "expo-permissions";
 
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import nexTheme from "./app/config/drawerTheme";
-import {
-  askPermissionsNotifications,
-  sendNotificationImmediately,
-} from "./app/utility/notifications";
+import { askPermissionsNotifications } from "./app/utility/notifications";
+import appTasks from "./app/utility/startCheckLocation";
 
 export default function App() {
   const requestPermission = async () => {
@@ -22,6 +20,7 @@ export default function App() {
   React.useEffect(() => {
     requestPermission();
     askPermissionsNotifications();
+    appTasks.refreshAllTasks();
   });
 
   return (

@@ -3,7 +3,18 @@ import * as Location from "expo-location";
 import storage from "./storage";
 import { sendNotificationImmediately } from "../utility/notifications";
 
-export default startCheckLocation = async (marker) => {
+const refreshAllTasks = async () => {
+  var taskAsyncMarkers = await storage.get("asyncMarkers");
+  console.log(taskAsyncMarkers);
+  if (taskAsyncMarkers !== null) {
+    for (let i = 0; i < taskAsyncMarkers.length; i++) {
+      console.log(taskAsyncMarkers[i]);
+      startCheckLocation(taskAsyncMarkers[i]);
+    }
+  }
+};
+
+const startCheckLocation = async (marker) => {
   const { status } = await Location.requestPermissionsAsync();
   if (status === "granted") {
     var latLng = marker.latLng;
@@ -59,4 +70,9 @@ export default startCheckLocation = async (marker) => {
     const tasks = await TaskManager.getRegisteredTasksAsync();
     console.log("All Tasks", tasks);
   }
+};
+
+export default {
+  refreshAllTasks,
+  startCheckLocation,
 };
