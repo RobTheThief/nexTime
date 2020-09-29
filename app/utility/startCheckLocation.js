@@ -3,11 +3,9 @@ import * as Location from "expo-location";
 import storage from "./storage";
 import { sendNotificationImmediately } from "../utility/notifications";
 
-export default startCheckLocation = async () => {
+export default startCheckLocation = async (marker) => {
   const { status } = await Location.requestPermissionsAsync();
   if (status === "granted") {
-    var asyncMarkers = await storage.get("asyncMarkers");
-    var marker = asyncMarkers[asyncMarkers.length - 1];
     var latLng = marker.latLng;
     var radius = marker.radius;
     var LOCATION_TASK_NAME = marker.markerTaskName;

@@ -136,7 +136,7 @@ function AddMarkerDetailsScreen({
 
     setMarkers(markers.map((marker) => marker));
     storage.store("asyncMarkers", markers);
-    startCheckLocation();
+    startCheckLocation(markers[id - 1]);
     console.log(markers);
     addMarkerDetailVisibility();
   };
@@ -209,7 +209,7 @@ function AddMarkerDetailsScreen({
 
             <View style={styles.radiusInput}>
               <AppTextInput
-                style={{ width: "100%" }}
+                style={{ width: "100%", marginBottom: 10 }}
                 maxLength={4}
                 keyboardType={"number-pad"}
                 value={kmOrMilesRadius.toString()}
@@ -264,7 +264,7 @@ function AddMarkerDetailsScreen({
             onPress={() => addMarkerDetailVisibility()}
             style={styles.button}
           >
-            <AntDesign name="leftcircleo" color={colors.primary} size={25} />
+            <AntDesign name="leftcircle" color={colors.primary} size={29} />
             <AppText style={styles.iconText}>Go Back</AppText>
           </TouchableOpacity>
           {markers[id - 1] !== undefined && (
@@ -301,7 +301,7 @@ export default AddMarkerDetailsScreen;
 
 const styles = StyleSheet.create({
   buttons: {
-    marginTop: 450,
+    marginTop: 480,
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-evenly",
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
   measureText: {
     position: "relative",
     right: 27,
-    top: 5,
+    top: 15,
   },
   notes: {
     borderColor: colors.primary,
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
   },
   slider: {
     width: "100%",
-    height: 40,
+    height: 80,
   },
   switch: {
     position: "relative",
