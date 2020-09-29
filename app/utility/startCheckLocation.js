@@ -7,8 +7,8 @@ const refreshAllTasks = async () => {
   var taskAsyncMarkers = await storage.get("asyncMarkers");
   if (taskAsyncMarkers !== null) {
     for (let i = 0; i < taskAsyncMarkers.length; i++) {
-      console.log(taskAsyncMarkers[i]);
-      await startCheckLocation(taskAsyncMarkers[i]);
+      !taskAsyncMarkers[i].taskDeleted &&
+        (await startCheckLocation(taskAsyncMarkers[i]));
     }
   }
 };

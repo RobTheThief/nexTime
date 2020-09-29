@@ -153,7 +153,8 @@ function AddMarkerDetailsScreen({
         {
           text: "Yes",
           onPress: () => {
-            Location.stopGeofencingAsync(markers[id - 1].markerTaskName);
+            !markers[id - 1].taskDeleted &&
+              Location.stopGeofencingAsync(markers[id - 1].markerTaskName);
             markers.splice(id - 1, 1);
             for (let i = 0; i < markers.length; i++) {
               markers[i].markerIndex = i + 1;
