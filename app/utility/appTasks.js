@@ -1,7 +1,7 @@
 import * as TaskManager from "expo-task-manager";
 import * as Location from "expo-location";
 import storage from "./storage";
-import { sendNotificationImmediately } from "../utility/notifications";
+import { sendNotificationImmediately } from "./notifications";
 
 const refreshAllTasks = async () => {
   var taskAsyncMarkers = await storage.get("asyncMarkers");
