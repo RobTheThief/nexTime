@@ -1,22 +1,30 @@
-var bTDevices = "";
+var bTDevicesCache = "";
+var bTDevicesArray = [];
 var counter = 0;
 
 const scanBT = (blueToothManager) => {
   blueToothManager.startDeviceScan(null, null, (error, device) => {
+    const bTDevicesObject = {
+      id: device.id,
+      name: device.name,
+      localName: device.localName,
+      rssi: device.rssi,
+    };
     if (error) {
       // Handle error (scanning will be stopped automatically)
       console.log(error);
       return;
     }
 
-    if (!bTDevices.includes(device.id)) {
-      console.log(device.id, ":", device.name, device.localName, device.rssi);
-      bTDevices = `${bTDevices} ${device.id}`;
+    if (!bTDevicesCache.includes(device.id)) {
+      bTDevicesArray.push(bTDevicesObject);
+      console.log(bTDevicesArray);
+      bTDevicesCache = `${bTDevicesCache} ${device.id}`;
     }
 
     counter++;
     if (counter === 50) {
-      bTDevices = "";
+      bTDevicesCache = "";
       counter = 0;
     }
 
@@ -40,4 +48,5 @@ const subscribeBTScan = (blueToothManager) => {
 
 export default {
   subscribeBTScan,
+  bTDevicesArray,
 };
