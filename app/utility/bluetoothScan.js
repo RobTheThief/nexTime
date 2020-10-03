@@ -1,3 +1,6 @@
+var bTDevices = "";
+var counter = 0;
+
 const scanBT = (blueToothManager) => {
   blueToothManager.startDeviceScan(null, null, (error, device) => {
     if (error) {
@@ -5,7 +8,18 @@ const scanBT = (blueToothManager) => {
       console.log(error);
       return;
     }
-    console.log(device.id, ":", device.name, device.localName, device.rssi);
+
+    if (!bTDevices.includes(device.id)) {
+      console.log(device.id, ":", device.name, device.localName, device.rssi);
+      bTDevices = `${bTDevices} ${device.id}`;
+    }
+
+    counter++;
+    if (counter === 50) {
+      bTDevices = "";
+      counter = 0;
+    }
+
     // Check if it is a device you are looking for based on advertisement data
     // or other criteria.
     if (device.name === "TI BLE Sensor Tag" || device.name === "SensorTag") {

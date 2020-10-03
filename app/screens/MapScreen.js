@@ -49,7 +49,7 @@ function MapScreen({ navigation }) {
         </TouchableOpacity>
 
         <View style={styles.headTextContainer}>
-          <Text style={styles.headText}>Map</Text>
+          <Text style={styles.headText}></Text>
         </View>
       </View>
 
