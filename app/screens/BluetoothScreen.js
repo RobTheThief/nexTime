@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from "react";
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import colors from "../config/colors";
-import bluetooth from "../utility/bluetoothScan";
-
+import React, { useState } from "react";
+import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import AppText from "../components/AppText";
 
-function BluetoothScreen({ navigation }) {
+import AppText from "../components/AppText";
+import bluetooth from "../utility/bluetoothScan";
+import colors from "../config/colors";
+import storage from "../utility/storage";
+
+var BTReminders = [];
+
+function BluetoothScreen() {
   const [bTDevicesArray, setBTDevicesArray] = useState(
     bluetooth.bTDevicesArray
   );
@@ -21,22 +18,44 @@ function BluetoothScreen({ navigation }) {
     setBTDevicesArray([...bluetooth.bTDevicesArray]);
   };
 
+  const remindBT = async (id) => {
+    BTReminders = await storage.get("asyncBTDevices");
+    if (BTReminders && BTReminders.includes(id)) {
+      alert("Reminder already set for this device");
+      return;
+    }
+    BTReminders === null && (BTReminders = []);
+    BTReminders.push(id);
+    await storage.store("asyncBTDevices", BTReminders);
+  };
+
+  const Item = ({ title, rssi, id }) => (
+    <View style={styles.item}>
+      <TouchableOpacity onPress={() => remindBT(id)}>
+        <AppText style={styles.title}>{title + " Signal: " + rssi}</AppText>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const renderItem = ({ item }) => (
+    <Item
+      title={item.name ? item.name : item.localName ? item.localName : item.id}
+      rssi={item.rssi}
+      id={item.id}
+    />
+  );
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => updateDevices()} style={styles.button}>
         <AntDesign name="leftcircle" color={colors.primary} size={29} />
         <AppText style={styles.iconText}>Update</AppText>
       </TouchableOpacity>
-      <AppText>
-        {bTDevicesArray[bTDevicesArray.length - 1].name
-          ? bTDevicesArray[bTDevicesArray.length - 1].name
-          : bTDevicesArray[bTDevicesArray.length - 1].localName
-          ? bTDevicesArray[bTDevicesArray.length - 1].localName
-          : bTDevicesArray[bTDevicesArray.length - 1].id}
-        {" Signal: "}
-        {bTDevicesArray[bTDevicesArray.length - 1].rssi}
-      </AppText>
-      <FlatList></FlatList>
+      <FlatList
+        data={bTDevicesArray}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+      />
     </View>
   );
 }

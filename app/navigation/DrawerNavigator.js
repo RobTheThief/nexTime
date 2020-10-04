@@ -24,7 +24,7 @@ const DrawerNavigator = () => {
     </Drawer.Navigator>
   );
 };
-// fuck it make a tab navigator for connections
+
 const Tab = createBottomTabNavigator();
 const ConnectionsNavigator = () => {
   return (

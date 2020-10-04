@@ -1,9 +1,12 @@
+import { sendNotificationImmediately } from "./notifications";
+import storage from "./storage";
+
 var bTDevicesCache = "";
 var bTDevicesArray = [];
 var counter = 0;
 
 const scanBT = (blueToothManager) => {
-  blueToothManager.startDeviceScan(null, null, (error, device) => {
+  blueToothManager.startDeviceScan(null, null, async (error, device) => {
     const bTDevicesObject = {
       id: device.id,
       name: device.name,
@@ -11,20 +14,34 @@ const scanBT = (blueToothManager) => {
       rssi: device.rssi,
     };
     if (error) {
-      // Handle error (scanning will be stopped automatically)
-      console.log(error);
+      alert(error.toString());
       return;
     }
 
     if (!bTDevicesCache.includes(device.id)) {
       bTDevicesArray.push(bTDevicesObject);
-      console.log(bTDevicesArray);
       bTDevicesCache = `${bTDevicesCache} ${device.id}`;
     }
 
     counter++;
     if (counter === 50) {
+      var btReminders = await storage.get("asyncBTDevices");
+      if (btReminders) {
+        for (let i = 0; i < btReminders.length; i++) {
+          for (let j = 0; j < bTDevicesArray.length; j++) {
+            if (btReminders[i].includes(bTDevicesArray[j].id)) {
+              sendNotificationImmediately(btReminders[i] + " Has been found!");
+              btReminders.splice(i, 1);
+              await storage.store("asyncBTDevices", btReminders);
+              j = 100;
+              i = 100;
+            }
+          }
+        }
+      }
+
       bTDevicesCache = "";
+      bTDevicesArray.splice(0, bTDevicesArray.length);
       counter = 0;
     }
 
