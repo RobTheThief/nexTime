@@ -15,7 +15,14 @@ function BluetoothScreen() {
   );
 
   const updateDevices = () => {
-    setBTDevicesArray([...bluetooth.bTDevicesArray]);
+    let count = 0;
+    const myInterval = setInterval(() => {
+      setBTDevicesArray([...bluetooth.bTDevicesArray]);
+      count++;
+      count === 20 && stopInterval();
+      console.log(count);
+    }, 2000);
+    const stopInterval = () => clearInterval(myInterval);
   };
 
   const remindBT = async (id) => {
@@ -32,7 +39,9 @@ function BluetoothScreen() {
   const Item = ({ title, rssi, id }) => (
     <View style={styles.item}>
       <TouchableOpacity onPress={() => remindBT(id)}>
-        <AppText style={styles.title}>{title + " Signal: " + rssi}</AppText>
+        <AppText style={styles.title}>
+          {title + (rssi ? " Signal: " + rssi : "")}
+        </AppText>
       </TouchableOpacity>
     </View>
   );

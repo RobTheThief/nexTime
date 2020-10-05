@@ -19,7 +19,7 @@ export default function App() {
       );
   };
 
-  const [blueToothManager, setBlueToothManager] = React.useState(
+  const [bluetoothManager, setBluetoothManager] = React.useState(
     new BleManager()
   );
 
@@ -27,7 +27,7 @@ export default function App() {
     requestPermission();
     askPermissionsNotifications();
     appTasks.refreshAllTasks();
-    bluetoothScan.subscribeBTScan(blueToothManager);
+    bluetoothScan.subscribeBTScan(bluetoothManager);
   });
 
   return (
