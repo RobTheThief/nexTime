@@ -21,7 +21,6 @@ function BluetoothScreen() {
 
   const updateDevices = () => {
     bluetooth.serialListUnpaired.splice(0,bluetooth.serialListUnpaired.length)
-    console.log(bluetooth.serialListUnpaired);
     bluetooth.getSerialListUnpairedAsync();
     if (count === 0) {
       const myInterval = setInterval(() => {
@@ -45,7 +44,7 @@ function BluetoothScreen() {
   };
   
   const remindBT = async (id, title, deviceClass) => {
-    BTReminders = await storage.get("asyncBTDevices");
+    BTReminders = await storage.get("asyncBLEDevices");
     if (BTReminders && BTReminders.some((BTDevice) => id == BTDevice.id)) {
       alert("Reminder already set for this device");
       return;
@@ -61,10 +60,12 @@ function BluetoothScreen() {
       serialBTReminders === null && (serialBTReminders = []);
       serialBTReminders.push({id: id, name: title});
       await storage.store("asyncSerialBTDevices", serialBTReminders);
+      alert(`Reminder ${title} set`);
     }else{
       BTReminders === null && (BTReminders = []);
       BTReminders.push({id: id, name: title});
-      await storage.store("asyncBTDevices", BTReminders);
+      await storage.store("asyncBLEDevices", BTReminders);
+      alert(`Reminder ${title} set`);
     }
   };
 

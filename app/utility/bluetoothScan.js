@@ -8,8 +8,7 @@ var counter = 0;
 var firstRun = 0;
 var serialListUnpaired = [];
 
-/* **************************************************
-GIVES ERROR - EXCESSIVE NUMBER OF PENDING CALLBACKS listUnpaired()
+/* *************************************************
 Please remove loop of insanity.
  *************************************************** */
 
@@ -51,7 +50,7 @@ const scanBT = (bluetoothManager) => {
 
       bTDevicesArray.sort(namesFirst);
 
-      var btReminders = await storage.get("asyncBTDevices");
+      var btReminders = await storage.get("asyncBLEDevices");
       if (btReminders !== null) {
         for (let i = 0; i < btReminders.length; i++) {
           for (let j = 0; j < bTDevicesArray.length; j++) {
@@ -64,7 +63,7 @@ const scanBT = (bluetoothManager) => {
                   : bTDevicesArray[j].id + " Has been found!"
               );
               btReminders.splice(i, 1);
-              await storage.store("asyncBTDevices", btReminders);
+              await storage.store("asyncBLEDevices", btReminders);
               j = 100;
               i = 100;
             }

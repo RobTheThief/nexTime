@@ -88,6 +88,7 @@ const startCheckBluetooth = (bTDeviceID) => {
       const index = taskAsyncBTDevices.findIndex((taskAsyncBTDevice) => bTDeviceID == taskAsyncBTDevice.id);
       sendNotificationImmediately(`Found ${taskAsyncBTDevices[index].name}`);
       taskAsyncBTDevices.splice(index, 1);
+      TaskManager.unregisterTaskAsync(bTDeviceID);
       await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
     }
   });
