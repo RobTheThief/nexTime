@@ -6,39 +6,73 @@ import AppText from "../components/AppText";
 import bluetooth from "../utility/bluetoothScan";
 import colors from "../config/colors";
 import storage from "../utility/storage";
+import appTasks from "../utility/appTasks/";
 
+var serialBTReminders = [];
 var BTReminders = [];
+var count = 0;
 
 function BluetoothScreen() {
   const [bTDevicesArray, setBTDevicesArray] = useState(
-    bluetooth.bTDevicesArray
+    bluetooth.bTDevicesArray[0] !== undefined
+      ? bluetooth.bTDevicesArray
+      : [{ name: "No Bluetooth Devices Found ", id: "123456789" }]
   );
 
   const updateDevices = () => {
-    let count = 0;
-    const myInterval = setInterval(() => {
-      setBTDevicesArray([...bluetooth.bTDevicesArray]);
-      count++;
-      count === 20 && stopInterval();
-      console.log(count);
-    }, 2000);
-    const stopInterval = () => clearInterval(myInterval);
+    bluetooth.serialListUnpaired.splice(0,bluetooth.serialListUnpaired.length)
+    console.log(bluetooth.serialListUnpaired);
+    bluetooth.getSerialListUnpairedAsync();
+    if (count === 0) {
+      const myInterval = setInterval(() => {
+        bluetooth.bTDevicesArray !== []
+          ? setBTDevicesArray([...bluetooth.bTDevicesArray])
+          : setBTDevicesArray([{ name: "Searching ", id: "123456789" }]);
+        count++;
+        count > 20 && stopInterval();
+        console.log(count);
+      }, 2000);
+      const stopInterval = () => {
+        clearInterval(myInterval);
+        count = 0;
+        setBTDevicesArray(
+          bluetooth.bTDevicesArray[0] !== undefined
+            ? bluetooth.bTDevicesArray
+            : [{ name: "No Bluetooth Devices Found ", id: "123456789" }]
+        );
+      };
+    }
   };
-
-  const remindBT = async (id) => {
+  
+  const remindBT = async (id, title, deviceClass) => {
     BTReminders = await storage.get("asyncBTDevices");
-    if (BTReminders && BTReminders.includes(id)) {
+    if (BTReminders && BTReminders.some((BTDevice) => id == BTDevice.id)) {
       alert("Reminder already set for this device");
       return;
     }
-    BTReminders === null && (BTReminders = []);
-    BTReminders.push(id);
-    await storage.store("asyncBTDevices", BTReminders);
+    serialBTReminders = await storage.get("asyncSerialBTDevices");
+    if (serialBTReminders && serialBTReminders.some((BTDevice) => id == BTDevice.id)) {
+      alert("Reminder already set for this device");
+      return;
+    }
+
+    if(deviceClass !== undefined){
+      appTasks.startCheckBluetooth(id);
+      serialBTReminders === null && (serialBTReminders = []);
+      serialBTReminders.push({id: id, name: title});
+      await storage.store("asyncSerialBTDevices", serialBTReminders);
+    }else{
+      BTReminders === null && (BTReminders = []);
+      BTReminders.push({id: id, name: title});
+      await storage.store("asyncBTDevices", BTReminders);
+    }
   };
 
-  const Item = ({ title, rssi, id }) => (
+  const Item = ({ title, rssi, id, deviceClass }) => (
     <View style={styles.item}>
-      <TouchableOpacity onPress={() => remindBT(id)}>
+      <TouchableOpacity
+        onPress={() => remindBT(id, title, deviceClass)}
+      >
         <AppText style={styles.title}>
           {title + (rssi ? " Signal: " + rssi : "")}
         </AppText>
@@ -51,6 +85,7 @@ function BluetoothScreen() {
       title={item.name ? item.name : item.localName ? item.localName : item.id}
       rssi={item.rssi}
       id={item.id}
+      deviceClass={item.class}
     />
   );
 

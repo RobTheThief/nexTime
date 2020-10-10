@@ -1,7 +1,9 @@
-import * as TaskManager from "expo-task-manager";
+import * as BackgroundFetch from "expo-background-fetch";
+import BluetoothSerial from "react-native-bluetooth-serial-next";
 import * as Location from "expo-location";
-import storage from "./storage";
 import { sendNotificationImmediately } from "./notifications";
+import storage from "./storage";
+import * as TaskManager from "expo-task-manager";
 
 const refreshAllTasks = async () => {
   var taskAsyncMarkers = await storage.get("asyncMarkers");
@@ -37,19 +39,19 @@ const startCheckLocation = async (marker) => {
             "You are entering area for nexTime Reminder: " + marker.title;
           sendNotificationImmediately(message);
 
+          var taskAsyncMarkers = await storage.get("asyncMarkers");
+          var taskMarkerIndex = taskAsyncMarkers.findIndex(markerSearch);
           const markerSearch = (task) => {
             return task.markerTaskName.includes(LOCATION_TASK_NAME);
           };
-          var taskAsyncMarkers = await storage.get("asyncMarkers");
-          var taskMarker = taskAsyncMarkers.findIndex(markerSearch);
 
           if (marker.repeat === false) {
-            taskAsyncMarkers[taskMarker].taskDeleted = true;
+            taskAsyncMarkers[taskMarkerIndex].taskDeleted = true;
             await storage.store("asyncMarkers", taskAsyncMarkers);
             Location.stopGeofencingAsync(LOCATION_TASK_NAME);
           }
           if (marker.delete === true) {
-            taskAsyncMarkers.splice(taskMarker, 1);
+            taskAsyncMarkers.splice(taskMarkerIndex, 1);
             for (let i = 0; i < taskAsyncMarkers.length; i++) {
               taskAsyncMarkers[i].markerIndex = i + 1;
               taskAsyncMarkers[i].circleId = i + 1 + "c";
@@ -71,7 +73,39 @@ const startCheckLocation = async (marker) => {
   }
 };
 
+const startCheckBluetooth = (bTDeviceID) => {
+  TaskManager.defineTask(bTDeviceID, async () => {
+    console.log('Task running!!!');
+      
+    var serialListUnpaired = await BluetoothSerial.listUnpaired();
+    var bTDeviceIDs = [];
+    serialListUnpaired.forEach((item) => bTDeviceIDs.push(item.id));
+    var present = bTDeviceIDs.some((id) => bTDeviceID == id);
+      
+
+    if (present === true) {
+      var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
+      const index = taskAsyncBTDevices.findIndex((taskAsyncBTDevice) => bTDeviceID == taskAsyncBTDevice.id);
+      sendNotificationImmediately(`Found ${taskAsyncBTDevices[index].name}`);
+      taskAsyncBTDevices.splice(index, 1);
+      await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
+    }
+  });
+
+  try {
+    BackgroundFetch.registerTaskAsync(bTDeviceID, {
+      minimumInterval: 5, // seconds,
+      stopOnTerminate: true,
+      startOnBoot: false,
+    });
+    console.log("Task registered");
+  } catch (err) {
+    console.log("Task Register failed:", err);
+  }
+};
+
 export default {
   refreshAllTasks,
   startCheckLocation,
+  startCheckBluetooth,
 };

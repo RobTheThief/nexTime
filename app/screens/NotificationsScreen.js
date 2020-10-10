@@ -19,7 +19,7 @@ function NotificationsScreen({ navigation }) {
       </View>
       <View style={styles.container}>
         <Button
-          onPress={() => storage.store("asyncMarkers", "")}
+          onPress={() => {storage.store("asyncMarkers", ""); storage.store("asyncBTDevices", ""); storage.store("asyncSerialBTDevices", "")}}
           title="Clear AsyncStorage Data"
         />
       </View>
