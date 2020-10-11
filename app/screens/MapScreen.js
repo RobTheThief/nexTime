@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import MapView, { Marker, Circle } from "react-native-maps";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import MapView, { Marker, Circle } from "react-native-maps";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
 import AddMarkerDetailsScreen from "./AddMarkerDetailsScreen";
 import colors from "../config/colors";

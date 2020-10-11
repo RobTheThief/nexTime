@@ -1,18 +1,22 @@
-import React, { useState } from "react";
-import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
 
+import appTasks from "../utility/appTasks/";
 import AppText from "../components/AppText";
 import bluetooth from "../utility/bluetoothScan";
 import colors from "../config/colors";
 import storage from "../utility/storage";
-import appTasks from "../utility/appTasks/";
 
 var serialBTReminders = [];
 var BTReminders = [];
 var count = 0;
 
 function BluetoothScreen() {
+  useEffect(() => {
+    //bluetooth.stopScan.splice(0, bluetooth.stopScan.length);
+  })
+
   const [bTDevicesArray, setBTDevicesArray] = useState(
     bluetooth.bTDevicesArray[0] !== undefined
       ? bluetooth.bTDevicesArray
@@ -28,11 +32,13 @@ function BluetoothScreen() {
           ? setBTDevicesArray([...bluetooth.bTDevicesArray])
           : setBTDevicesArray([{ name: "Searching ", id: "123456789" }]);
         count++;
-        count > 20 && stopInterval();
+        count > 5 && stopInterval();
         console.log(count);
       }, 2000);
       const stopInterval = () => {
         clearInterval(myInterval);
+        bluetooth.stopScan.splice(0, bluetooth.stopScan.length);
+        bluetooth.stopScan.unshift('STOP THE SCAN');
         count = 0;
         setBTDevicesArray(
           bluetooth.bTDevicesArray[0] !== undefined
@@ -73,7 +79,7 @@ function BluetoothScreen() {
   const Item = ({ title, rssi, id, deviceClass }) => (
     <View style={styles.item}>
       <TouchableOpacity
-        onPress={() => remindBT(id, title, deviceClass)}
+        onPress={() => id !== '123456789' && remindBT(id, title, deviceClass)}
       >
         <AppText style={styles.title}>
           {title + (rssi ? " Signal: " + rssi : "")}

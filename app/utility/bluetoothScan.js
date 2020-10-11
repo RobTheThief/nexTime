@@ -1,10 +1,12 @@
 import BluetoothSerial from "react-native-bluetooth-serial-next";
+import storage from "./storage";
 
 var bTDevicesCache = [];
 var bTDevicesArray = [];
 var counter = 0;
 var firstRun = 0;
 var serialListUnpaired = [];
+var stopScan = [];
 
 const scanBT = (bluetoothManager) => {
   bluetoothManager.startDeviceScan(null, null, async (error, device) => {
@@ -26,6 +28,8 @@ const scanBT = (bluetoothManager) => {
     if (counter > 7 || firstRun === 2) {
       bTDevicesArray.splice(0, bTDevicesArray.length);
 
+      console.log('btScan running!!!', stopScan)
+
       filterUniqueIDs(); // pushes to bTDevicesArray
 
       bTDevicesArray.sort(namesFirst);
@@ -36,8 +40,10 @@ const scanBT = (bluetoothManager) => {
 
     // Check if it is a device you are looking for based on advertisement data
     // or other criteria.
-    if (device.name === "TI BLE Sensor Tag" || device.name === "SensorTag") {
+    if (stopScan[0] === "STOP THE SCAN" && await storage.get("asyncBLEDevices") == null) {
       // Stop scanning as it's not necessary if you are scanning for one device.
+      stopScan.splice(0, stopScan.length);
+      console.log('BTSCAN: ', stopScan)
       bluetoothManager.stopDeviceScan();
     }
   });
@@ -93,4 +99,5 @@ export default {
   subscribeBTScan,
   bTDevicesArray,
   serialListUnpaired,
+  stopScan,
 };

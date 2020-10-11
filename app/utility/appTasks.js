@@ -1,9 +1,10 @@
 import * as BackgroundFetch from "expo-background-fetch";
 import BluetoothSerial from "react-native-bluetooth-serial-next";
 import * as Location from "expo-location";
+import * as TaskManager from "expo-task-manager";
+
 import { sendNotificationImmediately } from "./notifications";
 import storage from "./storage";
-import * as TaskManager from "expo-task-manager";
 import bluetooth from './bluetoothScan';
 
 const refreshAllTasks = async () => {
@@ -124,7 +125,7 @@ const startCheckBle = (bTDeviceID) => {
                 : bluetooth.bTDevicesArray[j].id + " Has been found!"
             );
             btReminders.splice(i, 1);
-            await storage.store("asyncBLEDevices", btReminders);
+            btReminders.length === 0 ? await storage.store("asyncBLEDevices", '') : await storage.store("asyncBLEDevices", btReminders);
             TaskManager.unregisterTaskAsync(bTDeviceID);
             j = 100;
             i = 100;

@@ -1,12 +1,11 @@
-import * as React from "react";
-import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import * as React from "react";
 
+import BluetoothScreen from "../screens/BluetoothScreen";
 import MapScreen from "../screens/MapScreen";
 import NotificationsScreen from "../screens/NotificationsScreen";
 import WelcomeScreen from "../screens/WelcomeScreen";
-
-import BluetoothScreen from "../screens/BluetoothScreen";
 import WifiScreen from "../screens/WifiScreen";
 
 const Drawer = createDrawerNavigator();

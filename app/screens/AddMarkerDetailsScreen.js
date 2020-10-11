@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from "react";
+import {
+  FontAwesome5,
+  AntDesign,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
+import * as Location from "expo-location";
 import {
   Platform,
   KeyboardAvoidingView,
@@ -8,20 +13,15 @@ import {
   Switch,
   Alert,
 } from "react-native";
-import {
-  FontAwesome5,
-  AntDesign,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+import React, { useEffect, useState } from "react";
 import Slider from "@react-native-community/slider";
-import * as Location from "expo-location";
 
+import appTasks from "../utility/appTasks";
 import AppText from "../components/AppText";
 import AppTextInput from "../components/AppTextInput";
 import colors from "../config/colors";
 import measurementSys from "../config/measurementSys";
 import storage from "../utility/storage";
-import appTasks from "../utility/appTasks";
 
 function AddMarkerDetailsScreen({
   addMarkerDetailVisibility,

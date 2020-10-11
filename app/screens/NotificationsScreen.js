@@ -1,7 +1,7 @@
 import React from "react";
+import storage from "../utility/storage";
 import { StyleSheet, View, Button } from "react-native";
 import * as TaskManager from "expo-task-manager";
-import storage from "../utility/storage";
 
 function NotificationsScreen({ navigation }) {
   const getTasks = async () => {
