@@ -62,6 +62,7 @@ function BluetoothScreen() {
       await storage.store("asyncSerialBTDevices", serialBTReminders);
       alert(`Reminder ${title} set`);
     }else{
+      appTasks.startCheckBle(id);
       BTReminders === null && (BTReminders = []);
       BTReminders.push({id: id, name: title});
       await storage.store("asyncBLEDevices", BTReminders);

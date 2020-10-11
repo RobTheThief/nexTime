@@ -1,5 +1,3 @@
-import { sendNotificationImmediately } from "./notifications";
-import storage from "./storage";
 import BluetoothSerial from "react-native-bluetooth-serial-next";
 
 var bTDevicesCache = [];
@@ -7,10 +5,6 @@ var bTDevicesArray = [];
 var counter = 0;
 var firstRun = 0;
 var serialListUnpaired = [];
-
-/* *************************************************
-Please remove loop of insanity.
- *************************************************** */
 
 const scanBT = (bluetoothManager) => {
   bluetoothManager.startDeviceScan(null, null, async (error, device) => {
@@ -25,7 +19,6 @@ const scanBT = (bluetoothManager) => {
       localName: device.localName,
       rssi: device.rssi,
     };
-
     bTDevicesCache.push(bTDevicesObject);
 
     counter++;
@@ -33,47 +26,12 @@ const scanBT = (bluetoothManager) => {
     if (counter > 7 || firstRun === 2) {
       bTDevicesArray.splice(0, bTDevicesArray.length);
 
-      var bTDeviceIDs = [];
-      bTDevicesCache.forEach((item) => bTDeviceIDs.push(item.id));
-      var uniqueIDs = bTDeviceIDs.filter(function (item, pos, self) {
-        return self.indexOf(item) == pos;
-      });
-
-      for (let i = 0; i < uniqueIDs.length; i++) {
-        for (let j = 0; j < bTDevicesCache.length; j++) {
-          if (uniqueIDs[i] === bTDevicesCache[j].id) {
-            bTDevicesArray.push(bTDevicesCache[j]);
-            j = bTDevicesCache.length + 1;
-          }
-        }
-      }
+      filterUniqueIDs(); // pushes to bTDevicesArray
 
       bTDevicesArray.sort(namesFirst);
 
-      var btReminders = await storage.get("asyncBLEDevices");
-      if (btReminders !== null) {
-        for (let i = 0; i < btReminders.length; i++) {
-          for (let j = 0; j < bTDevicesArray.length; j++) {
-            if (btReminders[i].id.includes(bTDevicesArray[j].id)) {
-              sendNotificationImmediately(
-                bTDevicesArray[j].name
-                  ? bTDevicesArray[j].name
-                  : bTDevicesArray[j].localName
-                  ? bTDevicesArray[j].localName
-                  : bTDevicesArray[j].id + " Has been found!"
-              );
-              btReminders.splice(i, 1);
-              await storage.store("asyncBLEDevices", btReminders);
-              j = 100;
-              i = 100;
-            }
-          }
-        }
-      }
       bTDevicesCache = [];
-      counter = 0;
-
-      serialListUnpaired.forEach(addSerialList);
+      counter = 0; 
     }
 
     // Check if it is a device you are looking for based on advertisement data
@@ -94,7 +52,24 @@ const subscribeBTScan = (blueToothManager) => {
   }, true);
 };
 
-function addSerialList(item) {
+const filterUniqueIDs = () => {
+  var bTDeviceIDs = [];
+  bTDevicesCache.forEach((item) => bTDeviceIDs.push(item.id));
+  var uniqueIDs = bTDeviceIDs.filter(function (item, pos, self) {
+    return self.indexOf(item) == pos;
+  });
+
+  for (let i = 0; i < uniqueIDs.length; i++) {
+    for (let j = 0; j < bTDevicesCache.length; j++) {
+      if (uniqueIDs[i] === bTDevicesCache[j].id) {
+        bTDevicesArray.push(bTDevicesCache[j]);
+        j = bTDevicesCache.length + 1;
+      }
+    }
+  }
+}
+
+function addSerialListToCache(item) {
   bTDevicesCache.push(item);
 }
 
@@ -110,6 +85,7 @@ const namesFirst = (a, b) => {
 
 const getSerialListUnpairedAsync = async () => {
   serialListUnpaired = await BluetoothSerial.listUnpaired();
+  serialListUnpaired.forEach(addSerialListToCache);
 }
 
 export default {
