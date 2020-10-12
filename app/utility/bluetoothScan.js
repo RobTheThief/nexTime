@@ -43,10 +43,23 @@ const scanBT = (bluetoothManager) => {
       counter = 0; 
     }
 
-    if (stopScan[0] === "STOP THE SCAN" && await storage.get("asyncBLEDevices") == null) {
+    if (stopScan[0] === "STOP THE SCAN") {
+      const btReminders = await storage.get("asyncBLEDevices");
+      const taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
+      var bleRemind = true;
+      var serialRemind = true;
+      if (btReminders !== null) {
+        bleRemind = btReminders.every((reminder) => reminder.taskDeleted === true);
+      }
+      if (taskAsyncBTDevices !== null) {
+        serialRemind = taskAsyncBTDevices.every((reminder) => reminder.taskDeleted === true);
+      }
+      
+      if ( bleRemind && serialRemind) {
+        console.log('Stop Scan');
+        bluetoothManager.stopDeviceScan();
+      }
       stopScan.splice(0, stopScan.length);
-      console.log('Stop Scan');
-      bluetoothManager.stopDeviceScan();
     }
   });
 };

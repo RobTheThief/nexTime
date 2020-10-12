@@ -24,9 +24,22 @@ export default function App() {
     new BleManager()
   );
   
+  //POSSIBLE DRYING WITH bluetoothScan.js STOP condition
   const checkRunBleScan = async () => {
-    const BLEDeviceReminders = await storage.get("asyncBLEDevices");
-    BLEDeviceReminders !== null && bluetoothScan.subscribeBTScan(bluetoothManager);
+    const btReminders = await storage.get("asyncBLEDevices");
+    const taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
+    var bleRemind = false;
+    var serialRemind = false;
+    if (btReminders !== null) {
+      bleRemind = btReminders.some((reminder) => reminder.taskDeleted === false);
+    }
+    if (taskAsyncBTDevices !== null) {
+      serialRemind = taskAsyncBTDevices.some((reminder) => reminder.taskDeleted === false);
+    }
+    
+    if ( bleRemind || serialRemind ) {
+      bluetoothScan.subscribeBTScan(bluetoothManager);
+    }
     console.log('checkRunBleScan');
   }
 
@@ -35,7 +48,6 @@ export default function App() {
     askPermissionsNotifications();
     appTasks.refreshAllTasks();
     appTasks.terminateNoTaskBle();
-    //appTasks.isBtEnabled();
     checkRunBleScan();
   });
 

@@ -93,10 +93,19 @@ const startCheckBluetooth = (bTDeviceID) => {
     if (present === true) {
       var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
       const index = taskAsyncBTDevices.findIndex((taskAsyncBTDevice) => bTDeviceID == taskAsyncBTDevice.id);
-      sendNotificationImmediately("nexTime Reminders", `Bluetooth reminder: ${taskAsyncBTDevices[index].name}`);
-      taskAsyncBTDevices.splice(index, 1);
-      TaskManager.unregisterTaskAsync(bTDeviceID);
-      await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
+      const btReminder = taskAsyncBTDevices[index];
+      sendNotificationImmediately("nexTime Reminders", `Bluetooth reminder: ${btReminder.name}`);
+
+      if (!btReminder.repeat) {
+        TaskManager.unregisterTaskAsync(bTDeviceID);
+        btReminder.taskDeleted = true;
+        await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
+      }
+
+      if (btReminder.delete) {
+        taskAsyncBTDevices.splice(index, 1);
+        await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
+      }
     }
   });
 
@@ -126,27 +135,34 @@ const startCheckBle = (bTDeviceID) => {
     }
 
     var btReminders = await storage.get("asyncBLEDevices");
-      
-    if (btReminders !== null) {
-      for (let i = 0; i < btReminders.length; i++) {
-        for (let j = 0; j < bluetoothScan.bTDevicesArray.length; j++) {
-          if (btReminders[i].id.includes(bluetoothScan.bTDevicesArray[j].id)) {
-            sendNotificationImmediately("nexTime Reminders",
-              `Bluetooth reminder: ${bluetoothScan.bTDevicesArray[j].name
-                ? bluetoothScan.bTDevicesArray[j].name
-                : bluetoothScan.bTDevicesArray[j].localName
-                ? bluetoothScan.bTDevicesArray[j].localName
-                : bluetoothScan.bTDevicesArray[j].id}`
-            );
-            btReminders.splice(i, 1);
-            btReminders.length === 0 ? await storage.store("asyncBLEDevices", '') : await storage.store("asyncBLEDevices", btReminders);
+    
+    for (let i = 0; i < btReminders.length; i++) {
+      for (let j = 0; j < bluetoothScan.bTDevicesArray.length; j++) {
+        if (btReminders[i].id.includes(bluetoothScan.bTDevicesArray[j].id)) {
+          sendNotificationImmediately("nexTime Reminders",
+            `Bluetooth reminder: ${bluetoothScan.bTDevicesArray[j].name
+              ? bluetoothScan.bTDevicesArray[j].name
+              : bluetoothScan.bTDevicesArray[j].localName
+              ? bluetoothScan.bTDevicesArray[j].localName
+              : bluetoothScan.bTDevicesArray[j].id}`
+          );
+
+          if (!btReminders[i].repeat) {
             TaskManager.unregisterTaskAsync(bTDeviceID);
-            j = 100;
-            i = 100;
+            console.log('initial state taskDeleted : ', btReminders[i].taskDeleted);
+            btReminders[i].taskDeleted = true;
+            await storage.store("asyncBLEDevices", btReminders);
           }
+          if (btReminders[i].delete) {
+            btReminders.splice(i, 1);
+            (btReminders.length === 0) ? await storage.store("asyncBLEDevices", '') : await storage.store("asyncBLEDevices", btReminders);
+          }
+
+          j = 100;
+          i = 100;
         }
       }
-    }
+    } 
   });
 
   try {
@@ -171,7 +187,7 @@ const terminateNoTaskBle = () => {
 
   try {
     BackgroundFetch.registerTaskAsync('terminateNoTaskBle', {
-      minimumInterval: 180, // seconds,
+      minimumInterval: 5, // seconds,
       stopOnTerminate: true,
       startOnBoot: false,
     });
@@ -180,8 +196,6 @@ const terminateNoTaskBle = () => {
     console.log("Task Register failed:", err);
   }
 };
-
-
 
 export default {
   refreshAllTasks,

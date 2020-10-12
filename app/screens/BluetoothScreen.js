@@ -68,13 +68,13 @@ function BluetoothScreen({bluetoothManager}) {
     if(deviceClass !== undefined){
       appTasks.startCheckBluetooth(id);
       serialBTReminders === null && (serialBTReminders = []);
-      serialBTReminders.push({id: id, name: title});
+      serialBTReminders.push({ id: id, name: title, taskDeleted: false, repeat: false, delete: false });
       await storage.store("asyncSerialBTDevices", serialBTReminders);
       alert(`Reminder ${title} set`);
     }else{
       appTasks.startCheckBle(id);
       BTReminders === null && (BTReminders = []);
-      BTReminders.push({id: id, name: title});
+      BTReminders.push({ id: id, name: title, taskDeleted: false, repeat: false, delete: false });
       await storage.store("asyncBLEDevices", BTReminders);
       alert(`Reminder ${title} set`);
       bluetoothScan.subscribeBTScan(bluetoothManager.bluetoothManager.bluetoothManager);
