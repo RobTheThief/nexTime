@@ -25,7 +25,7 @@ const scanBT = (bluetoothManager) => {
 
     counter++;
     firstRun < 3 && firstRun++;
-    if (counter > 7 || firstRun === 2) {
+    if (counter > 20|| firstRun === 2) {
       bTDevicesArray.splice(0, bTDevicesArray.length);
 
       console.log('btScan running!!!', stopScan)
@@ -43,7 +43,7 @@ const scanBT = (bluetoothManager) => {
     if (stopScan[0] === "STOP THE SCAN" && await storage.get("asyncBLEDevices") == null) {
       // Stop scanning as it's not necessary if you are scanning for one device.
       stopScan.splice(0, stopScan.length);
-      console.log('BTSCAN: ', stopScan)
+      console.log('Stop Scan');
       bluetoothManager.stopDeviceScan();
     }
   });

@@ -1,10 +1,10 @@
 import { AntDesign } from "@expo/vector-icons";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import appTasks from "../utility/appTasks/";
 import AppText from "../components/AppText";
-import bluetooth from "../utility/bluetoothScan";
+import bluetoothScan from "../utility/bluetoothScan";
 import colors from "../config/colors";
 import storage from "../utility/storage";
 
@@ -12,37 +12,36 @@ var serialBTReminders = [];
 var BTReminders = [];
 var count = 0;
 
-function BluetoothScreen() {
-  useEffect(() => {
-    //bluetooth.stopScan.splice(0, bluetooth.stopScan.length);
-  })
-
+function BluetoothScreen({bluetoothManager}) {
   const [bTDevicesArray, setBTDevicesArray] = useState(
-    bluetooth.bTDevicesArray[0] !== undefined
-      ? bluetooth.bTDevicesArray
-      : [{ name: "No Bluetooth Devices Found ", id: "123456789" }]
+    bluetoothScan.bTDevicesArray[0] !== undefined
+      ? bluetoothScan.bTDevicesArray
+      : [{ name: "Press 'Refresh' for list of nearby devices", id: "123456789" }]
   );
 
   const updateDevices = () => {
-    bluetooth.serialListUnpaired.splice(0,bluetooth.serialListUnpaired.length)
-    bluetooth.getSerialListUnpairedAsync();
+    setBTDevicesArray( bluetoothScan.bTDevicesArray[0] !== undefined
+      ? bluetoothScan.bTDevicesArray
+      : [{ name: "Searching... ", id: "123456789" }]);
+    bluetoothScan.subscribeBTScan(bluetoothManager.bluetoothManager.bluetoothManager);
+    bluetoothScan.serialListUnpaired.splice(0,bluetoothScan.serialListUnpaired.length)
+    bluetoothScan.getSerialListUnpairedAsync();
     if (count === 0) {
       const myInterval = setInterval(() => {
-        bluetooth.bTDevicesArray !== []
-          ? setBTDevicesArray([...bluetooth.bTDevicesArray])
+        bluetoothScan.bTDevicesArray !== []
+          ? setBTDevicesArray([...bluetoothScan.bTDevicesArray])
           : setBTDevicesArray([{ name: "Searching ", id: "123456789" }]);
         count++;
-        count > 5 && stopInterval();
+        count === 10 && bluetoothScan.getSerialListUnpairedAsync();
+        count > 20 && stopInterval();
         console.log(count);
       }, 2000);
       const stopInterval = () => {
         clearInterval(myInterval);
-        bluetooth.stopScan.splice(0, bluetooth.stopScan.length);
-        bluetooth.stopScan.unshift('STOP THE SCAN');
         count = 0;
         setBTDevicesArray(
-          bluetooth.bTDevicesArray[0] !== undefined
-            ? bluetooth.bTDevicesArray
+          bluetoothScan.bTDevicesArray[0] !== undefined
+            ? bluetoothScan.bTDevicesArray
             : [{ name: "No Bluetooth Devices Found ", id: "123456789" }]
         );
       };
@@ -73,6 +72,7 @@ function BluetoothScreen() {
       BTReminders.push({id: id, name: title});
       await storage.store("asyncBLEDevices", BTReminders);
       alert(`Reminder ${title} set`);
+      bluetoothScan.subscribeBTScan(bluetoothManager.bluetoothManager.bluetoothManager);
     }
   };
 

@@ -23,28 +23,24 @@ export default function App() {
   const [bluetoothManager, setBluetoothManager] = React.useState(
     new BleManager()
   );
-
-  const checkRunBleScan = async (stateCondition) => {
+  
+  const checkRunBleScan = async () => {
     const BLEDeviceReminders = await storage.get("asyncBLEDevices");
-    stateCondition && stateCondition.includes("Connections") && bluetoothScan.stopScan.splice(0, bluetoothScan.stopScan.length);
-    ((BLEDeviceReminders !== null) || (stateCondition && stateCondition.includes("Connections"))) ? bluetoothScan.subscribeBTScan(bluetoothManager) : stopTheBleScan();
+    BLEDeviceReminders !== null && bluetoothScan.subscribeBTScan(bluetoothManager);
     console.log('checkRunBleScan');
-  }
-
-  const stopTheBleScan = () => {
-    bluetoothScan.stopScan[0] === undefined ? bluetoothScan.stopScan.unshift('STOP THE SCAN') : bluetoothScan.stopScan.unshift('FLUFFY BUNNIES');
   }
 
   React.useEffect(() => {
     requestPermission();
     askPermissionsNotifications();
     appTasks.refreshAllTasks();
+    appTasks.terminateNoTaskBle();
     checkRunBleScan();
   });
 
   return (
-    <NavigationContainer theme={nexTheme} onStateChange={(state)=> checkRunBleScan(state.history[state.history.length - 1].key)}>
-      <DrawerNavigator />
+    <NavigationContainer  theme={nexTheme} >
+      <DrawerNavigator bluetoothManager={bluetoothManager} />
     </NavigationContainer>
   );
 }

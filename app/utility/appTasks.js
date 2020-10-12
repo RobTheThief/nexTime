@@ -5,7 +5,7 @@ import * as TaskManager from "expo-task-manager";
 
 import { sendNotificationImmediately } from "./notifications";
 import storage from "./storage";
-import bluetooth from './bluetoothScan';
+import bluetoothScan from './bluetoothScan';
 
 const refreshAllTasks = async () => {
   var taskAsyncMarkers = await storage.get("asyncMarkers");
@@ -115,14 +115,14 @@ const startCheckBle = (bTDeviceID) => {
     
     if (btReminders !== null) {
       for (let i = 0; i < btReminders.length; i++) {
-        for (let j = 0; j < bluetooth.bTDevicesArray.length; j++) {
-          if (btReminders[i].id.includes(bluetooth.bTDevicesArray[j].id)) {
+        for (let j = 0; j < bluetoothScan.bTDevicesArray.length; j++) {
+          if (btReminders[i].id.includes(bluetoothScan.bTDevicesArray[j].id)) {
             sendNotificationImmediately(
-              bluetooth.bTDevicesArray[j].name
-                ? bluetooth.bTDevicesArray[j].name
-                : bluetooth.bTDevicesArray[j].localName
-                ? bluetooth.bTDevicesArray[j].localName
-                : bluetooth.bTDevicesArray[j].id + " Has been found!"
+              bluetoothScan.bTDevicesArray[j].name
+                ? bluetoothScan.bTDevicesArray[j].name
+                : bluetoothScan.bTDevicesArray[j].localName
+                ? bluetoothScan.bTDevicesArray[j].localName
+                : bluetoothScan.bTDevicesArray[j].id + " Has been found!"
             );
             btReminders.splice(i, 1);
             btReminders.length === 0 ? await storage.store("asyncBLEDevices", '') : await storage.store("asyncBLEDevices", btReminders);
@@ -147,9 +147,30 @@ const startCheckBle = (bTDeviceID) => {
   }
 };
 
+const terminateNoTaskBle = () => {
+  TaskManager.defineTask('terminateNoTaskBle',  () => {
+    console.log('terminateNoTaskBle running!!!');
+      
+    bluetoothScan.stopScan.splice(0, bluetoothScan.stopScan.length);
+    bluetoothScan.stopScan.unshift('STOP THE SCAN');
+  });
+
+  try {
+    BackgroundFetch.registerTaskAsync('terminateNoTaskBle', {
+      minimumInterval: 5, // seconds,
+      stopOnTerminate: true,
+      startOnBoot: false,
+    });
+    console.log("Task registered");
+  } catch (err) {
+    console.log("Task Register failed:", err);
+  }
+};
+
 export default {
   refreshAllTasks,
   startCheckLocation,
   startCheckBluetooth,
   startCheckBle,
+  terminateNoTaskBle,
 };
