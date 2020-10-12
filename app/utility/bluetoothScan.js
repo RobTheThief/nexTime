@@ -11,8 +11,13 @@ var stopScan = [];
 const scanBT = (bluetoothManager) => {
   bluetoothManager.startDeviceScan(null, null, async (error, device) => {
     if (error) {
-      alert(error.toString());
-      return;
+      if(error.toString() === 'BleError: BluetoothLE is powered off'){
+        alert('Bluetooth must be turned on to scan for devices.');
+        return;
+      }else{
+        alert(error.toString());
+        return;
+      }
     }
 
     const bTDevicesObject = {
@@ -38,10 +43,7 @@ const scanBT = (bluetoothManager) => {
       counter = 0; 
     }
 
-    // Check if it is a device you are looking for based on advertisement data
-    // or other criteria.
     if (stopScan[0] === "STOP THE SCAN" && await storage.get("asyncBLEDevices") == null) {
-      // Stop scanning as it's not necessary if you are scanning for one device.
       stopScan.splice(0, stopScan.length);
       console.log('Stop Scan');
       bluetoothManager.stopDeviceScan();
@@ -54,6 +56,8 @@ const subscribeBTScan = (blueToothManager) => {
     if (state === "PoweredOn") {
       scanBT(blueToothManager);
       subscription.remove();
+    }else{
+      alert('Bluetooth must be turned on to scan for devices.');
     }
   }, true);
 };

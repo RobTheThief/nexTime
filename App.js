@@ -35,6 +35,7 @@ export default function App() {
     askPermissionsNotifications();
     appTasks.refreshAllTasks();
     appTasks.terminateNoTaskBle();
+    //appTasks.isBtEnabled();
     checkRunBleScan();
   });
 

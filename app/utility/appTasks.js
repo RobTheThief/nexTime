@@ -7,6 +7,8 @@ import { sendNotificationImmediately } from "./notifications";
 import storage from "./storage";
 import bluetoothScan from './bluetoothScan';
 
+var warned = false;
+
 const refreshAllTasks = async () => {
   var taskAsyncMarkers = await storage.get("asyncMarkers");
   if (taskAsyncMarkers !== null) {
@@ -37,9 +39,7 @@ const startCheckLocation = async (marker) => {
           return;
         }
         if (eventType === Location.GeofencingEventType.Enter) {
-          const message =
-            "You are entering area for nexTime Reminder: " + marker.title;
-          sendNotificationImmediately(message);
+          sendNotificationImmediately("nexTime Reminders", "nexTime Location Reminder: " + marker.title);
 
           var taskAsyncMarkers = await storage.get("asyncMarkers");
           var taskMarkerIndex = taskAsyncMarkers.findIndex(markerSearch);
@@ -60,14 +60,11 @@ const startCheckLocation = async (marker) => {
             }
             await storage.store("asyncMarkers", taskAsyncMarkers);
           }
-          //
           console.log(
             "You've entered region:" + "Title: " + marker.title,
             region
           );
-        } else if (eventType === Location.GeofencingEventType.Exit) {
-          //console.log("You've left region:", region);
-        }
+        } 
       }
     );
     const tasks = await TaskManager.getRegisteredTasksAsync();
@@ -79,16 +76,24 @@ const startCheckBluetooth = (bTDeviceID) => {
   TaskManager.defineTask(bTDeviceID, async () => {
     console.log('Task running!!!');
       
+    const isEnabled = await BluetoothSerial.isEnabled();
+    isEnabled && (warned = false);
+    if (!isEnabled && warned === false) {
+      warned = true;
+      return sendNotificationImmediately("nexTime Reminders", "Bluetooth must be on for your reminders to work");
+    } else if (!isEnabled && warned === true) {
+      return;
+    }
+
     var serialListUnpaired = await BluetoothSerial.listUnpaired();
     var bTDeviceIDs = [];
     serialListUnpaired.forEach((item) => bTDeviceIDs.push(item.id));
     var present = bTDeviceIDs.some((id) => bTDeviceID == id);
-      
 
     if (present === true) {
       var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
       const index = taskAsyncBTDevices.findIndex((taskAsyncBTDevice) => bTDeviceID == taskAsyncBTDevice.id);
-      sendNotificationImmediately(`Found ${taskAsyncBTDevices[index].name}`);
+      sendNotificationImmediately("nexTime Reminders", `Bluetooth reminder: ${taskAsyncBTDevices[index].name}`);
       taskAsyncBTDevices.splice(index, 1);
       TaskManager.unregisterTaskAsync(bTDeviceID);
       await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
@@ -110,19 +115,28 @@ const startCheckBluetooth = (bTDeviceID) => {
 const startCheckBle = (bTDeviceID) => {
   TaskManager.defineTask(bTDeviceID, async () => {
     console.log('Task running!!!');
-      
+
+    const isEnabled = await BluetoothSerial.isEnabled();
+    isEnabled && (warned = false);
+    if (!isEnabled && warned === false) {
+      warned = true;
+      return sendNotificationImmediately("nexTime Reminders", "Bluetooth must be on for your reminders to work");
+    } else if (!isEnabled && warned === true) {
+      return;
+    }
+
     var btReminders = await storage.get("asyncBLEDevices");
-    
+      
     if (btReminders !== null) {
       for (let i = 0; i < btReminders.length; i++) {
         for (let j = 0; j < bluetoothScan.bTDevicesArray.length; j++) {
           if (btReminders[i].id.includes(bluetoothScan.bTDevicesArray[j].id)) {
-            sendNotificationImmediately(
-              bluetoothScan.bTDevicesArray[j].name
+            sendNotificationImmediately("nexTime Reminders",
+              `Bluetooth reminder: ${bluetoothScan.bTDevicesArray[j].name
                 ? bluetoothScan.bTDevicesArray[j].name
                 : bluetoothScan.bTDevicesArray[j].localName
                 ? bluetoothScan.bTDevicesArray[j].localName
-                : bluetoothScan.bTDevicesArray[j].id + " Has been found!"
+                : bluetoothScan.bTDevicesArray[j].id}`
             );
             btReminders.splice(i, 1);
             btReminders.length === 0 ? await storage.store("asyncBLEDevices", '') : await storage.store("asyncBLEDevices", btReminders);
@@ -157,7 +171,7 @@ const terminateNoTaskBle = () => {
 
   try {
     BackgroundFetch.registerTaskAsync('terminateNoTaskBle', {
-      minimumInterval: 5, // seconds,
+      minimumInterval: 180, // seconds,
       stopOnTerminate: true,
       startOnBoot: false,
     });
@@ -166,6 +180,8 @@ const terminateNoTaskBle = () => {
     console.log("Task Register failed:", err);
   }
 };
+
+
 
 export default {
   refreshAllTasks,

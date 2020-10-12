@@ -23,19 +23,23 @@ function BluetoothScreen({bluetoothManager}) {
     setBTDevicesArray( bluetoothScan.bTDevicesArray[0] !== undefined
       ? bluetoothScan.bTDevicesArray
       : [{ name: "Searching... ", id: "123456789" }]);
+
     bluetoothScan.subscribeBTScan(bluetoothManager.bluetoothManager.bluetoothManager);
-    bluetoothScan.serialListUnpaired.splice(0,bluetoothScan.serialListUnpaired.length)
+
+    bluetoothScan.serialListUnpaired.splice(0,bluetoothScan.serialListUnpaired.length);
     bluetoothScan.getSerialListUnpairedAsync();
+
     if (count === 0) {
       const myInterval = setInterval(() => {
         bluetoothScan.bTDevicesArray !== []
           ? setBTDevicesArray([...bluetoothScan.bTDevicesArray])
           : setBTDevicesArray([{ name: "Searching ", id: "123456789" }]);
         count++;
-        count === 10 && bluetoothScan.getSerialListUnpairedAsync();
+        count === 12 && bluetoothScan.getSerialListUnpairedAsync();
         count > 20 && stopInterval();
         console.log(count);
       }, 2000);
+
       const stopInterval = () => {
         clearInterval(myInterval);
         count = 0;
@@ -45,6 +49,7 @@ function BluetoothScreen({bluetoothManager}) {
             : [{ name: "No Bluetooth Devices Found ", id: "123456789" }]
         );
       };
+      
     }
   };
   

@@ -18,7 +18,7 @@ const askPermissionsNotifications = async () => {
   return true;
 };
 
-const sendNotificationImmediately = async (message) => {
+const sendNotificationImmediately = async (title, body) => {
   const { status: existingStatus } = await Permissions.getAsync(
     Permissions.NOTIFICATIONS
   );
@@ -28,7 +28,7 @@ const sendNotificationImmediately = async (message) => {
     finalStatus = status;
   }
   if (finalStatus == "granted") {
-    const content = { title: message };
+    const content = { title: title, body: body, };
     Notifications.scheduleNotificationAsync({ content, trigger: null });
   }
 };
