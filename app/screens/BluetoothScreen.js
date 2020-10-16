@@ -1,84 +1,46 @@
 import { AntDesign } from "@expo/vector-icons";
+import BluetoothSerial from 'react-native-bluetooth-serial';
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
 
 import appTasks from "../utility/appTasks/";
 import AppText from "../components/AppText";
-import bluetoothScan from "../utility/bluetoothScan";
 import colors from "../config/colors";
 import storage from "../utility/storage";
 
 var serialBTReminders = [];
-var BTReminders = [];
-var count = 0;
+var unpairedDevices = [];
+var pairedDevices = [];
 
-function BluetoothScreen({bluetoothManager}) {
+function BluetoothScreen() {
   const [bTDevicesArray, setBTDevicesArray] = useState(
-    bluetoothScan.bTDevicesArray[0] !== undefined
-      ? bluetoothScan.bTDevicesArray
-      : [{ name: "Press 'Refresh' for list of nearby devices", id: "123456789" }]
+    [{ name: "Press 'Refresh' for list of nearby devices", id: "123456789" }]
   );
 
-  const updateDevices = () => {
-    setBTDevicesArray( bluetoothScan.bTDevicesArray[0] !== undefined
-      ? bluetoothScan.bTDevicesArray
-      : [{ name: "Searching... ", id: "123456789" }]);
+  const updateDevices = async () => {
+    setBTDevicesArray([{ name: "Searching... ", id: "123456789" }]);
 
-    bluetoothScan.subscribeBTScan(bluetoothManager.bluetoothManager.bluetoothManager);
+    pairedDevices = BluetoothSerial.list();
+    unpairedDevices = await BluetoothSerial.discoverUnpairedDevices();
 
-    bluetoothScan.serialListUnpaired.splice(0,bluetoothScan.serialListUnpaired.length);
-    bluetoothScan.getSerialListUnpairedAsync();
-
-    if (count === 0) {
-      const myInterval = setInterval(() => {
-        bluetoothScan.bTDevicesArray !== []
-          ? setBTDevicesArray([...bluetoothScan.bTDevicesArray])
-          : setBTDevicesArray([{ name: "Searching ", id: "123456789" }]);
-        count++;
-        count === 12 && bluetoothScan.getSerialListUnpairedAsync();
-        count > 20 && stopInterval();
-        console.log(count);
-      }, 2000);
-
-      const stopInterval = () => {
-        clearInterval(myInterval);
-        count = 0;
-        setBTDevicesArray(
-          bluetoothScan.bTDevicesArray[0] !== undefined
-            ? bluetoothScan.bTDevicesArray
-            : [{ name: "No Bluetooth Devices Found ", id: "123456789" }]
-        );
-      };
-      
-    }
+    setBTDevicesArray(
+      unpairedDevices[0] !== undefined
+        ? unpairedDevices
+        : [{ name: "No Bluetooth Devices Found ", id: "123456789" }]);
   };
   
   const remindBT = async (id, title, deviceClass) => {
-    BTReminders = await storage.get("asyncBLEDevices");
-    if (BTReminders && BTReminders.some((BTDevice) => id == BTDevice.id)) {
-      alert("Reminder already set for this device");
-      return;
-    }
     serialBTReminders = await storage.get("asyncSerialBTDevices");
     if (serialBTReminders && serialBTReminders.some((BTDevice) => id == BTDevice.id)) {
       alert("Reminder already set for this device");
       return;
     }
 
-    if(deviceClass !== undefined){
-      appTasks.startCheckBluetooth(id);
-      serialBTReminders === null && (serialBTReminders = []);
-      serialBTReminders.push({ id: id, name: title, taskDeleted: false, repeat: false, delete: false });
-      await storage.store("asyncSerialBTDevices", serialBTReminders);
-      alert(`Reminder ${title} set`);
-    }else{
-      appTasks.startCheckBle(id);
-      BTReminders === null && (BTReminders = []);
-      BTReminders.push({ id: id, name: title, taskDeleted: false, repeat: false, delete: false });
-      await storage.store("asyncBLEDevices", BTReminders);
-      alert(`Reminder ${title} set`);
-      bluetoothScan.subscribeBTScan(bluetoothManager.bluetoothManager.bluetoothManager);
-    }
+    appTasks.startCheckBluetooth(id);
+    serialBTReminders === null && (serialBTReminders = []);
+    serialBTReminders.push({ id: id, name: title, taskDeleted: false, repeat: false, delete: false });
+    await storage.store("asyncSerialBTDevices", serialBTReminders);
+    alert(`Reminder ${title} set`);
   };
 
   const Item = ({ title, rssi, id, deviceClass }) => (

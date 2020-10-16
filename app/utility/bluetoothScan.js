@@ -1,3 +1,4 @@
+import { BleManager } from "react-native-ble-plx";
 import BluetoothSerial from "react-native-bluetooth-serial-next";
 import storage from "./storage";
 
@@ -8,7 +9,9 @@ var firstRun = 0;
 var serialListUnpaired = [];
 var stopScan = [];
 
-const scanBT = (bluetoothManager) => {
+const bluetoothManager = new BleManager();
+
+const scanBT = () => {
   bluetoothManager.startDeviceScan(null, null, async (error, device) => {
     if (error) {
       if(error.toString() === 'BleError: BluetoothLE is powered off'){
@@ -30,7 +33,7 @@ const scanBT = (bluetoothManager) => {
 
     counter++;
     firstRun < 3 && firstRun++;
-    if (counter > 20|| firstRun === 2) {
+    if (counter > 20 || firstRun === 2) {
       bTDevicesArray.splice(0, bTDevicesArray.length);
 
       console.log('btScan running!!!', stopScan)
@@ -64,10 +67,14 @@ const scanBT = (bluetoothManager) => {
   });
 };
 
-const subscribeBTScan = (blueToothManager) => {
-  const subscription = blueToothManager.onStateChange((state) => {
+const stopBTScan = () => {
+  bluetoothManager.stopDeviceScan();
+}
+
+const subscribeBTScan = () => {
+  const subscription = bluetoothManager.onStateChange((state) => {
     if (state === "PoweredOn") {
-      scanBT(blueToothManager);
+      scanBT();
       subscription.remove();
     }else{
       alert('Bluetooth must be turned on to scan for devices.');
@@ -117,4 +124,5 @@ export default {
   bTDevicesArray,
   serialListUnpaired,
   stopScan,
+  stopBTScan,
 };

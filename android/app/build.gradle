@@ -206,6 +206,8 @@ dependencies {
     }
     addUnimodulesDependencies()
 
+    compile project(':react-native-bluetooth-serial')
+
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
         debugImplementation files(hermesPath + "hermes-debug.aar")
