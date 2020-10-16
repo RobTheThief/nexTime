@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flex: 1,
     position: "relative",
-    top: -7,
+    top: -20,
     right: 70,
   },
   headTextContainer: {
