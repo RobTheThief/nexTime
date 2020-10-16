@@ -74,13 +74,26 @@ const startCheckLocation = async (marker) => {
 const startCheckBluetooth = (bTDeviceID) => {
   TaskManager.defineTask(bTDeviceID, async () => {
     console.log('Task running!!!');
-      
-    const isEnabled = await BluetoothSerial.isEnabled();
-    isEnabled && (warned = false);
-    if (!isEnabled && warned === false) {
+
+    var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
+    var index = taskAsyncBTDevices.findIndex((taskAsyncBTDevice) => bTDeviceID == taskAsyncBTDevice.id);
+    const btReminder = taskAsyncBTDevices[index];
+
+    let enable = false;
+    const wasEnabled = await BluetoothSerial.isEnabled();
+    if (wasEnabled === false && btReminder.startBluetooth == true) {enable = await BluetoothSerial.enable();}
+    let timer = Date.now() + 2000;
+    if (enable === true || wasEnabled === true){
+      while (Date.now() < timer){
+        let life = 'go by..'; 
+      };
+    }
+   
+    wasEnabled && (warned = false);
+    if (!wasEnabled && !warned && !btReminder.startBluetooth) {
       warned = true;
       return sendNotificationImmediately("nexTime Reminders", "Bluetooth must be on for your reminders to work");
-    } else if (!isEnabled && warned === true) {
+    } else if (!wasEnabled && warned === true) {
       return;
     }
 
@@ -89,10 +102,9 @@ const startCheckBluetooth = (bTDeviceID) => {
     serialListUnpaired.forEach((item) => bTDeviceIDs.push(item.id));
     var present = bTDeviceIDs.some((id) => bTDeviceID == id);
 
+    !wasEnabled && BluetoothSerial.disable();
+
     if (present === true) {
-      var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
-      const index = taskAsyncBTDevices.findIndex((taskAsyncBTDevice) => bTDeviceID == taskAsyncBTDevice.id);
-      const btReminder = taskAsyncBTDevices[index];
       sendNotificationImmediately("nexTime Reminders", `Bluetooth reminder: ${btReminder.name}`);
 
       if (!btReminder.repeat) {

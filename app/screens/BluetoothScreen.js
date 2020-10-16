@@ -70,7 +70,7 @@ function BluetoothScreen() {
 
     appTasks.startCheckBluetooth(id);
     serialBTReminders === null && (serialBTReminders = []);
-    serialBTReminders.push({ id: id, name: title, taskDeleted: false, repeat: false, delete: false });
+    serialBTReminders.push({ id: id, name: title, taskDeleted: false, repeat: false, delete: false, startBluetooth: false });
     await storage.store("asyncSerialBTDevices", serialBTReminders);
     updateReminderList();
     alert(`Reminder ${title} set`);
