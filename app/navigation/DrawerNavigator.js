@@ -19,7 +19,7 @@ const DrawerNavigator = () => {
     <Drawer.Navigator
       drawerStyle={{ width: "50%" }}
       initialRouteName="Locations"
-      edgeWidth={100}
+      edgeWidth={70}
     >
       <Drawer.Screen name="Locations" component={MapScreen} />
       <Drawer.Screen name='Connections' component={ConnectionsNavigator} />
@@ -33,8 +33,8 @@ const Tab = createBottomTabNavigator();
 const ConnectionsNavigator = () => {
   return (
     <Tab.Navigator tabStyle={{ fontSize: 12 }}>
-      <Tab.Screen options={{title: () => {return <AppText style = {styles.tabLable} >Bluetooth</AppText>}}}  name="Bluetooth" component={BluetoothScreen} />
-      <Tab.Screen options={{title: () => {return <AppText style = {styles.tabLable} >Wifi</AppText>}}} name="Wifi" component={WifiScreen} />
+      <Tab.Screen options={{title: () => {return <AppText style = {styles.tabLable} >BLUETOOTH</AppText>}}}  name="Bluetooth" component={BluetoothScreen} />
+      <Tab.Screen options={{title: () => {return <AppText style = {styles.tabLable} >WIFI</AppText>}}} name="Wifi" component={WifiScreen} />
     </Tab.Navigator>
   );
 };

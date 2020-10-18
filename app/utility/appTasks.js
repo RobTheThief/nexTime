@@ -41,10 +41,7 @@ const startCheckLocation = async (marker) => {
           sendNotificationImmediately("nexTime Reminders", "nexTime Location Reminder: " + marker.title);
 
           var taskAsyncMarkers = await storage.get("asyncMarkers");
-          var taskMarkerIndex = taskAsyncMarkers.findIndex(markerSearch);
-          const markerSearch = (task) => {
-            return task.markerTaskName.includes(LOCATION_TASK_NAME);
-          };
+          var taskMarkerIndex = taskAsyncMarkers.findIndex((task) => task.markerTaskName.includes(LOCATION_TASK_NAME));
 
           if (marker.repeat === false) {
             taskAsyncMarkers[taskMarkerIndex].taskDeleted = true;

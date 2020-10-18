@@ -233,7 +233,7 @@ function AddMarkerDetailsScreen({
             value={radius}
             onValueChange={(value) => handleChangeSlider(value)}
           />
-          <View style={styles.repeatDeletContainer}>
+          <View style={styles.switchBox}>
             <View style={styles.switchContainer}>
               <AppText style={styles.repeatText}>Repeat</AppText>
               <Switch
@@ -363,15 +363,11 @@ const styles = StyleSheet.create({
     width: "30%",
     flexDirection: "row",
   },
-  repeatDeletContainer: {
+  switchBox: {
     width: "100%",
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
-  },
-  slider: {
-    width: "100%",
-    height: 80,
   },
   switch: {
     position: "relative",
@@ -382,5 +378,9 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     width: "47%",
     flexDirection: "row",
+  },
+  slider: {
+    width: "100%",
+    height: 80,
   },
 });
