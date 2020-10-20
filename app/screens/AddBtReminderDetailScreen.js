@@ -1,6 +1,7 @@
 import { AntDesign } from "@expo/vector-icons";
 import React, { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
+import * as TaskManager from "expo-task-manager";
 
 import appTasks from '../utility/appTasks';
 import AppText from '../components/AppText';
@@ -12,8 +13,9 @@ function AddBtReminderDetailScreen({addBtReminderDetailVisibility, pickedId, pic
 
     const [notes, setNotes] = useState();
     
-    const index = btRemindersArray.findIndex((BTDevice) => pickedId === BTDevice.id);
+    var index = btRemindersArray.findIndex((BTDevice) => pickedId === BTDevice.id);
     const reminder = btRemindersArray[index];
+    console.log(index);
 
     const [repeatReminder, setRepeatReminder] = useState(
         reminder == undefined ? false : reminder.repeat
@@ -26,16 +28,7 @@ function AddBtReminderDetailScreen({addBtReminderDetailVisibility, pickedId, pic
       const [deleteOnTrig, setDeleteOnTrig] = useState(
         reminder == undefined ? false : reminder.delete
       );
-      const toggleDelete = () => setDeleteOnTrig((previousState) => !previousState);
-
-      const [startBluetooth, setStartBluetooth] = useState(
-        reminder == undefined ? false : reminder.delete
-      );
-      const toggleStartBluetooth = () => {
-          !startBluetooth && alert('Allows the app to automatically enable bluetooth while scanning. Bluetooth is disabled again when finished to save power.')
-          setStartBluetooth((previousState) => !previousState);
-        }
-    
+      const toggleDelete = () => setDeleteOnTrig((previousState) => !previousState);  
 
     const setNotesInputValue = () => 
     reminder !== undefined && reminder.notes
@@ -47,8 +40,8 @@ function AddBtReminderDetailScreen({addBtReminderDetailVisibility, pickedId, pic
     }, []);  
 
     const remindBT = async (id, title) => {
-        appTasks.startCheckBluetooth(id);
-        btRemindersArray[0].id === '123456789' && btRemindersArray.splice(0, 2);
+        btRemindersArray = btRemindersArray.filter((reminder) => reminder.junk === false );
+        index = btRemindersArray.findIndex((BTDevice) => pickedId === BTDevice.id);
         index > -1 && btRemindersArray.splice(index, 1);
         btRemindersArray.push({ 
                                 id: id,
@@ -57,12 +50,15 @@ function AddBtReminderDetailScreen({addBtReminderDetailVisibility, pickedId, pic
                                 taskDeleted: false,
                                 repeat: repeatReminder,
                                 delete: deleteOnTrig,
-                                startBluetooth: startBluetooth,
+                                junk: false,
                             });
+        console.log(btRemindersArray.length);
         await storage.store("asyncSerialBTDevices", btRemindersArray);
         updateReminderList();
-        alert(`Reminder ${title} set`);
+        Alert.alert('nexTime', `Reminder ${title} set`);
         addBtReminderDetailVisibility();
+        await TaskManager.unregisterAllTasksAsync();
+            appTasks.checkLocationTask();
     };
 
     return (
@@ -73,7 +69,7 @@ function AddBtReminderDetailScreen({addBtReminderDetailVisibility, pickedId, pic
         >
             <View style={styles.inputBox} >
                 <View style={styles.title}>
-                    <AppText style={styles.titleLable} >DEVICE:</AppText>
+                    <AppText style={styles.titleLable} >Device:</AppText>
                     <AppText style={styles.titleDevice} >{pickedTitle}</AppText>
                 </View>
                 <AppTextInput
@@ -87,7 +83,7 @@ function AddBtReminderDetailScreen({addBtReminderDetailVisibility, pickedId, pic
                 />
                 <View style={styles.switchBox}>
                     <View style={styles.switchContainer}>
-                        <AppText style={styles.switchText}>REPEAT</AppText>
+                        <AppText style={styles.switchText}>Repeat</AppText>
                         <Switch
                             style={styles.switch}
                             trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -98,7 +94,7 @@ function AddBtReminderDetailScreen({addBtReminderDetailVisibility, pickedId, pic
                         />
                     </View>
                     <View style={styles.switchContainer}>
-                        <AppText style={styles.switchText}>DELETE ON TRIGGER</AppText>
+                        <AppText style={styles.switchText}>Delete on Trigger</AppText>
                         <Switch
                             style={styles.switch}
                             trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -109,26 +105,16 @@ function AddBtReminderDetailScreen({addBtReminderDetailVisibility, pickedId, pic
                             disabled={repeatReminder}
                         />
                     </View>
-                    <View style={styles.switchContainer}>
-                        <AppText style={styles.switchText}>START BLUETOOTH</AppText>
-                        <Switch
-                            style={styles.switch}
-                            trackColor={{ false: "#767577", true: "#81b0ff" }}
-                            thumbColor={startBluetooth ? colors.primary : "#f4f3f4"}
-                            ios_backgroundColor="#3e3e3e"
-                            onValueChange={toggleStartBluetooth}
-                            value={startBluetooth}
-                        />
-                    </View>
+                    
                 </View>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity style={styles.buttons} onPress={() => addBtReminderDetailVisibility() }>
                         <AntDesign name="leftcircle" color={colors.primary} size={29} />
-                        <AppText style={styles.buttonText}>GO BACK</AppText>
+                        <AppText style={styles.buttonText}>Go Back</AppText>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.buttons} onPress={() => remindBT(pickedId, pickedTitle) }>
                         <AntDesign name="enter" color={colors.primary} size={29} />
-                        <AppText style={styles.buttonText} >SET REMINDER</AppText>
+                        <AppText style={styles.buttonText} >Set Reminder</AppText>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -157,7 +143,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "flex-start",
         backgroundColor: colors.light,
-        padding: 10,
+        padding: 15,
     },
     inputText: {
         width: "90%",
@@ -210,6 +196,7 @@ const styles = StyleSheet.create({
     },
     titleDevice: {
         color: colors.secondary,
+        fontSize: 17,
     },
 })
 

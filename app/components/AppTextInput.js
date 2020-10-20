@@ -24,8 +24,8 @@ function AppTextInput({
 
 const styles = StyleSheet.create({
   textInput: {
-    borderBottomWidth: 2,
-    borderBottomColor: colors.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.primaryLight,
     marginBottom: 20,
     width: "100%",
   },

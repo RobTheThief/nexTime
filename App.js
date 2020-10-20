@@ -2,11 +2,26 @@ import { NavigationContainer } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
 import * as React from "react";
+import * as TaskManager from "expo-task-manager";
 
 import appTasks from "./app/utility/appTasks";
 import { askPermissionsNotifications } from "./app/utility/notifications";
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import nexTheme from "./app/config/drawerTheme";
+import storage from './app/utility/storage';
+
+TaskManager.defineTask('checkLocation', async ({ data: { locations }, error }) => {
+  console.log('Check Location running !!!');
+  
+  var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
+  if(taskAsyncBTDevices && taskAsyncBTDevices[0].id){
+    appTasks.startCheckBluetoothAsync( taskAsyncBTDevices );
+  }
+
+  if (error){
+    console.log(error);
+  }
+});
 
 export default function App() {
   const requestPermission = async () => {
@@ -20,7 +35,6 @@ export default function App() {
   React.useEffect(() => {
     requestPermission();
     askPermissionsNotifications();
-    appTasks.refreshAllTasks();
   });
 
   return (
@@ -29,6 +43,8 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {

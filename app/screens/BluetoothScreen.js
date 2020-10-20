@@ -1,9 +1,8 @@
 import BluetoothSerial from 'react-native-bluetooth-serial';
-import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, StyleSheet, Switch, TouchableOpacity, View } from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useEffect, useState } from "react";
 
-import appTasks from "../utility/appTasks/";
 import AppText from "../components/AppText";
 import colors from "../config/colors";
 import storage from "../utility/storage";
@@ -13,16 +12,28 @@ import AddBtReminderDetailScreen from './AddBtReminderDetailScreen';
 var serialBTReminders = [];
 var unfilteredUnpairedDevices = [];
 var pairedDevices = [];
+var startBtInitialState = false;
 
 function BluetoothScreen({navigation}) {
   const [btDevicesArray, setBtDevicesArray] = useState(
-    [{ name: "Pull down to refresh device list", id: "123456789" }, {id:'', name:''}]
+    [{ name: "Pull down to refresh device list", id: "123456789" , junk: true }, {id:'', name:'', junk: true}]
   );
   const [btPairedDevicesArray, setBtPairedDevicesArray] = useState(pairedDevices);
 
   const [btRemindersArray, setBtRemindersArray] = useState(serialBTReminders);
 
   const [isFetching, setIsFetching] = useState(false);
+
+  const getBtStartState = async () => {startBtInitialState = await storage.get('startBluetooth');}
+  const [startBluetooth, setStartBluetooth] = useState(startBtInitialState ? startBtInitialState : false);
+
+  const toggleStartBluetooth = async () => {
+      !startBluetooth && Alert.alert('nexTime','Allows the app to automatically enable bluetooth while scanning. Bluetooth is disabled again when finished to save power.')
+      setStartBluetooth(startBluetooth ? false : true);
+  
+      await storage.store('startBluetooth', {startBluetooth: !startBluetooth});
+
+    }
 
   const [visible, setVisible] = useState(false);
   const [pickedId, setPickedId] = useState();
@@ -38,12 +49,13 @@ function BluetoothScreen({navigation}) {
   const onRefresh = () => {
     setIsFetching(true);
     updateDevices();
+    getBtStartState();
   }
 
   const updateReminderList = async () => {
     const serialBTReminders = await storage.get("asyncSerialBTDevices");
-    (serialBTReminders && serialBTReminders.length === 1) && serialBTReminders.push({id:'', name:''});
-    setBtRemindersArray(serialBTReminders ? serialBTReminders : [{ name: "Tap on a paired or unpaired device to set\na reminder", id: "123456789" },{id:'', name:''}]);
+    (serialBTReminders && serialBTReminders.length === 1) && serialBTReminders.push({id:'', name:'', junk: true});
+    setBtRemindersArray(serialBTReminders ? serialBTReminders : [{ name: "Tap on a paired or unpaired device to set\na reminder", id: "123456789" , junk: true},{id:'', name:'', junk: true }]);
   }
 
   const getPaired = async () => {
@@ -60,7 +72,7 @@ function BluetoothScreen({navigation}) {
 
 
   const updateDevices = async () => {
-    setBtDevicesArray([{ name: "        Searching... ", id: "123456789" }]);
+    setBtDevicesArray([{ name: "        Searching... ", id: "123456789" , junk: true}]);
 
     getPaired();
 
@@ -85,7 +97,7 @@ function BluetoothScreen({navigation}) {
     setBtDevicesArray(
       unpairedDevices[0] !== undefined
         ? unpairedDevices
-        : [{ name: "No new unpaired devices found ", id: "123456789" }]);
+        : [{ name: "No new unpaired devices found ", id: "123456789" , junk: true}]);
         
     setIsFetching(false);
   };
@@ -158,6 +170,17 @@ function BluetoothScreen({navigation}) {
             persistentScrollbar = {true}
             renderItem={renderReminderItem}
             />
+        </View>
+        <View style={styles.switchContainer}>
+          <AppText style={styles.switchText}>Start Bluetooth on Scan</AppText>
+          <Switch
+              style={styles.switch}
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={startBluetooth ? colors.primary : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleStartBluetooth}
+              value={startBluetooth}
+          />
         </View>
         <View style={styles.pairedContainer}>
           <View style={styles.devicesHeader}>
@@ -242,6 +265,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 5,
     color: colors.light,
+  },
+  switchContainer: {
+    alignItems: "center",
+    justifyContent: "flex-start",
+    flexDirection: "row",
+    marginLeft: 20,
+  },
+  switch: {
+      position: "relative",
+      top: 2,
+  },
+  switchText: {
+      marginRight: 10,
+      color: colors.primary,
+      fontSize: 15,
   },
   unPairedContainer: {
     width: "100%",

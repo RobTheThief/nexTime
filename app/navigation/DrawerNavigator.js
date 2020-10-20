@@ -18,7 +18,7 @@ const DrawerNavigator = () => {
   return (
     <Drawer.Navigator
       drawerStyle={{ width: "50%" }}
-      initialRouteName="Locations"
+      initialRouteName="Welcome Screen"
       edgeWidth={70}
     >
       <Drawer.Screen name="Locations" component={MapScreen} />

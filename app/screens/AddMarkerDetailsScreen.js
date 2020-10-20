@@ -93,7 +93,7 @@ function AddMarkerDetailsScreen({
 
   const handleSubmitMarker = () => {
     if (radius < 100 || title == null)
-      return alert(
+      return Alert.alert('nexTime',
         "Radius cannot be less than " +
           measurementSys.unitDivider / 10 +
           " " +
@@ -137,7 +137,6 @@ function AddMarkerDetailsScreen({
     setMarkers(markers.map((marker) => marker));
     storage.store("asyncMarkers", markers);
     appTasks.startCheckLocation(markers[id - 1]);
-    console.log(markers);
     addMarkerDetailVisibility();
   };
 
@@ -176,7 +175,7 @@ function AddMarkerDetailsScreen({
       enabled={Platform.OS === "ios" ? true : false}
     >
       <View style={styles.inputBox}>
-        <View style={styles.inputText}>
+        <View style={styles.inputTextContainer}>
           <AppTextInput
             placeholder={"Title"}
             onChangeText={(text) => {
@@ -186,7 +185,7 @@ function AddMarkerDetailsScreen({
             defaultValue={setTitleInputValue()}
           />
           <AppTextInput
-            placeholder={"Description"}
+            placeholder={"Description (Displayed in callout on Map Screen)"}
             onChangeText={(text) => setDesc(text)}
             defaultValue={setDescInputValue()}
           />
@@ -210,7 +209,7 @@ function AddMarkerDetailsScreen({
 
             <View style={styles.radiusInput}>
               <AppTextInput
-                style={{ width: "100%", marginBottom: 10 }}
+                style={styles.radiTextInput}
                 maxLength={4}
                 keyboardType={"number-pad"}
                 value={kmOrMilesRadius.toString()}
@@ -235,7 +234,7 @@ function AddMarkerDetailsScreen({
           />
           <View style={styles.switchBox}>
             <View style={styles.switchContainer}>
-              <AppText style={styles.repeatText}>Repeat</AppText>
+              <AppText style={styles.switchText}>Repeat</AppText>
               <Switch
                 style={styles.switch}
                 trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -246,7 +245,7 @@ function AddMarkerDetailsScreen({
               />
             </View>
             <View style={styles.switchContainer}>
-              <AppText style={styles.repeatText}>Delete on Trigger</AppText>
+              <AppText style={styles.switchText}>Delete on Trigger</AppText>
               <Switch
                 style={styles.switch}
                 trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -324,9 +323,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     backgroundColor: colors.light,
-    padding: 10,
   },
-  inputText: {
+  inputTextContainer: {
     width: "90%",
     height: "10%",
     alignItems: "center",
@@ -343,10 +341,13 @@ const styles = StyleSheet.create({
     height: 200,
     paddingLeft: 5,
     paddingTop: 5,
+    borderBottomWidth: 1,
+    borderWidth: 1,
+    borderColor: colors.primaryLight,
   },
-  repeatText: {
+  switchText: {
     paddingRight: 20,
-    fontSize: 20,
+    fontSize: 17,
   },
   radiInputandTotal: {
     flexDirection: "row-reverse",
@@ -358,6 +359,12 @@ const styles = StyleSheet.create({
     paddingLeft: 13,
     position: "relative",
     bottom: 5,
+  },
+  radiTextInput: {
+     width: "100%",
+     marginBottom: 10,
+     borderBottomWidth: 1,
+     borderBottomColor: colors.primaryLight
   },
   radiusInput: {
     width: "30%",
@@ -375,9 +382,9 @@ const styles = StyleSheet.create({
   },
   switchContainer: {
     alignItems: "center",
-    justifyContent: "flex-start",
-    width: "47%",
     flexDirection: "row",
+    justifyContent: "flex-start",
+    marginLeft: 5,
   },
   slider: {
     width: "100%",

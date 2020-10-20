@@ -2,6 +2,7 @@ import React from "react";
 import storage from "../utility/storage";
 import { StyleSheet, View, Button } from "react-native";
 import * as TaskManager from "expo-task-manager";
+import * as Location from 'expo-location';
 
 function NotificationsScreen({ navigation }) {
   const getTasks = async () => {
@@ -24,7 +25,7 @@ function NotificationsScreen({ navigation }) {
         />
       </View>
       <View style={styles.container}>
-        <Button onPress={() => getTasks()} title="log tasks" />
+        <Button onPress={async () => {getTasks(); var thing = await storage.get('startBluetooth');console.log(thing.startBluetooth)}} title="log tasks" />
       </View>
     </>
   );
@@ -36,3 +37,6 @@ const styles = StyleSheet.create({
 
 export default NotificationsScreen;
 TaskManager.unregisterAllTasksAsync();
+
+
+

@@ -1,4 +1,3 @@
-import * as BackgroundFetch from "expo-background-fetch";
 import BluetoothSerial from "react-native-bluetooth-serial";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
@@ -8,15 +7,17 @@ import storage from "./storage";
 
 var warned = false;
   
-const refreshAllTasks = async () => {
-  var taskAsyncMarkers = await storage.get("asyncMarkers");
-  if (taskAsyncMarkers !== null) {
-    for (let i = 0; i < taskAsyncMarkers.length; i++) {
-      !taskAsyncMarkers[i].taskDeleted &&
-        (await startCheckLocation(taskAsyncMarkers[i]));
+const checkLocationTask = () => {
+  Location.startLocationUpdatesAsync('checkLocation', { 
+    accuracy: Location.Accuracy.BestForNavigation,
+    timeInterval: 60000,
+    distanceInterval: 1,
+    foregroundService: {
+        notificationTitle: 'nexTime',
+        notificationBody: 'nexTime Reminders running'
     }
-  }
-};
+  });
+}
 
 const startCheckLocation = async (marker) => {
   const { status } = await Location.requestPermissionsAsync();
@@ -60,78 +61,65 @@ const startCheckLocation = async (marker) => {
             "You've entered region:" + "Title: " + marker.title,
             region
           );
-        } 
+        }  else {
+          return;
       }
-    );
+    });
     const tasks = await TaskManager.getRegisteredTasksAsync();
     console.log("All Tasks", tasks);
   }
 };
 
-const startCheckBluetooth = (bTDeviceID) => {
-  TaskManager.defineTask(bTDeviceID, async () => {
-    console.log('Task running!!!');
 
-    var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
-    var index = taskAsyncBTDevices.findIndex((taskAsyncBTDevice) => bTDeviceID == taskAsyncBTDevice.id);
+
+const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) => {
+  console.log('BT Task running!!!');
+
+  const wasEnabled = await BluetoothSerial.isEnabled();
+  var startBluetooth = await storage.get('startBluetooth');
+  startBluetooth = startBluetooth.startBluetooth;
+  
+  let enable = false;
+  if (wasEnabled === false && startBluetooth == true) {enable = await BluetoothSerial.enable();}
+  let timer = Date.now() + 2000;
+  if (enable === true || wasEnabled === true){
+    while (Date.now() < timer){
+      let life = 'go by..'; 
+    };
+  }
+
+  wasEnabled && (warned = false);
+  if (!wasEnabled && !warned && !startBluetooth) {
+    warned = true;
+    return sendNotificationImmediately("nexTime Reminders", "Bluetooth must be on for your reminders to work");
+  } else if (!wasEnabled && warned === true) {
+    return;
+  }
+
+  var serialListUnpaired = await BluetoothSerial.discoverUnpairedDevices();
+  var bTDeviceIDs = [];
+  serialListUnpaired.forEach((item) => bTDeviceIDs.push(item.id));
+
+  !wasEnabled && BluetoothSerial.disable();
+
+  for (let index = 0; index < taskAsyncBTDevices.length; index++)  {
     const btReminder = taskAsyncBTDevices[index];
-
-    let enable = false;
-    const wasEnabled = await BluetoothSerial.isEnabled();
-    if (wasEnabled === false && btReminder.startBluetooth == true) {enable = await BluetoothSerial.enable();}
-    let timer = Date.now() + 2000;
-    if (enable === true || wasEnabled === true){
-      while (Date.now() < timer){
-        let life = 'go by..'; 
-      };
-    }
-   
-    wasEnabled && (warned = false);
-    if (!wasEnabled && !warned && !btReminder.startBluetooth) {
-      warned = true;
-      return sendNotificationImmediately("nexTime Reminders", "Bluetooth must be on for your reminders to work");
-    } else if (!wasEnabled && warned === true) {
-      return;
-    }
-
-    var serialListUnpaired = await BluetoothSerial.discoverUnpairedDevices();
-    var bTDeviceIDs = [];
-    serialListUnpaired.forEach((item) => bTDeviceIDs.push(item.id));
-    var present = bTDeviceIDs.some((id) => bTDeviceID == id);
-
-    !wasEnabled && BluetoothSerial.disable();
-
-    if (present === true) {
+    var present = bTDeviceIDs.some((id) => btReminder.id == id);
+    if (present && !btReminder.taskDeleted) {
       sendNotificationImmediately("nexTime Reminders", `Bluetooth reminder: ${btReminder.name}`);
 
       if (!btReminder.repeat) {
-        TaskManager.unregisterTaskAsync(bTDeviceID);
         btReminder.taskDeleted = true;
         await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
       }
-
-      if (btReminder.delete) {
-        taskAsyncBTDevices.splice(index, 1);
-        await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
-      }
+      taskAsyncBTDevices = taskAsyncBTDevices.filter((reminder) => !reminder.delete);
+      taskAsyncBTDevices.length === 0 ? await storage.store("asyncSerialBTDevices", '') : await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
     }
-  });
-
-  try {
-    BackgroundFetch.registerTaskAsync(bTDeviceID, {
-      minimumInterval: 5, // seconds,
-      stopOnTerminate: true,
-      startOnBoot: false,
-    });
-    console.log("Task registered");
-  } catch (err) {
-    console.log("Task Register failed:", err);
   }
 };
 
-
 export default {
-  refreshAllTasks,
   startCheckLocation,
-  startCheckBluetooth,
+  startCheckBluetoothAsync,
+  checkLocationTask,
 };
