@@ -1,7 +1,7 @@
 import BluetoothSerial from "react-native-bluetooth-serial";
 import * as Location from "expo-location";
-import * as TaskManager from "expo-task-manager";
 
+import geoFencing from './geoFencing';
 import { sendNotificationImmediately } from "./notifications";
 import storage from "./storage";
 
@@ -10,7 +10,7 @@ var warned = false;
 const checkLocationTask = () => {
   Location.startLocationUpdatesAsync('checkLocation', { 
     accuracy: Location.Accuracy.BestForNavigation,
-    timeInterval: 5000,
+    timeInterval: 30000,
     distanceInterval: 1,
     foregroundService: {
         notificationTitle: 'nexTime',
@@ -19,59 +19,57 @@ const checkLocationTask = () => {
   });
 }
 
-const startCheckLocation = async (marker) => {
+const toKeep = (reminder) => {
+  if (!reminder.delete){
+    return true;
+  }
+  if(!reminder.taskDeleted){
+    return true;
+  }
+  return false;
+}
+
+const areTasksRunning = async () => {
+  const running = await Location.hasStartedLocationUpdatesAsync('checkLocation');
+  !running && checkLocationTask();
+}
+
+const startCheckLocation = async (locations, taskAsyncMarkers) => {
   const { status } = await Location.requestPermissionsAsync();
   if (status === "granted") {
-    var latLng = marker.latLng;
-    var radius = marker.radius;
-    var LOCATION_TASK_NAME = marker.markerTaskName;
-    await Location.startGeofencingAsync(LOCATION_TASK_NAME, [
-      {
-        ...latLng,
-        radius,
-      },
-    ]);
-    TaskManager.defineTask(
-      LOCATION_TASK_NAME,
-      async ({ data: { eventType, region }, error }) => {
-        if (error) {
-          console.log(error.message);
-          return;
-        }
-        if (eventType === Location.GeofencingEventType.Enter) {
+    var cleanupTrigger = false;
+
+    for (let index = 0; index < taskAsyncMarkers.length; index++) {
+      const marker = taskAsyncMarkers[index];
+      if (!marker.taskDeleted) {
+        const adjustedDistance = geoFencing.getRelativeDistance(locations, marker);
+        
+        if (adjustedDistance <= marker.radius) {
           sendNotificationImmediately("nexTime Reminders", "nexTime Location Reminder: " + marker.title);
-
-          var taskAsyncMarkers = await storage.get("asyncMarkers");
-          var taskMarkerIndex = taskAsyncMarkers.findIndex((task) => task.markerTaskName.includes(LOCATION_TASK_NAME));
-
+          cleanupTrigger = true;
           if (marker.repeat === false) {
-            taskAsyncMarkers[taskMarkerIndex].taskDeleted = true;
-            await storage.store("asyncMarkers", taskAsyncMarkers);
-            Location.stopGeofencingAsync(LOCATION_TASK_NAME);
-          }
-          if (marker.delete === true) {
-            taskAsyncMarkers.splice(taskMarkerIndex, 1);
-            for (let i = 0; i < taskAsyncMarkers.length; i++) {
-              taskAsyncMarkers[i].markerIndex = i + 1;
-              taskAsyncMarkers[i].circleId = i + 1 + "c";
-            }
+            taskAsyncMarkers[index].taskDeleted = true;
             await storage.store("asyncMarkers", taskAsyncMarkers);
           }
-          console.log(
-            "You've entered region:" + "Title: " + marker.title,
-            region
-          );
-        }  else {
-          return;
+        }
+      }     
+    }
+    if(cleanupTrigger){
+      taskAsyncMarkers = taskAsyncMarkers.filter((marker) => toKeep(marker));
+      for (let i = 0; i < taskAsyncMarkers.length; i++) {
+        taskAsyncMarkers[i].id = i + 1;
+        taskAsyncMarkers[i].circleId = i + 1 + "c";
       }
-    });
-    const tasks = await TaskManager.getRegisteredTasksAsync();
-    console.log("All Tasks", tasks);
+      taskAsyncMarkers.length === 0 ? 
+      await storage.store("asyncMarkers", '') :
+      await storage.store("asyncMarkers", taskAsyncMarkers);
+      var cleanupTrigger = false;
+    }
   }
 };
 
 const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) => {
-  console.log('btTask running!!!!');
+  var cleanupTrigger = false;
 
   const wasEnabled = await BluetoothSerial.isEnabled();
   var startBluetooth = await storage.get('startBluetooth');
@@ -105,19 +103,25 @@ const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) =>
     var present = bTDeviceIDs.some((id) => btReminder.id == id);
     if (present && !btReminder.taskDeleted) {
       sendNotificationImmediately("nexTime Reminders", `Bluetooth reminder: ${btReminder.name}`);
-
+      cleanupTrigger = true;
       if (!btReminder.repeat) {
         btReminder.taskDeleted = true;
         await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
       }
-      taskAsyncBTDevices = taskAsyncBTDevices.filter((reminder) => !reminder.delete);
-      taskAsyncBTDevices.length === 0 ? await storage.store("asyncSerialBTDevices", '') : await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
     }
+  }
+  if(cleanupTrigger) {
+    taskAsyncBTDevices = taskAsyncBTDevices.filter((reminder) => toKeep(reminder));
+    taskAsyncBTDevices.length === 0 ?
+    await storage.store("asyncSerialBTDevices", '') :
+    await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
+    cleanupTrigger = false;
   }
 };
 
 export default {
+  areTasksRunning,
+  checkLocationTask,
   startCheckLocation,
   startCheckBluetoothAsync,
-  checkLocationTask,
 };

@@ -13,7 +13,12 @@ import storage from './app/utility/storage';
 
 
 TaskManager.defineTask('checkLocation', async ({ data: { locations }, error }) => {
-  console.log('Check Location running !!!');
+  console.log('Tasks running !!!');
+
+  var taskAsyncMarkers = await storage.get('asyncMarkers');
+  if(taskAsyncMarkers && taskAsyncMarkers[0].id){
+    appTasks.startCheckLocation(locations, taskAsyncMarkers);
+  }
 
   var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
   if(taskAsyncBTDevices && taskAsyncBTDevices[0].id){

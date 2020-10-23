@@ -16,12 +16,12 @@ import {
 import React, { useEffect, useState } from "react";
 import Slider from "@react-native-community/slider";
 
-import appTasks from "../utility/appTasks";
 import AppText from "../components/AppText";
 import AppTextInput from "../components/AppTextInput";
 import colors from "../config/colors";
 import measurementSys from "../config/measurementSys";
 import storage from "../utility/storage";
+import appTasks from "../utility/appTasks";
 
 function AddMarkerDetailsScreen({
   addMarkerDetailVisibility,
@@ -101,23 +101,8 @@ function AddMarkerDetailsScreen({
           " or Title cannot be Empty!"
       );
 
-    const makeTaskName = () => {
-      if (
-        markers[id - 1] &&
-        markers[id - 1].markerTaskName &&
-        markers[id - 1].taskDeleted === false
-      ) {
-        return markers[id - 1].markerTaskName;
-      } else {
-        markers[id - 1] && markers[id - 1].taskDeleted
-          ? (markers[id - 1].taskDeleted = false)
-          : console.log("ok");
-        return title + "" + Date();
-      }
-    };
-
     const markerObject = {
-      markerIndex: id,
+      id: id,
       circleId: id + "c",
       title: title,
       description: description,
@@ -126,7 +111,6 @@ function AddMarkerDetailsScreen({
       repeat: repeatReminder,
       delete: deleteOnTrig,
       notes: notes,
-      markerTaskName: makeTaskName(),
       taskDeleted: false,
     };
 
@@ -136,7 +120,6 @@ function AddMarkerDetailsScreen({
 
     setMarkers(markers.map((marker) => marker));
     storage.store("asyncMarkers", markers);
-    appTasks.startCheckLocation(markers[id - 1]);
     addMarkerDetailVisibility();
   };
 
@@ -156,11 +139,12 @@ function AddMarkerDetailsScreen({
               Location.stopGeofencingAsync(markers[id - 1].markerTaskName);
             markers.splice(id - 1, 1);
             for (let i = 0; i < markers.length; i++) {
-              markers[i].markerIndex = i + 1;
+              markers[i].id = i + 1;
               markers[i].circleId = i + 1 + "c";
             }
             storage.store("asyncMarkers", markers);
             addMarkerDetailVisibility();
+            appTasks.areTasksRunning();
           },
         },
       ],

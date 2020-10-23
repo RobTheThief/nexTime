@@ -1,25 +1,19 @@
-import storage from "./storage";
+const getRelativeDistance = (locations, marker) => {
 
-//const latLng = { latitude: 51.8787992, longitude: -8.4518733 };
-
-const getRelativeDistance = async (data) => {
-  const asyncMarkers = await storage.get("asyncMarkers");
-
-  for (var i = 0; i < asyncMarkers.length; i++) {
-    const latLng = asyncMarkers[i].latLng;
+    const latLng = marker.latLng;
     const distance = distanceMtrs(
       latLng.longitude,
       latLng.latitude,
-      data.locations[0].coords.longitude,
-      data.locations[0].coords.latitude
+      locations[0].coords.longitude,
+      locations[0].coords.latitude
     );
 
     const adjustedDistance = distanceMinusAccuracy(
       distance,
-      data.locations[0].coords.accuracy
+      locations[0].coords.accuracy
     );
-    console.log("Adjusted:", adjustedDistance, "meters");
-  }
+    console.log("Adjusted:", adjustedDistance, "meters", 'Radius: ', marker.radius);
+  return adjustedDistance;
 };
 
 //gives the distance in meters between 2 coordinates
@@ -35,4 +29,4 @@ const distanceMinusAccuracy = (distance, accuracy) => {
   return difference;
 };
 
-export { getRelativeDistance };
+export default { getRelativeDistance };

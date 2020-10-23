@@ -12,7 +12,7 @@ function MapScreen({ navigation }) {
 
   const loadMarkers = async () => {
     const asyncMarkers = await storage.get("asyncMarkers");
-    asyncMarkers ? setMarkers(asyncMarkers) : console.log("No saved markers.");
+    asyncMarkers ? setMarkers(asyncMarkers) : setMarkers([]);
   };
 
   useEffect(() => {
@@ -28,13 +28,13 @@ function MapScreen({ navigation }) {
   const setDetails = (e) => {
     setId(e.nativeEvent.id);
     setPickedLocation(e.nativeEvent.coordinate);
-    console.log(pickedLocation, id);
   };
 
   const [visible, setVisible] = useState(false);
-  const addMarkerDetailVisibility = () =>
+  const addMarkerDetailVisibility = () =>{
+    visible && loadMarkers();
     visible ? setVisible(false) : setVisible(true);
-
+}
   const [pickedLocation, setPickedLocation] = useState();
   const [id, setId] = useState();
 
@@ -57,13 +57,13 @@ function MapScreen({ navigation }) {
           style={styles.mapStyle}
         >
           {markers.map((marker) => (
-            <React.Fragment key={marker.markerIndex}>
+            <React.Fragment key={marker.id}>
               <Marker
                 coordinate={marker.latLng}
                 title={marker.title}
                 description={marker.description}
-                key={marker.markerIndex}
-                identifier={marker.markerIndex.toString()}
+                key={marker.id}
+                identifier={marker.id.toString()}
                 pinColor={marker.pinColor}
                 onPress={setDetails}
                 onCalloutPress={addMarkerDetailVisibility}
