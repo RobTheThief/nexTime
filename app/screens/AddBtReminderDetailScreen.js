@@ -13,8 +13,8 @@ function AddBtReminderDetailScreen({addBtReminderDetailVisibility, pickedId, pic
 
     const [notes, setNotes] = useState();
     
-    var index = btRemindersArray.findIndex((BTDevice) => pickedId === BTDevice.id);
-    const reminder = btRemindersArray[index];
+    var index = btRemindersArray && btRemindersArray.findIndex((BTDevice) => pickedId === BTDevice.id);
+    const reminder = index && btRemindersArray[index];
 
     const [repeatReminder, setRepeatReminder] = useState(
         reminder == undefined ? false : reminder.repeat
@@ -30,7 +30,7 @@ function AddBtReminderDetailScreen({addBtReminderDetailVisibility, pickedId, pic
       const toggleDelete = () => setDeleteOnTrig((previousState) => !previousState);  
 
     const setNotesInputValue = () => 
-    reminder !== undefined && reminder.notes
+    (reminder !== undefined && reminder !== null && reminder !== '') && reminder.notes
         ? reminder.notes
         : undefined;
 
@@ -39,9 +39,10 @@ function AddBtReminderDetailScreen({addBtReminderDetailVisibility, pickedId, pic
     }, []);  
 
     const remindBT = async (id, title) => {
-        btRemindersArray = btRemindersArray.filter((reminder) => reminder.junk === false );
-        index = btRemindersArray.findIndex((BTDevice) => pickedId === BTDevice.id);
-        index > -1 && btRemindersArray.splice(index, 1);
+        btRemindersArray = btRemindersArray && btRemindersArray.filter((reminder) => reminder.junk === false );
+        index = btRemindersArray && btRemindersArray.findIndex((BTDevice) => pickedId === BTDevice.id);
+        index && (index > -1 && btRemindersArray.splice(index, 1));
+        !btRemindersArray && (btRemindersArray = []);
         btRemindersArray.push({ 
                                 id: id,
                                 name: title,

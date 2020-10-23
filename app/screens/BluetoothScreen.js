@@ -1,6 +1,6 @@
 import BluetoothSerial from 'react-native-bluetooth-serial';
 import { Alert, FlatList, StyleSheet, Switch, TouchableOpacity, View } from "react-native";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Octicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useEffect, useState } from "react";
 
 import AppText from "../components/AppText";
@@ -8,6 +8,8 @@ import colors from "../config/colors";
 import storage from "../utility/storage";
 import AppHeader from '../components/AppHeader';
 import AddBtReminderDetailScreen from './AddBtReminderDetailScreen';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 var serialBTReminders = [];
 var unfilteredUnpairedDevices = [];
@@ -23,7 +25,7 @@ function BluetoothScreen({navigation}) {
 
   const getStartBluetoothOption = async () => {
     const option = await storage.get('startBluetooth');
-    setStartBluetooth(option.startBluetooth);
+    option && setStartBluetooth(option.startBluetooth);
   }
   
   const [startBluetooth, setStartBluetooth] = useState();
@@ -35,7 +37,7 @@ function BluetoothScreen({navigation}) {
   }
 
   const [btDevicesArray, setBtDevicesArray] = useState(
-    [{ name: "Pull down to refresh device list", id: "123456789" , junk: true }, {id:'', name:'', junk: true}]
+    [{ name: "Pull down to refresh device list", id: "123456789" , junk: true }]
   );
   const [btPairedDevicesArray, setBtPairedDevicesArray] = useState(pairedDevices);
   const [btRemindersArray, setBtRemindersArray] = useState(serialBTReminders);
@@ -60,8 +62,7 @@ function BluetoothScreen({navigation}) {
 
   const updateReminderList = async () => {
     const serialBTReminders = await storage.get("asyncSerialBTDevices");
-    (serialBTReminders && serialBTReminders.length === 1) && serialBTReminders.push({id:'', name:'', junk: true});
-    setBtRemindersArray(serialBTReminders ? serialBTReminders : [{ name: "Tap on a paired or unpaired device to set\na reminder", id: "123456789" , junk: true},{id:'', name:'', junk: true }]);
+    setBtRemindersArray(serialBTReminders && serialBTReminders);
   }
 
   const getPaired = async () => {
@@ -71,7 +72,7 @@ function BluetoothScreen({navigation}) {
   } 
 
   const updateDevices = async () => {
-    setBtDevicesArray([{ name: "        Searching... ", id: "123456789" , junk: true}]);
+    setBtDevicesArray([{ name: "Searching... ", id: "123456789" , junk: true}]);
 
     getPaired();
 
@@ -101,9 +102,16 @@ function BluetoothScreen({navigation}) {
     setIsFetching(false);
   };
 
+  const handleDeleteReminder = async (item) => {
+    var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
+    taskAsyncBTDevices = taskAsyncBTDevices.filter((reminder) => reminder.id !== item.id);
+    taskAsyncBTDevices.length === 0 ? await storage.store("asyncSerialBTDevices", '') : await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
+    updateReminderList();
+  }
+
   const Item = ({ title, id }) => (
     <View style={styles.item}>
-      <TouchableOpacity
+      <TouchableOpacity 
         onPress={() => addBtReminderDetail(id, title)}
       >
         <AppText style={styles.device}>
@@ -133,15 +141,28 @@ function BluetoothScreen({navigation}) {
   );
 
   const renderReminderItem = ({ item }) => (
-    <ReminderItem
-      title={item.name ? item.name : item.id}
-      id={item.id}
-    />
+    <Swipeable renderRightActions={() => <RenderRightActions item={item} />} style={styles.swipe}>
+      <ReminderItem 
+        
+        style={styles.item}
+        title={item.name ? item.name : item.id}
+        id={item.id}
+      />
+    </Swipeable>
   );
 
-  const seperator = () => (
-    <AppText style={styles.seperator} >_____________________________________</AppText>
+  const RenderRightActions = ({item}) => (
+      <View style={styles.deleteSwipe}>
+          <AppText style={styles.deleteSwipeText}>Delete</AppText>
+          <TouchableWithoutFeedback onPress={()=> handleDeleteReminder(item)}>
+            <Octicons name="trashcan" size={24} color = { colors.secondary } />
+          </TouchableWithoutFeedback>
+      </View>
   );
+
+  const remindersEmptyList = () => (
+    <AppText style={styles.device} >Tap on a paired or unpaired device to set a reminder</AppText>
+  )
 
   return (
     <>
@@ -155,20 +176,21 @@ function BluetoothScreen({navigation}) {
         btRemindersArray={btRemindersArray}
       />
       ) : (
-      <>  
+      <View > 
+
         <View style={styles.btRemindersContainer}>
           <View style={styles.devicesHeader}>
             <MaterialCommunityIcons name="reminder" size={18} color={colors.primaryLight} />
             <AppText style={styles.devicesHeaderText} >REMINDERS</AppText>
           </View>
-          <FlatList
-            contentContainerStyle={styles.listItems}
-            data={btRemindersArray}
-            ItemSeparatorComponent={seperator}
-            keyExtractor={(item) => item.id}
-            persistentScrollbar = {true}
-            renderItem={renderReminderItem}
-            />
+            <FlatList
+              ListEmptyComponent = {remindersEmptyList}
+              contentContainerStyle={styles.listItems}
+              data={btRemindersArray}
+              keyExtractor={(item) => item.id}
+              persistentScrollbar = {true}
+              renderItem={renderReminderItem}
+              />
         </View>
         
         <View style={styles.pairedContainer}>
@@ -179,7 +201,6 @@ function BluetoothScreen({navigation}) {
           <FlatList
             contentContainerStyle={styles.listItems}
             data={btPairedDevicesArray}
-            ItemSeparatorComponent={seperator}
             keyExtractor={(item) => item.id}
             persistentScrollbar = {true}
             renderItem={renderItem}
@@ -194,27 +215,25 @@ function BluetoothScreen({navigation}) {
           <FlatList
             contentContainerStyle={styles.listItems}
             data={btDevicesArray}
-            ItemSeparatorComponent={seperator}
             keyExtractor={(item) => item.id}
             onRefresh = {() => onRefresh()}
             persistentScrollbar = {true}
             refreshing = {isFetching}
             renderItem={renderItem}
             />
-          <View style={styles.switchContainer}>
-            <AppText style={styles.switchText}>Start Bluetooth on Scan</AppText>
-            <Switch
-                style={styles.switch}
-                trackColor={{ false: "#767577", true: "#81b0ff" }}
-                thumbColor={startBluetooth ? colors.primary : "#f4f3f4"}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={toggleStartBluetooth}
-                value={startBluetooth}
-            />
-          </View>
         </View>
-        
-      </>
+        <View style={styles.switchContainer}>
+          <AppText style={styles.switchText}>Start Bluetooth on Scan</AppText>
+          <Switch
+              style={styles.switch}
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={startBluetooth ? colors.primary : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleStartBluetooth}
+              value={startBluetooth}
+          />
+        </View>
+      </View>  
       )}
     </>
   );
@@ -222,24 +241,35 @@ function BluetoothScreen({navigation}) {
 
 const styles = StyleSheet.create({
   btRemindersContainer: {
-    width: "100%",
-    height: "25%",
+    height: "29%",
     color: colors.primary,
+    borderBottomWidth: 1,
+    marginHorizontal: 20,
+  },
+  deleteSwipe: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'flex-end',
     alignItems: 'center',
-    marginTop: 10,
+    backgroundColor: colors.primaryLight,
+    paddingRight: 30,
+  },
+  deleteSwipeText :{
+    paddingRight: 5,
+    color: colors.secondary
   },
   device: {
     fontSize: 15,
     width: '100%',
     alignItems: 'center',
     color: colors.secondary,
+    paddingVertical: 15,
   },
   devicesHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     width: "100%",
     marginBottom: 10,
-    marginLeft: 30,
     marginTop: 20,
     color: colors.primaryLight,
   },
@@ -248,31 +278,27 @@ const styles = StyleSheet.create({
     color: colors.primaryLight,
     marginLeft: 5,
   },
+  item: {
+    
+  },
   listItems: {
-    alignItems: 'flex-start',
     marginRight: 20,
     width: '100%',
   },
   pairedContainer: {
-    width: "100%",
-    height: "25%",
-    alignItems: 'center',
-    marginTop: 10,
+    height: "29%",
+    marginHorizontal: 20,
+    borderBottomWidth: 1,
   },
-  seperator: { 
-    borderTopWidth: 1,
-    borderTopColor: colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 5,
-    color: colors.light,
+  swipe: {
+  
   },
   switchContainer: {
     alignItems: "center",
     justifyContent: "flex-start",
     flexDirection: "row",
     marginLeft: 20,
-    marginBottom: 20,
+    marginVertical: 10,
     width: '100%',
   },
   switch: {
@@ -285,11 +311,10 @@ const styles = StyleSheet.create({
       fontSize: 15,
   },
   unPairedContainer: {
-    width: "100%",
-    height: "35%",
+    height: "29%",
     color: colors.primary,
-    alignItems: 'center',
-    marginTop: 10,
+    marginHorizontal: 20,
+    borderBottomWidth: 1,
   },
 });
 
