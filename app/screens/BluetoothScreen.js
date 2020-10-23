@@ -9,7 +9,6 @@ import storage from "../utility/storage";
 import AppHeader from '../components/AppHeader';
 import AddBtReminderDetailScreen from './AddBtReminderDetailScreen';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 var serialBTReminders = [];
 var unfilteredUnpairedDevices = [];
@@ -30,10 +29,10 @@ function BluetoothScreen({navigation}) {
   
   const [startBluetooth, setStartBluetooth] = useState();
 
-  const toggleStartBluetooth = async () => {
+  const toggleStartBluetooth = () => {
       !startBluetooth && Alert.alert('nexTime','Allows the app to automatically enable bluetooth while scanning. Bluetooth is disabled again when finished to save power.')
-      setStartBluetooth(startBluetooth ? false : true);
-      await storage.store('startBluetooth', {startBluetooth: !startBluetooth});
+      setStartBluetooth(startBluetooth ? false : true);// is this line useless?
+      storage.store('startBluetooth', {startBluetooth: !startBluetooth});
   }
 
   const [btDevicesArray, setBtDevicesArray] = useState(
@@ -102,11 +101,28 @@ function BluetoothScreen({navigation}) {
     setIsFetching(false);
   };
 
+
   const handleDeleteReminder = async (item) => {
-    var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
-    taskAsyncBTDevices = taskAsyncBTDevices.filter((reminder) => reminder.id !== item.id);
-    taskAsyncBTDevices.length === 0 ? await storage.store("asyncSerialBTDevices", '') : await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
-    updateReminderList();
+    Alert.alert(
+      "Delete Reminder",
+      `Are you sure you want to delete ${item.name ? item.name : item.id} reminder?`,
+      [
+        {
+          text: "No",
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: async () => {
+            var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
+            taskAsyncBTDevices = taskAsyncBTDevices.filter((reminder) => reminder.id !== item.id);
+            taskAsyncBTDevices.length === 0 ? await storage.store("asyncSerialBTDevices", '') : await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
+            updateReminderList();
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   }
 
   const Item = ({ title, id }) => (
@@ -153,10 +169,10 @@ function BluetoothScreen({navigation}) {
 
   const RenderRightActions = ({item}) => (
       <View style={styles.deleteSwipe}>
-          <AppText style={styles.deleteSwipeText}>Delete</AppText>
-          <TouchableWithoutFeedback onPress={()=> handleDeleteReminder(item)}>
+          <TouchableOpacity style={styles.deleteButtonContainer} onPress={()=> handleDeleteReminder(item)}>
+            <AppText style={styles.deleteSwipeText}>Delete</AppText>
             <Octicons name="trashcan" size={24} color = { colors.secondary } />
-          </TouchableWithoutFeedback>
+          </TouchableOpacity>
       </View>
   );
 
@@ -246,11 +262,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     marginHorizontal: 20,
   },
-  deleteSwipe: {
+  deleteButtonContainer: {
     flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'flex-end',
     alignItems: 'center',
+    height: '100%',
+  },
+  deleteSwipe: {
+    alignItems: 'flex-end',
+    width: '100%',
     backgroundColor: colors.primaryLight,
     paddingRight: 30,
   },
@@ -302,13 +321,13 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   switch: {
-      position: "relative",
-      top: 2,
+    position: "relative",
+    top: 2,
   },
   switchText: {
-      marginRight: 10,
-      color: colors.primary,
-      fontSize: 15,
+    marginRight: 10,
+    color: colors.primary,
+    fontSize: 15,
   },
   unPairedContainer: {
     height: "29%",
