@@ -10,9 +10,11 @@ import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import nexTheme from "./app/config/drawerTheme";
 import storage from './app/utility/storage';
 
+
+
 TaskManager.defineTask('checkLocation', async ({ data: { locations }, error }) => {
   console.log('Check Location running !!!');
-  
+
   var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
   if(taskAsyncBTDevices && taskAsyncBTDevices[0].id){
     appTasks.startCheckBluetoothAsync( taskAsyncBTDevices );
@@ -20,6 +22,7 @@ TaskManager.defineTask('checkLocation', async ({ data: { locations }, error }) =
 
   if (error){
     console.log(error);
+    return;
   }
 });
 

@@ -12,28 +12,35 @@ import AddBtReminderDetailScreen from './AddBtReminderDetailScreen';
 var serialBTReminders = [];
 var unfilteredUnpairedDevices = [];
 var pairedDevices = [];
-var startBtInitialState = false;
 
 function BluetoothScreen({navigation}) {
-  const [btDevicesArray, setBtDevicesArray] = useState(
-    [{ name: "Pull down to refresh device list", id: "123456789" , junk: true }, {id:'', name:'', junk: true}]
-  );
-  const [btPairedDevicesArray, setBtPairedDevicesArray] = useState(pairedDevices);
 
-  const [btRemindersArray, setBtRemindersArray] = useState(serialBTReminders);
+  useEffect(() => {
+    getStartBluetoothOption();
+    getPaired();
+    updateReminderList();
+  },[]);
 
-  const [isFetching, setIsFetching] = useState(false);
-
-  const getBtStartState = async () => {startBtInitialState = await storage.get('startBluetooth');}
-  const [startBluetooth, setStartBluetooth] = useState(startBtInitialState ? startBtInitialState : false);
+  const getStartBluetoothOption = async () => {
+    const option = await storage.get('startBluetooth');
+    setStartBluetooth(option.startBluetooth);
+  }
+  
+  const [startBluetooth, setStartBluetooth] = useState();
 
   const toggleStartBluetooth = async () => {
       !startBluetooth && Alert.alert('nexTime','Allows the app to automatically enable bluetooth while scanning. Bluetooth is disabled again when finished to save power.')
       setStartBluetooth(startBluetooth ? false : true);
-  
       await storage.store('startBluetooth', {startBluetooth: !startBluetooth});
+  }
 
-    }
+  const [btDevicesArray, setBtDevicesArray] = useState(
+    [{ name: "Pull down to refresh device list", id: "123456789" , junk: true }, {id:'', name:'', junk: true}]
+  );
+  const [btPairedDevicesArray, setBtPairedDevicesArray] = useState(pairedDevices);
+  const [btRemindersArray, setBtRemindersArray] = useState(serialBTReminders);
+
+  const [isFetching, setIsFetching] = useState(false);
 
   const [visible, setVisible] = useState(false);
   const [pickedId, setPickedId] = useState();
@@ -49,7 +56,6 @@ function BluetoothScreen({navigation}) {
   const onRefresh = () => {
     setIsFetching(true);
     updateDevices();
-    getBtStartState();
   }
 
   const updateReminderList = async () => {
@@ -63,13 +69,6 @@ function BluetoothScreen({navigation}) {
     setBtPairedDevicesArray(pairedDevices);
     updateReminderList();
   } 
-
-  
-  useEffect(() => {
-    getPaired();
-    updateReminderList();
-  },[]);
-
 
   const updateDevices = async () => {
     setBtDevicesArray([{ name: "        Searching... ", id: "123456789" , junk: true}]);
@@ -171,17 +170,7 @@ function BluetoothScreen({navigation}) {
             renderItem={renderReminderItem}
             />
         </View>
-        <View style={styles.switchContainer}>
-          <AppText style={styles.switchText}>Start Bluetooth on Scan</AppText>
-          <Switch
-              style={styles.switch}
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={startBluetooth ? colors.primary : "#f4f3f4"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={toggleStartBluetooth}
-              value={startBluetooth}
-          />
-        </View>
+        
         <View style={styles.pairedContainer}>
           <View style={styles.devicesHeader}>
             <MaterialCommunityIcons name="lan-connect" size={18} color={colors.primaryLight} />
@@ -212,7 +201,19 @@ function BluetoothScreen({navigation}) {
             refreshing = {isFetching}
             renderItem={renderItem}
             />
+          <View style={styles.switchContainer}>
+            <AppText style={styles.switchText}>Start Bluetooth on Scan</AppText>
+            <Switch
+                style={styles.switch}
+                trackColor={{ false: "#767577", true: "#81b0ff" }}
+                thumbColor={startBluetooth ? colors.primary : "#f4f3f4"}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={toggleStartBluetooth}
+                value={startBluetooth}
+            />
+          </View>
         </View>
+        
       </>
       )}
     </>
@@ -271,6 +272,8 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     flexDirection: "row",
     marginLeft: 20,
+    marginBottom: 20,
+    width: '100%',
   },
   switch: {
       position: "relative",

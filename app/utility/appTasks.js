@@ -10,7 +10,7 @@ var warned = false;
 const checkLocationTask = () => {
   Location.startLocationUpdatesAsync('checkLocation', { 
     accuracy: Location.Accuracy.BestForNavigation,
-    timeInterval: 60000,
+    timeInterval: 5000,
     distanceInterval: 1,
     foregroundService: {
         notificationTitle: 'nexTime',
@@ -73,7 +73,7 @@ const startCheckLocation = async (marker) => {
 
 
 const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) => {
-  console.log('BT Task running!!!');
+  console.log('btTask running!!!!');
 
   const wasEnabled = await BluetoothSerial.isEnabled();
   var startBluetooth = await storage.get('startBluetooth');

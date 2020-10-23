@@ -1,7 +1,7 @@
 import { AntDesign } from "@expo/vector-icons";
 import React, { useEffect, useState } from 'react';
 import { Alert, KeyboardAvoidingView, StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
-import * as TaskManager from "expo-task-manager";
+import * as Location from 'expo-location';
 
 import appTasks from '../utility/appTasks';
 import AppText from '../components/AppText';
@@ -15,7 +15,6 @@ function AddBtReminderDetailScreen({addBtReminderDetailVisibility, pickedId, pic
     
     var index = btRemindersArray.findIndex((BTDevice) => pickedId === BTDevice.id);
     const reminder = btRemindersArray[index];
-    console.log(index);
 
     const [repeatReminder, setRepeatReminder] = useState(
         reminder == undefined ? false : reminder.repeat
@@ -52,13 +51,12 @@ function AddBtReminderDetailScreen({addBtReminderDetailVisibility, pickedId, pic
                                 delete: deleteOnTrig,
                                 junk: false,
                             });
-        console.log(btRemindersArray.length);
         await storage.store("asyncSerialBTDevices", btRemindersArray);
         updateReminderList();
         Alert.alert('nexTime', `Reminder ${title} set`);
         addBtReminderDetailVisibility();
-        await TaskManager.unregisterAllTasksAsync();
-            appTasks.checkLocationTask();
+        const running = await Location.hasStartedLocationUpdatesAsync('checkLocation');
+        !running && appTasks.checkLocationTask();
     };
 
     return (
