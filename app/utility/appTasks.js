@@ -70,8 +70,6 @@ const startCheckLocation = async (marker) => {
   }
 };
 
-
-
 const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) => {
   console.log('btTask running!!!!');
 

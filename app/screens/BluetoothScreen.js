@@ -182,7 +182,7 @@ function BluetoothScreen({navigation}) {
 
   return (
     <>
-      <AppHeader navigation={navigation} />
+      <AppHeader style={{height: '11.5%'}} navigation={navigation} />
       {visible ? (
       <AddBtReminderDetailScreen 
         addBtReminderDetailVisibility={addBtReminderDetail}

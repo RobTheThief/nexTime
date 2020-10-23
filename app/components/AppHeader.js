@@ -4,14 +4,14 @@ import colors from "../config/colors";
 import { AntDesign } from "@expo/vector-icons";
 
 
-function AppHeader({ navigation }) {
+function AppHeader({ navigation, style }) {
     return (
-        <View style={styles.headContainer}>
+        <View style={[styles.headContainer, style]}>
         <TouchableOpacity
           onPress={() => navigation.openDrawer()}
           style={styles.drawerButton}
         >
-          <AntDesign name="rightcircleo" color={colors.light} size={25} />
+          <AntDesign name="menuunfold" color={colors.light} size={30} />
         </TouchableOpacity>
 
         <View style={styles.headTextContainer}>
@@ -25,15 +25,12 @@ const styles = StyleSheet.create({
     drawerButton: {
         alignItems: "center",
         justifyContent: "center",
-        flex: 1,
-        position: "relative",
-        top: -20,
-        right: 70,
+        marginLeft: 20,
       },
       headContainer: {
         height: "10%",
         flexDirection: "row",
-        alignItems: "flex-end",
+        alignItems: "center",
         justifyContent: "center",
         backgroundColor: colors.primary,
         borderBottomColor: colors.black,
