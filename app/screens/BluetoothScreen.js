@@ -10,27 +10,19 @@ import AppHeader from '../components/AppHeader';
 import AddBtReminderDetailScreen from './AddBtReminderDetailScreen';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
-var serialBTReminders = [];
-var unfilteredUnpairedDevices = [];
-var pairedDevices = [];
-
 function BluetoothScreen({navigation}) {
 
   useEffect(() => {
-    getStartBluetoothOption();
     getPaired();
     updateReminderList();
   },[]);
-
-  const getStartBluetoothOption = async () => {
-    const option = await storage.get('startBluetooth');
-    option && setStartBluetooth(option.startBluetooth);
-  }
   
-  const [startBluetooth, setStartBluetooth] = useState();
+  var option = storage.getbtStartOption();
+  const [startBluetooth, setStartBluetooth] = useState(option.startBluetooth);
 
   const toggleStartBluetooth = () => {
-      !startBluetooth && Alert.alert('nexTime','Allows the app to automatically enable bluetooth while scanning. Bluetooth is disabled again when finished to save power.')
+      !startBluetooth && Alert.alert('nexTime',
+      'Allows the app to automatically enable bluetooth while scanning. Bluetooth is disabled again when finished to save power.')
       setStartBluetooth(startBluetooth ? false : true);// is this line useless?
       storage.store('startBluetooth', {startBluetooth: !startBluetooth});
   }
@@ -38,14 +30,15 @@ function BluetoothScreen({navigation}) {
   const [btDevicesArray, setBtDevicesArray] = useState(
     [{ name: "Pull down to refresh device list", id: "123456789" , junk: true }]
   );
-  const [btPairedDevicesArray, setBtPairedDevicesArray] = useState(pairedDevices);
-  const [btRemindersArray, setBtRemindersArray] = useState(serialBTReminders);
+  const [btPairedDevicesArray, setBtPairedDevicesArray] = useState([]);
+  const [btRemindersArray, setBtRemindersArray] = useState([]);
 
   const [isFetching, setIsFetching] = useState(false);
 
   const [visible, setVisible] = useState(false);
   const [pickedId, setPickedId] = useState();
   const [pickedTitle, setPickedTitle] = useState();
+  
   const addBtReminderDetail = (id, title) => {
     if (id !== '123456789' && id !== '') {
       id && setPickedId(id);
@@ -65,7 +58,7 @@ function BluetoothScreen({navigation}) {
   }
 
   const getPaired = async () => {
-    pairedDevices = await BluetoothSerial.list();
+    const pairedDevices = await BluetoothSerial.list();
     setBtPairedDevicesArray(pairedDevices);
     updateReminderList();
   } 
@@ -75,7 +68,7 @@ function BluetoothScreen({navigation}) {
 
     getPaired();
 
-    unfilteredUnpairedDevices = await BluetoothSerial.discoverUnpairedDevices();
+    var unfilteredUnpairedDevices = await BluetoothSerial.discoverUnpairedDevices();
 
     var bTDeviceIDs = [];
     var unpairedDevices = [];
@@ -116,7 +109,9 @@ function BluetoothScreen({navigation}) {
           onPress: async () => {
             var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
             taskAsyncBTDevices = taskAsyncBTDevices.filter((reminder) => reminder.id !== item.id);
-            taskAsyncBTDevices.length === 0 ? await storage.store("asyncSerialBTDevices", '') : await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
+            taskAsyncBTDevices.length === 0 ?
+            await storage.store("asyncSerialBTDevices", '') :
+            await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
             updateReminderList();
           },
         },

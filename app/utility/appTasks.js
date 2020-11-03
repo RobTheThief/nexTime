@@ -77,7 +77,7 @@ const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) =>
   
   let enable = false;
   if (wasEnabled === false && startBluetooth == true) {enable = await BluetoothSerial.enable();}
-  let timer = Date.now() + 2000;
+  let timer = Date.now() + 1500;
   if (enable === true || wasEnabled === true){
     while (Date.now() < timer){
       let life = 'go by..'; 

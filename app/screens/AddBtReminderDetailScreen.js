@@ -8,12 +8,29 @@ import AppTextInput from '../components/AppTextInput';
 import colors from '../config/colors';
 import storage from '../utility/storage';
 
-function AddBtReminderDetailScreen({addBtReminderDetailVisibility, pickedId, pickedTitle, updateReminderList, btRemindersArray}) {
+function AddBtReminderDetailScreen({
+    addBtReminderDetailVisibility,
+    pickedId,
+    pickedTitle,
+    updateReminderList,
+    btRemindersArray}) {
 
-    const [notes, setNotes] = useState();
+    const setNotesInputValue = () => 
+        (reminder !== undefined && reminder !== null && reminder !== '') && reminder.notes
+        ? reminder.notes
+        : undefined;
+
+    const [notes, setNotes] = useState(setNotesInputValue());
     
-    var index = btRemindersArray && btRemindersArray.findIndex((BTDevice) => pickedId === BTDevice.id);
-    const reminder = index && btRemindersArray[index];
+    var index;
+    if(btRemindersArray !== null){
+        index = btRemindersArray.findIndex((BTDevice) => pickedId === BTDevice.id);
+    } 
+    var reminder;
+    if (index !== -1 && index !== null) {
+        reminder = btRemindersArray[index];
+    }
+
 
     const [repeatReminder, setRepeatReminder] = useState(
         reminder == undefined ? false : reminder.repeat
@@ -27,12 +44,7 @@ function AddBtReminderDetailScreen({addBtReminderDetailVisibility, pickedId, pic
         reminder == undefined ? false : reminder.delete
       );
       const toggleDelete = () => setDeleteOnTrig((previousState) => !previousState);  
-
-    const setNotesInputValue = () => 
-    (reminder !== undefined && reminder !== null && reminder !== '') && reminder.notes
-        ? reminder.notes
-        : undefined;
-
+    
     useEffect(() => {     
         setNotes(setNotesInputValue);
     }, []);  
@@ -135,6 +147,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         marginLeft: 5,
+        fontSize: 15,
     },
     inputBox: {
         width: "100%",

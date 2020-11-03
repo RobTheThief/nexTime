@@ -121,6 +121,7 @@ function AddMarkerDetailsScreen({
     setMarkers(markers.map((marker) => marker));
     storage.store("asyncMarkers", markers);
     addMarkerDetailVisibility();
+    appTasks.areTasksRunning();
   };
 
   const handleDeleteMarker = () => {
@@ -134,17 +135,16 @@ function AddMarkerDetailsScreen({
         },
         {
           text: "Yes",
-          onPress: () => {
-            !markers[id - 1].taskDeleted &&
-              Location.stopGeofencingAsync(markers[id - 1].markerTaskName);
+          onPress: async () => {
             markers.splice(id - 1, 1);
             for (let i = 0; i < markers.length; i++) {
               markers[i].id = i + 1;
               markers[i].circleId = i + 1 + "c";
             }
-            storage.store("asyncMarkers", markers);
+            markers.length === 0 ? 
+            await storage.store("asyncMarkers", '') :
+            await storage.store("asyncMarkers", markers);
             addMarkerDetailVisibility();
-            appTasks.areTasksRunning();
           },
         },
       ],
@@ -249,7 +249,7 @@ function AddMarkerDetailsScreen({
             style={styles.button}
           >
             <AntDesign name="leftcircle" color={colors.primary} size={29} />
-            <AppText style={styles.iconText}>Go Back</AppText>
+            <AppText style={styles.buttonText}>Go Back</AppText>
           </TouchableOpacity>
           {markers[id - 1] !== undefined && (
             <TouchableOpacity
@@ -261,7 +261,7 @@ function AddMarkerDetailsScreen({
                 size={30}
                 color={colors.primary}
               />
-              <AppText style={styles.iconText}>Delete</AppText>
+              <AppText style={styles.buttonText}>Delete</AppText>
             </TouchableOpacity>
           )}
           <TouchableOpacity
@@ -273,7 +273,7 @@ function AddMarkerDetailsScreen({
               size={24}
               color={colors.primary}
             />
-            <AppText style={styles.iconText}>Submit</AppText>
+            <AppText style={styles.buttonText}>Submit</AppText>
           </TouchableOpacity>
         </View>
       </View>
@@ -298,8 +298,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  iconText: {
+  buttonText: {
     paddingLeft: 5,
+    fontSize: 15,
   },
   inputBox: {
     width: "100%",

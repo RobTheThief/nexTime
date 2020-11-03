@@ -10,8 +10,6 @@ import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import nexTheme from "./app/config/drawerTheme";
 import storage from './app/utility/storage';
 
-
-
 TaskManager.defineTask('checkLocation', async ({ data: { locations }, error }) => {
   console.log('Tasks running !!!');
 
@@ -40,14 +38,10 @@ export default function App() {
       );
   };
 
-  const formatStorage = async () => {
-    await storage.get("asyncMarkers") == null && await storage.store("asyncMarkers", '');
-    await storage.get("asyncSerialBTDevices") == null && await storage.store("asyncSerialBTDevices", '');
-    await storage.get("startBluetooth") == null && await storage.store("startBluetooth", {startBluetooth : false});
-  }
+  
 
   React.useEffect(() => {
-    formatStorage();
+    storage.formatStorage();
     requestPermission();
     askPermissionsNotifications();
   });
@@ -58,8 +52,6 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {

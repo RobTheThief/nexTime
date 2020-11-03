@@ -21,7 +21,8 @@ const DrawerNavigator = () => {
     <Drawer.Navigator
       drawerStyle={{ width: "50%" }}
       initialRouteName="Welcome Screen"
-      edgeWidth={70}
+      edgeWidth={40}
+      lazy={true}
     >
       <Drawer.Screen name="Locations" component={MapScreen} />
       <Drawer.Screen name='Connections' component={ConnectionsNavigator} />
@@ -34,7 +35,7 @@ const DrawerNavigator = () => {
 const Tab = createBottomTabNavigator();
 const ConnectionsNavigator = () => {
   return (
-    <Tab.Navigator tabStyle={{ fontSize: 12 }}>
+    <Tab.Navigator tabStyle={{ fontSize: 12 }} lazy={true} >
       <Tab.Screen listeners ={{
                     tabPress: () => {
                       btTabColor = colors.secondary;

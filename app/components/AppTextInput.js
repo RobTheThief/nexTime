@@ -16,8 +16,10 @@ function AppTextInput({
       {...otherProps}
       style={[styles.textInput, style]}
       placeholder={placeholder}
+      placeholderTextColor={colors.primaryLight}
       onChangeText={onChangeText}
       keyboardType={keyboardType}
+      selectionColor={colors.primaryLight}
     />
   );
 }
@@ -28,6 +30,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.primaryLight,
     marginBottom: 20,
     width: "100%",
+    color: colors.secondary,
   },
 });
 

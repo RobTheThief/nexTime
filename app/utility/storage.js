@@ -21,7 +21,25 @@ const get = async (key) => {
   }
 };
 
+var option = {};
+const loadBluetoothOption = async () => {
+ option = await get('startBluetooth');
+}
+
+const getbtStartOption = () => {
+  return option;
+};
+
+const formatStorage = async () => {
+  await get("startBluetooth") == null && await store("startBluetooth", {startBluetooth : false});
+  loadBluetoothOption();
+  await get("asyncMarkers") == null && await store("asyncMarkers", '');
+  await get("asyncSerialBTDevices") == null && await store("asyncSerialBTDevices", '');
+}
+
 export default {
   store,
   get,
+  getbtStartOption,
+  formatStorage,
 };

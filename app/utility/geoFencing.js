@@ -12,7 +12,6 @@ const getRelativeDistance = (locations, marker) => {
       distance,
       locations[0].coords.accuracy
     );
-    console.log("Adjusted:", adjustedDistance, "meters", 'Radius: ', marker.radius);
   return adjustedDistance;
 };
 
@@ -22,7 +21,7 @@ const distanceMtrs = (long1, lat1, long2, lat2) => {
   return Math.pow(d, 0.5) * 110.574 * 1000;
 };
 
-//adjusts for margin of error when location is only accurate to Xmeters
+//adjusts for margin of error when location is only accurate to X meters
 const distanceMinusAccuracy = (distance, accuracy) => {
   var difference = distance - accuracy;
   difference < 0 && (difference = 0);
