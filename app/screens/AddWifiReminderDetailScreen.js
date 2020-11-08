@@ -1,28 +1,18 @@
 import { AntDesign } from "@expo/vector-icons";
 import React, { useEffect, useState } from 'react';
 import { Alert, KeyboardAvoidingView, StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
+import AppText from "../components/AppText";
+import AppTextInput from "../components/AppTextInput";
+import colors from "../config/colors";
+import appTasks from "../utility/appTasks";
+import storage from "../utility/storage";
 
-import appTasks from '../utility/appTasks';
-import AppText from '../components/AppText';
-import AppTextInput from '../components/AppTextInput';
-import colors from '../config/colors';
-import storage from '../utility/storage';
-
-function AddBtReminderDetailScreen({
-    addBtReminderDetailVisibility,
-    pickedId,
+function AddWifiReminderDetailScreen({
+    addWifiReminderDetailVisibility,
     pickedTitle,
+    pickedId,
     updateReminderList,
-    btRemindersArray}) {
-
-    var index = -1;
-    if(btRemindersArray !== null){
-        index = btRemindersArray.findIndex((BTDevice) => pickedId === BTDevice.id);
-    } 
-    var reminder = undefined;
-    if (index !== -1 && index !== null) {
-        reminder = btRemindersArray[index];
-    }
+    wifiRemindersArray}) {
 
     const setNotesInputValue = () => 
         (reminder !== undefined && reminder !== null && reminder !== '') && reminder.notes
@@ -31,31 +21,36 @@ function AddBtReminderDetailScreen({
 
     const [notes, setNotes] = useState(setNotesInputValue());
 
+    var index = -1;
+    if(wifiRemindersArray !== null){
+        index = wifiRemindersArray.findIndex((network) => pickedId === network.id);
+    } 
+    var reminder = undefined;
+    if (index !== -1 && index !== null) {
+        reminder = wifiRemindersArray[index];
+    }
+
     const [repeatReminder, setRepeatReminder] = useState(
         reminder == undefined ? false : reminder.repeat
       );
-      const toggleRepeat = () => {
+    const toggleRepeat = () => {
         setRepeatReminder((previousState) => !previousState);
         if (deleteOnTrig === true) toggleDelete();
-      };
-    
-      const [deleteOnTrig, setDeleteOnTrig] = useState(
-        reminder == undefined ? false : reminder.delete
-      );
-      const toggleDelete = () => setDeleteOnTrig((previousState) => !previousState);  
-    
-    useEffect(() => {     
-        setNotes(setNotesInputValue);
-    }, []);  
+    };
 
-    const remindBT = async (id, title) => {
-        if (btRemindersArray){
-            index = btRemindersArray.findIndex((BTDevice) => pickedId === BTDevice.id);
+    const [deleteOnTrig, setDeleteOnTrig] = useState(
+        reminder == undefined ? false : reminder.delete
+    );
+    const toggleDelete = () => setDeleteOnTrig((previousState) => !previousState);
+
+    const remindWifi = async (id, title) => {
+        if (wifiRemindersArray){
+            index = wifiRemindersArray.findIndex((network) => pickedId === network.id);
         } else !index && (index = -1);
 
-        index > -1 && btRemindersArray.splice(index, 1);
-        !btRemindersArray && (btRemindersArray = []);
-        btRemindersArray.push({ 
+        index > -1 && wifiRemindersArray.splice(index, 1);
+        !wifiRemindersArray && (wifiRemindersArray = []);
+        wifiRemindersArray.push({ 
                                 id: id,
                                 name: title,
                                 notes: notes,
@@ -64,12 +59,16 @@ function AddBtReminderDetailScreen({
                                 delete: deleteOnTrig,
                                 junk: false,
                             });
-        await storage.store("asyncSerialBTDevices", btRemindersArray);
+        await storage.store("asyncWifiReminders", wifiRemindersArray);
         updateReminderList();
         Alert.alert('nexTime', `Reminder ${title} set`);
-        addBtReminderDetailVisibility();
+        addWifiReminderDetailVisibility();
         appTasks.areTasksRunning();
     };
+
+    useEffect(() => {     
+        setNotes(setNotesInputValue);
+    }, []); 
 
     return (
         <KeyboardAvoidingView
@@ -115,20 +114,19 @@ function AddBtReminderDetailScreen({
                             disabled={repeatReminder}
                         />
                     </View>
-                    
                 </View>
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.buttons} onPress={() => addBtReminderDetailVisibility() }>
-                        <AntDesign name="leftcircle" color={colors.primary} size={29} />
-                        <AppText style={styles.buttonText}>Go Back</AppText>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttons} onPress={() => remindBT(pickedId, pickedTitle) }>
-                        <AntDesign name="enter" color={colors.primary} size={29} />
-                        <AppText style={styles.buttonText} >Set Reminder</AppText>
-                    </TouchableOpacity>
-                </View>
+                        <TouchableOpacity style={styles.buttons} onPress={() => addWifiReminderDetailVisibility() }>
+                            <AntDesign name="leftcircle" color={colors.primary} size={29} />
+                            <AppText style={styles.buttonText}>Go Back</AppText>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttons} onPress={() => remindWifi(pickedId, pickedTitle) }>
+                            <AntDesign name="enter" color={colors.primary} size={29} />
+                            <AppText style={styles.buttonText} >Set Reminder</AppText>
+                        </TouchableOpacity>
+                    </View>
             </View>
-    </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
     );
 }
 
@@ -155,12 +153,6 @@ const styles = StyleSheet.create({
         justifyContent: "flex-start",
         backgroundColor: colors.light,
         padding: 15,
-    },
-    inputText: {
-        width: "90%",
-        height: "10%",
-        alignItems: "center",
-        marginVertical: 15,
     },
     notes: {
         borderColor: colors.primaryLight,
@@ -211,4 +203,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default AddBtReminderDetailScreen;
+export default AddWifiReminderDetailScreen;

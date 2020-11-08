@@ -1,18 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Octicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 import WifiManager from "react-native-wifi-reborn";
 
 import AppHeader from "../components/AppHeader";
 import AppText from "../components/AppText";
 import colors from "../config/colors";
+import AddWifiReminderDetailScreen from "./AddWifiReminderDetailScreen";
+import Swipeable from "react-native-gesture-handler/Swipeable";
+import storage from "../utility/storage";
 
 function WifiScreen({navigation}) {
+  useEffect(() => {
+    updateReminderList();
+  },[]);
+
   const [wifiDevicesArray, setWifiDevicesArray] = useState(
     [{ SSID: "Pull down to refresh network list", BSSID: "123456789" , junk: true }]
   );
 
+  const [wifiRemindersArray, setWifiRemindersArray] = useState([]);
+  const updateReminderList = async () => {
+    const wifiReminders = await storage.get("asyncWifiReminders");
+    setWifiRemindersArray(wifiReminders && wifiReminders);
+  }
   const [isFetching, setIsFetching] = useState(false);
+
+  const [visible, setVisible] = useState(false);
+  const [pickedId, setPickedId] = useState();
+  const [pickedTitle, setPickedTitle] = useState();
 
   const onRefresh = () => {
     setIsFetching(true);
@@ -49,6 +65,39 @@ function WifiScreen({navigation}) {
     setIsFetching(false);
   };
 
+  const addWifiReminderDetail = (id, title) => {
+    if (id !== '123456789' && id !== '') {
+      id && setPickedId(id);
+      title && setPickedTitle(title);
+      visible ? setVisible(false) : setVisible(true);
+    }
+  }
+
+  const handleDeleteReminder = async (item) => {
+    Alert.alert(
+      "Delete Reminder",
+      `Are you sure you want to delete ${item.SSID} reminder?`,
+      [
+        {
+          text: "No",
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: async () => {
+            var taskAsyncWifiReminders = await storage.get("asyncWifiReminders");
+            taskAsyncWifiReminders = taskAsyncWifiReminders.filter((reminder) => reminder.id !== item.id);
+            taskAsyncWifiReminders.length === 0 ?
+            await storage.store("asyncWifiReminders", '') :
+            await storage.store("asyncWifiReminders", taskAsyncWifiReminders);
+            updateReminderList();
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  }
+
   const Item = ({ title, id }) => (
     <View>
       <TouchableOpacity 
@@ -68,6 +117,27 @@ function WifiScreen({navigation}) {
     />
   );
 
+  const ReminderItem = ({ title, id }) => (
+    <View>
+      <TouchableOpacity
+        onPress={() => addWifiReminderDetail(id, title)}
+      >
+        <AppText style={styles.network}>
+          {title}
+        </AppText>
+      </TouchableOpacity>
+    </View>
+  );  
+
+  const renderReminderItem = ({ item }) => (
+    <Swipeable renderRightActions={() => <RenderRightActions item={item} />} style={styles.swipe}>
+      <ReminderItem 
+        title={item.name}
+        id={item.id}
+      />
+    </Swipeable>
+  );
+
   const RenderRightActions = ({item}) => (
     <View style={styles.deleteSwipe}>
         <TouchableOpacity style={styles.deleteButtonContainer} onPress={()=> handleDeleteReminder(item)}>
@@ -77,10 +147,36 @@ function WifiScreen({navigation}) {
     </View>
 );
 
+const remindersEmptyList = () => (
+  <AppText style={styles.network} >Tap on an available network below to set a reminder</AppText>
+)
+
   return (
     <>
       <AppHeader style={{height: '11.5%'}} navigation={ navigation } />
+      {visible ? (
+        <AddWifiReminderDetailScreen
+        addWifiReminderDetailVisibility={addWifiReminderDetail}
+        pickedTitle={pickedTitle}
+        pickedId={pickedId}
+        updateReminderList={updateReminderList}
+        wifiRemindersArray={wifiRemindersArray}
+      />) : (
       <View>
+        <View style={styles.networkRemindersContainer}>
+          <View style={styles.networksHeader}>
+            <MaterialCommunityIcons name="reminder" size={18} color={colors.primaryLight} />
+            <AppText style={styles.networksHeaderText} >WIFI REMINDERS</AppText>
+          </View>
+          <FlatList
+            ListEmptyComponent = {remindersEmptyList}
+            contentContainerStyle={styles.listItems}
+            data={wifiRemindersArray}
+            keyExtractor={(item) => item.id}
+            persistentScrollbar = {true}
+            renderItem={renderReminderItem}
+            />
+        </View>
         <View style={styles.availableNetworksContainer}>
           <View style={styles.networksHeader}>
             <MaterialCommunityIcons name="devices" size={18} color={colors.primaryLight} />
@@ -97,6 +193,7 @@ function WifiScreen({navigation}) {
             />
         </View>
       </View>
+      )}
     </>
   );
 }
@@ -146,6 +243,12 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: colors.primaryLight,
     marginLeft: 5,
+  },
+  networkRemindersContainer: {
+    height: "49%",
+    color: colors.primary,
+    marginHorizontal: 20,
+    borderBottomWidth: 1,
   },
 });
 

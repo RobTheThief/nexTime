@@ -35,6 +35,7 @@ const formatStorage = async () => {
   loadBluetoothOption();
   await get("asyncMarkers") == null && await store("asyncMarkers", '');
   await get("asyncSerialBTDevices") == null && await store("asyncSerialBTDevices", '');
+  await get("asyncWifiReminders") == null && await store("asyncWifiReminders", '');
 }
 
 export default {

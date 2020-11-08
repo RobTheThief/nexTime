@@ -133,7 +133,7 @@ function BluetoothScreen({navigation}) {
   );
 
   const ReminderItem = ({ title, id }) => (
-    <View style={styles.item}>
+    <View>
       <TouchableOpacity
         onPress={() => addBtReminderDetail(id, title)}
       >
@@ -154,7 +154,6 @@ function BluetoothScreen({navigation}) {
   const renderReminderItem = ({ item }) => (
     <Swipeable renderRightActions={() => <RenderRightActions item={item} />} style={styles.swipe}>
       <ReminderItem 
-        style={styles.item}
         title={item.name ? item.name : item.id}
         id={item.id}
       />
