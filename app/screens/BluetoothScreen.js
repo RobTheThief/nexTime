@@ -154,7 +154,6 @@ function BluetoothScreen({navigation}) {
   const renderReminderItem = ({ item }) => (
     <Swipeable renderRightActions={() => <RenderRightActions item={item} />} style={styles.swipe}>
       <ReminderItem 
-        
         style={styles.item}
         title={item.name ? item.name : item.id}
         id={item.id}
@@ -292,9 +291,6 @@ const styles = StyleSheet.create({
     color: colors.primaryLight,
     marginLeft: 5,
   },
-  item: {
-    
-  },
   listItems: {
     marginRight: 20,
     width: '100%',
@@ -303,9 +299,6 @@ const styles = StyleSheet.create({
     height: "29%",
     marginHorizontal: 20,
     borderBottomWidth: 1,
-  },
-  swipe: {
-  
   },
   switchContainer: {
     alignItems: "center",
