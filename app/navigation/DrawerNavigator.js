@@ -11,9 +11,6 @@ import WelcomeScreen from "../screens/WelcomeScreen";
 import WifiScreen from "../screens/WifiScreen";
 import colors from "../config/colors";
 
-var btTabColor = colors.secondary;
-var wifiTabColor = colors.primaryLight;
-
 const Drawer = createDrawerNavigator();
 const DrawerNavigator = () => {
   
@@ -38,18 +35,18 @@ const ConnectionsNavigator = () => {
     <Tab.Navigator tabStyle={{ fontSize: 12 }} lazy={true} >
       <Tab.Screen listeners ={{
                     tabPress: () => {
-                      btTabColor = colors.secondary;
-                      wifiTabColor = colors.primaryLight;
+                      colors.btTabColor = colors.secondary;
+                      colors.wifiTabColor = colors.primaryLight;
                     },
                   }} 
-                  options={{title: () => {return <AppText style = {[styles.btTabLable, {color: btTabColor,}]} >BLUETOOTH</AppText>}}}  name="Bluetooth" component={BluetoothScreen} />
+                  options={{title: () => {return <AppText style = {[styles.btTabLable, {color: colors.btTabColor,}]} >BLUETOOTH</AppText>}}}  name="Bluetooth" component={BluetoothScreen} />
       <Tab.Screen listeners ={{
                     tabPress: () => {
-                      btTabColor = colors.primaryLight;
-                      wifiTabColor = colors.secondary;
+                      colors.btTabColor = colors.primaryLight;
+                      colors.wifiTabColor = colors.secondary;
                     },
                   }} 
-       options={{title: () => {return <AppText style = {[styles.wifiTabLable, {color: wifiTabColor,}]} >WIFI</AppText>}}} name="Wifi" component={WifiScreen} />
+                  options={{title: () => {return <AppText style = {[styles.wifiTabLable, {color: colors.wifiTabColor,}]} >WIFI</AppText>}}} name="Wifi" component={WifiScreen} />
     </Tab.Navigator>
   );
 };

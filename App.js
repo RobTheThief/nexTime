@@ -9,6 +9,7 @@ import { askPermissionsNotifications } from "./app/utility/notifications";
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import nexTheme from "./app/config/drawerTheme";
 import storage from './app/utility/storage';
+import colors from "./app/config/colors";
 
 TaskManager.defineTask('checkLocation', async ({ data: { locations }, error }) => {
   console.log('Tasks running !!!');
@@ -47,6 +48,8 @@ export default function App() {
 
   React.useEffect(() => {
     storage.formatStorage();
+    colors.btTabColor = colors.secondary;
+    colors.wifiTabColor = colors.primaryLight;
     requestPermission();
     askPermissionsNotifications();
   });
