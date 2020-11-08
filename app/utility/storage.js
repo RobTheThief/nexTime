@@ -21,18 +21,18 @@ const get = async (key) => {
   }
 };
 
-var option = {};
-const loadBluetoothOption = async () => {
- option = await get('startBluetooth');
+var options = {};
+const loadOptionsToMem = async () => {
+ options = await get('options');
 }
 
-const getbtStartOption = () => {
-  return option;
+const getOptions = () => {
+  return options;
 };
 
 const formatStorage = async () => {
-  await get("startBluetooth") == null && await store("startBluetooth", {startBluetooth : false});
-  loadBluetoothOption();
+  await get("options") == null && await store("options", {startBluetooth : false, measurementSys: 'metric', color: 'bright'});
+  loadOptionsToMem();
   await get("asyncMarkers") == null && await store("asyncMarkers", '');
   await get("asyncSerialBTDevices") == null && await store("asyncSerialBTDevices", '');
   await get("asyncWifiReminders") == null && await store("asyncWifiReminders", '');
@@ -41,6 +41,6 @@ const formatStorage = async () => {
 export default {
   store,
   get,
-  getbtStartOption,
+  getOptions,
   formatStorage,
 };

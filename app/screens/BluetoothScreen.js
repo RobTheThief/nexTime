@@ -1,5 +1,5 @@
 import BluetoothSerial from 'react-native-bluetooth-serial';
-import { Alert, FlatList, StyleSheet, Switch, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Octicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useEffect, useState } from "react";
 
@@ -16,16 +16,6 @@ function BluetoothScreen({navigation}) {
     getPaired();
     updateReminderList();
   },[]);
-  
-  var option = storage.getbtStartOption();
-  const [startBluetooth, setStartBluetooth] = useState(option.startBluetooth);
-
-  const toggleStartBluetooth = () => {
-      !startBluetooth && Alert.alert('nexTime',
-      'Allows the app to automatically enable bluetooth while scanning. Bluetooth is disabled again when finished to save power.')
-      setStartBluetooth(startBluetooth ? false : true);// is this line useless?
-      storage.store('startBluetooth', {startBluetooth: !startBluetooth});
-  }
 
   const [btDevicesArray, setBtDevicesArray] = useState(
     [{ name: "Pull down to refresh device list", id: "123456789" , junk: true }]
@@ -231,17 +221,6 @@ function BluetoothScreen({navigation}) {
             renderItem={renderItem}
             />
         </View>
-        <View style={styles.switchContainer}>
-          <AppText style={styles.switchText}>Start Bluetooth on Scan</AppText>
-          <Switch
-              style={styles.switch}
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={startBluetooth ? colors.primary : "#f4f3f4"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={toggleStartBluetooth}
-              value={startBluetooth}
-          />
-        </View>
       </View>  
       )}
     </>
@@ -250,7 +229,7 @@ function BluetoothScreen({navigation}) {
 
 const styles = StyleSheet.create({
   btRemindersContainer: {
-    height: "29%",
+    height: "31%",
     color: colors.primary,
     borderBottomWidth: 1,
     marginHorizontal: 20,
@@ -295,29 +274,12 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   pairedContainer: {
-    height: "29%",
+    height: "31%",
     marginHorizontal: 20,
     borderBottomWidth: 1,
   },
-  switchContainer: {
-    alignItems: "center",
-    justifyContent: "flex-start",
-    flexDirection: "row",
-    marginLeft: 20,
-    marginVertical: 10,
-    width: '100%',
-  },
-  switch: {
-    position: "relative",
-    top: 2,
-  },
-  switchText: {
-    marginRight: 10,
-    color: colors.primary,
-    fontSize: 15,
-  },
   unPairedContainer: {
-    height: "29%",
+    height: "31%",
     color: colors.primary,
     marginHorizontal: 20,
     borderBottomWidth: 1,

@@ -6,10 +6,10 @@ import { StyleSheet} from 'react-native';
 
 import BluetoothScreen from "../screens/BluetoothScreen";
 import MapScreen from "../screens/MapScreen";
-import NotificationsScreen from "../screens/NotificationsScreen";
 import WelcomeScreen from "../screens/WelcomeScreen";
 import WifiScreen from "../screens/WifiScreen";
 import colors from "../config/colors";
+import SettingsScreen from "../screens/SettingsScreen";
 
 const Drawer = createDrawerNavigator();
 const DrawerNavigator = () => {
@@ -23,7 +23,7 @@ const DrawerNavigator = () => {
     >
       <Drawer.Screen name="Locations" component={MapScreen} />
       <Drawer.Screen name='Connections' component={ConnectionsNavigator} />
-      <Drawer.Screen name="Notifications" component={NotificationsScreen} />
+      <Drawer.Screen name='Settings' component={SettingsScreen} />
       <Drawer.Screen name="Welcome Screen" component={WelcomeScreen} />
     </Drawer.Navigator>
   );

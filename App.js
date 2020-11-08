@@ -10,6 +10,7 @@ import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import nexTheme from "./app/config/drawerTheme";
 import storage from './app/utility/storage';
 import colors from "./app/config/colors";
+import measurementSys from "./app/config/measurementSys";
 
 TaskManager.defineTask('checkLocation', async ({ data: { locations }, error }) => {
   console.log('Tasks running !!!');
@@ -50,6 +51,9 @@ export default function App() {
     storage.formatStorage();
     colors.btTabColor = colors.secondary;
     colors.wifiTabColor = colors.primaryLight;
+    measurementSys.unitDivider = measurementSys.oneThousand;
+    measurementSys.kmOrMiles = measurementSys.km;
+    measurementSys.mOrFt = measurementSys.meters;
     requestPermission();
     askPermissionsNotifications();
   });
