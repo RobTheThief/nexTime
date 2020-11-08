@@ -1,5 +1,6 @@
 import BluetoothSerial from "react-native-bluetooth-serial";
 import * as Location from "expo-location";
+import WifiManager from "react-native-wifi-reborn";
 
 import geoFencing from './geoFencing';
 import { sendNotificationImmediately } from "./notifications";
@@ -14,7 +15,7 @@ const checkLocationTask = () => {
     distanceInterval: 1,
     foregroundService: {
         notificationTitle: 'nexTime',
-        notificationBody: 'nexTime Reminders running'
+        notificationBody: 'Reminders service running'
     }
   });
 }
@@ -119,9 +120,49 @@ const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) =>
   }
 };
 
+var wifiWarned = false;
+const startCheckWifi = async (taskAsyncWifiNetworks) => {
+  var cleanupTrigger = false;
+
+  const isEnabled = await WifiManager.isEnabled();
+  isEnabled && (wifiWarned = false);
+
+  if (!isEnabled && !wifiWarned) {
+    wifiWarned = true;
+    return sendNotificationImmediately("nexTime Reminders", "WIFI must be on for your WIFI reminders to work");
+  } else if (!isEnabled && wifiWarned === true) {
+    return;
+  }
+
+  var networkList = await WifiManager.loadWifiList();
+  var SSIDs = [];
+  networkList.forEach((item) => SSIDs.push(item.SSID));
+
+  for (let index = 0; index < taskAsyncWifiNetworks.length; index++)  {
+    const wifiReminder = taskAsyncWifiNetworks[index];
+    var present = SSIDs.some((name) => wifiReminder.name == name);
+    if (present && !wifiReminder.taskDeleted) {
+      sendNotificationImmediately("nexTime Reminders", `Bluetooth reminder: ${wifiReminder.name}`);
+      cleanupTrigger = true;
+      if (!wifiReminder.repeat) {
+        wifiReminder.taskDeleted = true;
+        await storage.store("asyncWifiReminders", taskAsyncWifiNetworks);
+      }
+    }
+  }
+  if(cleanupTrigger) {
+    taskAsyncWifiNetworks = taskAsyncWifiNetworks.filter((reminder) => toKeep(reminder));
+    taskAsyncWifiNetworks.length === 0 ?
+    await storage.store("asyncWifiReminders", '') :
+    await storage.store("asyncWifiReminders", taskAsyncWifiNetworks);
+    cleanupTrigger = false;
+  }
+};
+
 export default {
   areTasksRunning,
   checkLocationTask,
   startCheckLocation,
   startCheckBluetoothAsync,
+  startCheckWifi,
 };

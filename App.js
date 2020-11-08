@@ -23,6 +23,11 @@ TaskManager.defineTask('checkLocation', async ({ data: { locations }, error }) =
     appTasks.startCheckBluetoothAsync( taskAsyncBTDevices );
   }
 
+  var taskAsyncWifiNetworks = await storage.get("asyncWifiReminders");
+  if(taskAsyncWifiNetworks && taskAsyncWifiNetworks[0].id){
+    appTasks.startCheckWifi( taskAsyncWifiNetworks );
+  }
+
   if (error){
     console.log(error);
     return;
