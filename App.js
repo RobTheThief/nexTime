@@ -45,22 +45,28 @@ export default function App() {
       );
   };
 
-  
+  const [themeState, setThemeState] = React.useState();
 
-  React.useEffect(() => {
-    storage.formatStorage();
+  const loadOptionsToMemAndSetAsync = async () => {
+    await storage.formatStorage();
+    setThemeState(storage.getOptions().color);
     colors.btTabColor = colors.secondary;
     colors.wifiTabColor = colors.primaryLight;
     measurementSys.unitDivider = measurementSys.oneThousand;
     measurementSys.kmOrMiles = measurementSys.km;
     measurementSys.mOrFt = measurementSys.meters;
+  };
+
+  React.useEffect(() => {
+    loadOptionsToMemAndSetAsync();
     requestPermission();
     askPermissionsNotifications();
-  });
+  }, []);
+  
 
   return (
     <NavigationContainer  theme={nexTheme} >
-      <DrawerNavigator />
+      <DrawerNavigator setThemeState={setThemeState} themeState={themeState}/>
     </NavigationContainer>
   );
 }

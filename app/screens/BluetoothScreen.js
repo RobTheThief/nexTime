@@ -10,7 +10,7 @@ import AppHeader from '../components/AppHeader';
 import AddBtReminderDetailScreen from './AddBtReminderDetailScreen';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
-function BluetoothScreen({navigation}) {
+function BluetoothScreen({navigation, themeState}) {
 
   useEffect(() => {
     getPaired();
@@ -165,7 +165,7 @@ function BluetoothScreen({navigation}) {
 
   return (
     <>
-      <AppHeader style={{height: '11.5%'}} navigation={navigation} />
+      <AppHeader themeState={themeState} style={{height: '11.5%'}} navigation={navigation} />
       {visible ? (
       <AddBtReminderDetailScreen 
         addBtReminderDetailVisibility={addBtReminderDetail}
@@ -173,11 +173,12 @@ function BluetoothScreen({navigation}) {
         pickedId={pickedId}
         updateReminderList={updateReminderList}
         btRemindersArray={btRemindersArray}
+        themeState={themeState}
       />
       ) : (
-      <View > 
+        <View style={colors.mode[themeState].main} > 
 
-        <View style={styles.btRemindersContainer}>
+        <View style={[styles.btRemindersContainer, colors.mode[themeState].container]}>
           <View style={styles.devicesHeader}>
             <MaterialCommunityIcons name="reminder" size={18} color={colors.primaryLight} />
             <AppText style={styles.devicesHeaderText} >REMINDERS</AppText>
@@ -192,7 +193,7 @@ function BluetoothScreen({navigation}) {
               />
         </View>
         
-        <View style={styles.pairedContainer}>
+        <View style={[styles.pairedContainer, colors.mode[themeState].container]}>
           <View style={styles.devicesHeader}>
             <MaterialCommunityIcons name="lan-connect" size={18} color={colors.primaryLight} />
             <AppText style={styles.devicesHeaderText} >PAIRED DEVICES</AppText>
@@ -206,7 +207,7 @@ function BluetoothScreen({navigation}) {
             scrollToOverflowEnabled={true}
             />
         </View>
-        <View style={styles.unPairedContainer}>
+        <View style={[styles.unPairedContainer, colors.mode[themeState].container]}>
           <View style={styles.devicesHeader}>
             <MaterialCommunityIcons name="devices" size={18} color={colors.primaryLight} />
             <AppText style={styles.devicesHeaderText} >UNPAIRED DEVICES</AppText>
@@ -247,13 +248,11 @@ const styles = StyleSheet.create({
   },
   deleteSwipeText :{
     paddingRight: 5,
-    color: colors.secondary
   },
   device: {
     fontSize: 15,
     width: '100%',
     alignItems: 'center',
-    color: colors.secondary,
     paddingVertical: 15,
   },
   devicesHeader: {

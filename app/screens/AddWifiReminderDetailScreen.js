@@ -12,7 +12,8 @@ function AddWifiReminderDetailScreen({
     pickedTitle,
     pickedId,
     updateReminderList,
-    wifiRemindersArray}) {
+    wifiRemindersArray,
+    themeState }) {
 
     const setNotesInputValue = () => 
         (reminder !== undefined && reminder !== null && reminder !== '') && reminder.notes
@@ -76,7 +77,7 @@ function AddWifiReminderDetailScreen({
             keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
             enabled={Platform.OS === "ios" ? true : false}
         >
-            <View style={styles.inputBox} >
+            <View style={[styles.inputBox , colors.mode[themeState].main]} >
                 <View style={styles.title}>
                     <AppText style={styles.titleLable} >Device:</AppText>
                     <AppText style={styles.titleDevice} >{pickedTitle}</AppText>
@@ -145,6 +146,7 @@ const styles = StyleSheet.create({
     buttonText: {
         marginLeft: 5,
         fontSize: 15,
+        color: colors.primary,
     },
     inputBox: {
         width: "100%",

@@ -15,7 +15,7 @@ const checkLocationTask = () => {
     distanceInterval: 1,
     foregroundService: {
         notificationTitle: 'nexTime',
-        notificationBody: 'Reminders service running'
+        notificationBody: 'Reminders service running...'
     }
   });
 }
@@ -73,8 +73,8 @@ const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) =>
   var cleanupTrigger = false;
 
   const wasEnabled = await BluetoothSerial.isEnabled();
-  var startBluetooth = await storage.get('startBluetooth');
-  startBluetooth = startBluetooth.startBluetooth;
+  var options = await storage.get('options');
+  startBluetooth = options.startBluetooth;
   
   let enable = false;
   if (wasEnabled === false && startBluetooth == true) {enable = await BluetoothSerial.enable();}

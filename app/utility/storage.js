@@ -31,7 +31,7 @@ const getOptions = () => {
 };
 
 const formatStorage = async () => {
-  await get("options") == null && await store("options", {startBluetooth : false, measurementSys: 'metric', color: 'bright'});
+  await get("options") == null && await store("options", {startBluetooth : false, measurementSys: 'metric', color: 'light'});
   loadOptionsToMem();
   await get("asyncMarkers") == null && await store("asyncMarkers", '');
   await get("asyncSerialBTDevices") == null && await store("asyncSerialBTDevices", '');

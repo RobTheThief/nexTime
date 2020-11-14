@@ -7,7 +7,7 @@ import AddMarkerDetailsScreen from "./AddMarkerDetailsScreen";
 import colors from "../config/colors";
 import storage from "../utility/storage";
 
-function MapScreen({ navigation }) {
+function MapScreen({ navigation, themeState }) {
   const [markers, setMarkers] = useState([]);
 
   const loadMarkers = async () => {
@@ -40,7 +40,7 @@ function MapScreen({ navigation }) {
 
   return (
     <>
-      <AppHeader navigation={ navigation }/>
+      <AppHeader themeState={themeState} navigation={ navigation }/>
       {visible ? (
         <AddMarkerDetailsScreen
           addMarkerDetailVisibility={addMarkerDetailVisibility}
@@ -48,6 +48,7 @@ function MapScreen({ navigation }) {
           pickedLocation={pickedLocation}
           markers={markers}
           setMarkers={setMarkers}
+          themeState={themeState}
         />
       ) : markers ? (
         <MapView

@@ -10,7 +10,7 @@ import AddWifiReminderDetailScreen from "./AddWifiReminderDetailScreen";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import storage from "../utility/storage";
 
-function WifiScreen({navigation}) {
+function WifiScreen({navigation, themeState}) {
   useEffect(() => {
     updateReminderList();
   },[]);
@@ -153,7 +153,7 @@ const remindersEmptyList = () => (
 
   return (
     <>
-      <AppHeader style={{height: '11.5%'}} navigation={ navigation } />
+      <AppHeader themeState={themeState} style={{height: '11.5%'}} navigation={ navigation } />
       {visible ? (
         <AddWifiReminderDetailScreen
         addWifiReminderDetailVisibility={addWifiReminderDetail}
@@ -161,9 +161,10 @@ const remindersEmptyList = () => (
         pickedId={pickedId}
         updateReminderList={updateReminderList}
         wifiRemindersArray={wifiRemindersArray}
+        themeState = {themeState}
       />) : (
-      <View>
-        <View style={styles.networkRemindersContainer}>
+      <View style={colors.mode[themeState].main}>
+        <View style={[styles.networkRemindersContainer, colors.mode[themeState].container]}>
           <View style={styles.networksHeader}>
             <MaterialCommunityIcons name="reminder" size={18} color={colors.primaryLight} />
             <AppText style={styles.networksHeaderText} >WIFI REMINDERS</AppText>
@@ -177,7 +178,7 @@ const remindersEmptyList = () => (
             renderItem={renderReminderItem}
             />
         </View>
-        <View style={styles.availableNetworksContainer}>
+        <View style={[styles.availableNetworksContainer, colors.mode[themeState].container]}>
           <View style={styles.networksHeader}>
             <MaterialCommunityIcons name="devices" size={18} color={colors.primaryLight} />
             <AppText style={styles.networksHeaderText} >AVAILABLE NETWORKS</AppText>
@@ -218,7 +219,6 @@ const styles = StyleSheet.create({
   },
   deleteSwipeText :{
     paddingRight: 5,
-    color: colors.secondary
   },
   listItems: {
     marginRight: 20,
@@ -228,7 +228,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     width: '100%',
     alignItems: 'center',
-    color: colors.secondary,
     paddingVertical: 15,
   },
   networksHeader: {

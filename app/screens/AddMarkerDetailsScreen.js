@@ -29,7 +29,7 @@ function AddMarkerDetailsScreen({
   markers,
   id,
   setMarkers,
-}) {
+  themeState }) {
   const [description, setDesc] = useState();
   const [kmOrMilesRadius, setKmOrMilesRadius] = useState(
     markers[id - 1] == undefined
@@ -158,7 +158,7 @@ function AddMarkerDetailsScreen({
       keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
       enabled={Platform.OS === "ios" ? true : false}
     >
-      <View style={styles.inputBox}>
+      <View style={[styles.inputBox, colors.mode[themeState].main]}>
         <View style={styles.inputTextContainer}>
           <AppTextInput
             placeholder={"Title"}
@@ -211,7 +211,7 @@ function AddMarkerDetailsScreen({
             maximumValue={1000}
             step={100}
             minimumTrackTintColor={colors.primary}
-            maximumTrackTintColor={colors.black}
+            maximumTrackTintColor={colors.mode[themeState].slider}
             thumbTintColor={colors.primary}
             value={radius}
             onValueChange={(value) => handleChangeSlider(value)}
@@ -301,6 +301,7 @@ const styles = StyleSheet.create({
   buttonText: {
     paddingLeft: 5,
     fontSize: 15,
+    color: colors.primary,
   },
   inputBox: {
     width: "100%",
@@ -333,6 +334,7 @@ const styles = StyleSheet.create({
   switchText: {
     paddingRight: 20,
     fontSize: 17,
+    color: colors.primary,
   },
   radiInputandTotal: {
     flexDirection: "row-reverse",

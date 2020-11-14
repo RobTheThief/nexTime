@@ -4,6 +4,7 @@ import { StyleSheet, Text, Platform } from "react-native";
 import colors from "../config/colors";
 
 function AppText({ children, style, ...otherProps }) {
+
   return (
     <Text style={[styles.container, style]} {...otherProps}>
       {children}
@@ -13,7 +14,7 @@ function AppText({ children, style, ...otherProps }) {
 
 const styles = StyleSheet.create({
   container: {
-    color: colors.primary,
+    color: colors.secondary,
     fontFamily: Platform.OS == "ios" ? "Arial-BoldMT" : "sans-serif-medium",
   },
 });

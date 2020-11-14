@@ -13,7 +13,8 @@ function AddBtReminderDetailScreen({
     pickedId,
     pickedTitle,
     updateReminderList,
-    btRemindersArray}) {
+    btRemindersArray,
+    themeState }) {
 
     var index = -1;
     if(btRemindersArray !== null){
@@ -77,7 +78,7 @@ function AddBtReminderDetailScreen({
             keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
             enabled={Platform.OS === "ios" ? true : false}
         >
-            <View style={styles.inputBox} >
+            <View style={[styles.inputBox, colors.mode[themeState].main]} >
                 <View style={styles.title}>
                     <AppText style={styles.titleLable} >Device:</AppText>
                     <AppText style={styles.titleDevice} >{pickedTitle}</AppText>
@@ -147,6 +148,7 @@ const styles = StyleSheet.create({
     buttonText: {
         marginLeft: 5,
         fontSize: 15,
+        color: colors.primary
     },
     inputBox: {
         width: "100%",
@@ -206,7 +208,6 @@ const styles = StyleSheet.create({
         fontSize: 17,
     },
     titleDevice: {
-        color: colors.secondary,
         fontSize: 17,
     },
 })

@@ -10,10 +10,10 @@ import WelcomeScreen from "../screens/WelcomeScreen";
 import WifiScreen from "../screens/WifiScreen";
 import colors from "../config/colors";
 import SettingsScreen from "../screens/SettingsScreen";
+import { color } from "react-native-reanimated";
 
 const Drawer = createDrawerNavigator();
-const DrawerNavigator = () => {
-  
+const DrawerNavigator = ({setThemeState, themeState}) => {
   return (
     <Drawer.Navigator
       drawerStyle={{ width: "50%" }}
@@ -21,32 +21,49 @@ const DrawerNavigator = () => {
       edgeWidth={40}
       lazy={true}
     >
-      <Drawer.Screen name="Locations" component={MapScreen} />
-      <Drawer.Screen name='Connections' component={ConnectionsNavigator} />
-      <Drawer.Screen name='Settings' component={SettingsScreen} />
+      <Drawer.Screen name="Locations" >
+        {(props) => <MapScreen  {...props} themeState={themeState} />}
+      </Drawer.Screen>
+
+      <Drawer.Screen name='Connections' >
+        {(props) => <ConnectionsNavigator  {...props} themeState={themeState} />}
+      </Drawer.Screen>
+
+      <Drawer.Screen name='Settings'>
+        {(props) => <SettingsScreen  {...props} setThemeState={setThemeState} themeState={themeState} />}
+      </Drawer.Screen> 
       <Drawer.Screen name="Welcome Screen" component={WelcomeScreen} />
     </Drawer.Navigator>
   );
 };
 
 const Tab = createBottomTabNavigator();
-const ConnectionsNavigator = () => {
+const ConnectionsNavigator = ({ themeState}) => {
   return (
-    <Tab.Navigator tabStyle={{ fontSize: 12 }} lazy={true} >
+    <Tab.Navigator tabBarOptions= {{
+                          style: colors.mode[themeState].tabBar
+                      }}
+                   tabStyle={{ fontSize: 12 }}
+                   lazy={true}
+                    >
       <Tab.Screen listeners ={{
                     tabPress: () => {
                       colors.btTabColor = colors.secondary;
                       colors.wifiTabColor = colors.primaryLight;
                     },
                   }} 
-                  options={{title: () => {return <AppText style = {[styles.btTabLable, {color: colors.btTabColor,}]} >BLUETOOTH</AppText>}}}  name="Bluetooth" component={BluetoothScreen} />
+                  options={{title: () => {return <AppText style = {[styles.btTabLable, {color: colors.btTabColor,}]} >BLUETOOTH</AppText>}}}  name="Bluetooth" >
+                  {(props) => <BluetoothScreen  {...props} themeState={themeState} />}
+      </Tab.Screen>
       <Tab.Screen listeners ={{
                     tabPress: () => {
                       colors.btTabColor = colors.primaryLight;
                       colors.wifiTabColor = colors.secondary;
                     },
                   }} 
-                  options={{title: () => {return <AppText style = {[styles.wifiTabLable, {color: colors.wifiTabColor,}]} >WIFI</AppText>}}} name="Wifi" component={WifiScreen} />
+                  options={{title: () => {return <AppText style = {[styles.wifiTabLable, {color: colors.wifiTabColor,}]} >WIFI</AppText>}}} name="Wifi" >
+                  {(props) => <WifiScreen  {...props} themeState={themeState} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 };
