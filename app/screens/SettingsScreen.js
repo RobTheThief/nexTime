@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
 import { Alert, StyleSheet, Switch, View } from 'react-native';
 import { Fontisto, MaterialCommunityIcons } from '@expo/vector-icons';
+import React, { useState } from 'react';
 
-import colors from '../config/colors';
-import AppText from '../components/AppText';
 import AppHeader from '../components/AppHeader';
+import AppText from '../components/AppText';
+import colors from '../config/colors';
 import storage from '../utility/storage';
 
-function SettingsScreen({navigation, setThemeState, themeState }) {
+function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNumSystem }) {
   var options = storage.getOptions();
 
-  const [measurementSys, setMeasurementSys] = useState(options.measurementSys);
 
   const toggleMeasurementSys = () => {
-    const mySetting = measurementSys == 'metric' ? 'imperial' : 'metric';
+    const mySetting = numSystem == 'metric' ? 'imperial' : 'metric';
     options.measurementSys = mySetting;
     storage.store('options', options);
-    setMeasurementSys(mySetting);
+    setNumSystem(mySetting);
   }
 
   const toggleColor = () => {
@@ -53,10 +52,10 @@ function SettingsScreen({navigation, setThemeState, themeState }) {
               <Switch
                   style={styles.switch}
                   trackColor={{ false: "#767577", true: "#81b0ff" }}
-                  thumbColor={measurementSys == 'metric' ? colors.primary : "#f4f3f4"}
+                  thumbColor={numSystem == 'metric' ? colors.primary : "#f4f3f4"}
                   ios_backgroundColor="#3e3e3e"
                   onValueChange={toggleMeasurementSys}
-                  value={measurementSys == 'metric'}
+                  value={numSystem == 'metric'}
               />
               <AppText >Metric</AppText>
             </View>

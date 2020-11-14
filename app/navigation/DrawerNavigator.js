@@ -10,19 +10,20 @@ import WelcomeScreen from "../screens/WelcomeScreen";
 import WifiScreen from "../screens/WifiScreen";
 import colors from "../config/colors";
 import SettingsScreen from "../screens/SettingsScreen";
-import { color } from "react-native-reanimated";
 
 const Drawer = createDrawerNavigator();
-const DrawerNavigator = ({setThemeState, themeState}) => {
+const DrawerNavigator = ({setThemeState, themeState, numSystem, setNumSystem}) => {
   return (
     <Drawer.Navigator
-      drawerStyle={{ width: "50%" }}
+      drawerStyle={ [{width: "50%", borderRightColor: colors.secondary, borderRightWidth: 2},
+                    themeState && colors.mode[themeState].drawerThemeStyles
+                  ]}
       initialRouteName="Welcome Screen"
       edgeWidth={40}
       lazy={true}
     >
       <Drawer.Screen name="Locations" >
-        {(props) => <MapScreen  {...props} themeState={themeState} />}
+        {(props) => <MapScreen  {...props} themeState={themeState} numSystem={numSystem} setNumSystem={setNumSystem} />}
       </Drawer.Screen>
 
       <Drawer.Screen name='Connections' >
@@ -30,7 +31,11 @@ const DrawerNavigator = ({setThemeState, themeState}) => {
       </Drawer.Screen>
 
       <Drawer.Screen name='Settings'>
-        {(props) => <SettingsScreen  {...props} setThemeState={setThemeState} themeState={themeState} />}
+        {(props) => <SettingsScreen {...props}
+                                    setThemeState={setThemeState}
+                                    themeState={themeState} 
+                                    setNumSystem={setNumSystem} 
+                                    numSystem={numSystem} />}
       </Drawer.Screen> 
       <Drawer.Screen name="Welcome Screen" component={WelcomeScreen} />
     </Drawer.Navigator>

@@ -3,7 +3,6 @@ import {
   AntDesign,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
-import * as Location from "expo-location";
 import {
   Platform,
   KeyboardAvoidingView,
@@ -29,13 +28,32 @@ function AddMarkerDetailsScreen({
   markers,
   id,
   setMarkers,
-  themeState }) {
+  themeState,
+  numSystem }) {
+
+  const milesToMeters = (radius) => {
+    return radius / 0.00062137;
+  } 
+
+  const metersTofeetRadius = (radius) => {
+    return radius * 3.2808;
+  }
+
+  const convertedRadius = (marker) => {
+    markers[id - 1].numSystem == 'imperial' ?
+    metersTofeetRadius(markers[id - 1].radius) 
+    : markers[id - 1].radius; 
+  }
+
   const [description, setDesc] = useState();
   const [kmOrMilesRadius, setKmOrMilesRadius] = useState(
     markers[id - 1] == undefined
       ? 0.1
-      : markers[id - 1].radius / measurementSys.unitDivider
+      : (markers[id - 1].numSystem == 'imperial' ?
+      metersTofeetRadius(markers[id - 1].radius) 
+      : markers[id - 1].radius) / measurementSys.numRules[numSystem].unitDivider
   );
+
   const [notes, setNotes] = useState();
   const [radius, setRadius] = useState(100);
   const [title, setTitle] = useState();
@@ -65,8 +83,8 @@ function AddMarkerDetailsScreen({
       : undefined;
   const setRadiusInputValue = () =>
     markers[id - 1] !== undefined && markers[id - 1].radius
-      ? markers[id - 1].radius
-      : 100;
+      ?  (markers[id - 1].numSystem == 'imperial' ? metersTofeetRadius(markers[id - 1].radius) : markers[id - 1].radius)
+        : 100;
 
   useEffect(() => {
     setTitle(setTitleInputValue);
@@ -75,7 +93,7 @@ function AddMarkerDetailsScreen({
     setRadius(setRadiusInputValue);
   }, []);
 
-  const handleChangeText = (value) => {
+  const handleChangeRadiusText = (value) => {
     isNaN(parseFloat(value)) && (value = "");
     if (value[0] == "0" && !isNaN(value[1])) {
       const tempArr = value.split("");
@@ -83,35 +101,40 @@ function AddMarkerDetailsScreen({
       value = tempArr.join("");
     }
     setKmOrMilesRadius(value);
-    value !== "" && setRadius(parseFloat(value) * measurementSys.unitDivider);
+    value !== "" && setRadius(parseFloat(value) * measurementSys.numRules[numSystem].unitDivider);
   };
 
   const handleChangeSlider = (value) => {
     setRadius(value);
-    setKmOrMilesRadius(value / measurementSys.unitDivider);
+    setKmOrMilesRadius(value / measurementSys.numRules[numSystem].unitDivider);
   };
 
+  
+  
+
   const handleSubmitMarker = () => {
-    if (radius < 100 || title == null)
+    if (radius < measurementSys.numRules[numSystem].unitDivider / 10 || title == null)
       return Alert.alert('nexTime',
         "Radius cannot be less than " +
-          measurementSys.unitDivider / 10 +
+        measurementSys.numRules[numSystem].unitDivider / 10 +
           " " +
-          measurementSys.mOrFt +
+          measurementSys.numRules[numSystem].mOrFt +
           " or Title cannot be Empty!"
       );
-
+      console.log(radius);
+      
     const markerObject = {
       id: id,
       circleId: id + "c",
       title: title,
       description: description,
       latLng: pickedLocation,
-      radius: radius,
+      radius: numSystem === 'imperial' ? milesToMeters(kmOrMilesRadius) : radius,
       repeat: repeatReminder,
       delete: deleteOnTrig,
       notes: notes,
       taskDeleted: false,
+      numSystem: numSystem,
     };
 
     markers[id - 1] !== undefined
@@ -184,24 +207,24 @@ function AddMarkerDetailsScreen({
           />
           <View style={styles.radiInputandTotal}>
             <AppText style={styles.radiTotal}>
-              {radius < measurementSys.unitDivider
-                ? "=  " + radius + measurementSys.mOrFt
+              {radius < measurementSys.numRules[numSystem].unitDivider
+                ? "=  " + radius + measurementSys.numRules[numSystem].mOrFt
                 : "=  " +
-                  radius / measurementSys.unitDivider +
-                  measurementSys.kmOrMiles}
+                  radius / measurementSys.numRules[numSystem].unitDivider +
+                  measurementSys.numRules[numSystem].kmOrMiles}
             </AppText>
 
             <View style={styles.radiusInput}>
               <AppTextInput
                 style={styles.radiTextInput}
-                maxLength={4}
+                maxLength={7}
                 keyboardType={"number-pad"}
                 value={kmOrMilesRadius.toString()}
-                onChangeText={(value) => handleChangeText(value)}
-                defaultValue={setRadiusInputValue().toString()}
+                onChangeText={(value) => handleChangeRadiusText(value)}
+                defaultValue={radius.toString()}
               />
               <AppText style={styles.measureText}>
-                {measurementSys.kmOrMiles}
+                {measurementSys.numRules[numSystem].kmOrMiles}
               </AppText>
             </View>
           </View>

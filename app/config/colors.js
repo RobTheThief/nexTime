@@ -22,7 +22,13 @@ const mode = {
     slider: white,
     tabBar: {
       backgroundColor: black,
-    }
+    },
+    drawerThemeStyles: {
+      backgroundColor: black,
+      color: secondary,
+      fontColor: secondary,
+      width: '50%'
+    } 
   },
 
 
@@ -39,7 +45,10 @@ const mode = {
     slider: black,
     tabBar: {
      
-    }
+    },
+    drawerThemeStyles: {
+      width: '50%'
+    } 
   }  
 };
 

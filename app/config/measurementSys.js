@@ -1,14 +1,24 @@
-var mOrFt;
-var kmOrMiles;
-var unitDivider;
+
+const feetInAMile = 5280;
+const oneThousand= 1000;
+const meters = 'meters';
+const feet = 'feet';
+const km = 'km';
+const miles = 'miles';
+
+const numRules = {
+  'imperial': {
+    unitDivider: feetInAMile,
+    kmOrMiles: miles,
+    mOrFt: feet
+  },
+  'metric': {
+    unitDivider: oneThousand,
+    kmOrMiles: km,
+    mOrFt: meters
+  }
+}
 
 export default {
-  mOrFt,
-  meters: 'meters',
-  feet: 'feet',
-  unitDivider,
-  oneThousand: 1000,
-  kmOrMiles,
-  km: 'km',
-  miles: 'miles',
+  numRules
 };

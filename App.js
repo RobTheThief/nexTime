@@ -6,11 +6,21 @@ import * as TaskManager from "expo-task-manager";
 
 import appTasks from "./app/utility/appTasks";
 import { askPermissionsNotifications } from "./app/utility/notifications";
+import colors from "./app/config/colors";
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
+import measurementSys from "./app/config/measurementSys";
 import nexTheme from "./app/config/drawerTheme";
 import storage from './app/utility/storage';
-import colors from "./app/config/colors";
-import measurementSys from "./app/config/measurementSys";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    return {
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    };
+  },
+});
 
 TaskManager.defineTask('checkLocation', async ({ data: { locations }, error }) => {
   console.log('Tasks running !!!');
@@ -46,15 +56,17 @@ export default function App() {
   };
 
   const [themeState, setThemeState] = React.useState();
+  const [numSystem, setNumSystem] = React.useState();
 
   const loadOptionsToMemAndSetAsync = async () => {
     await storage.formatStorage();
     setThemeState(storage.getOptions().color);
+    setNumSystem(storage.getOptions().measurementSys);
+
     colors.btTabColor = colors.secondary;
     colors.wifiTabColor = colors.primaryLight;
-    measurementSys.unitDivider = measurementSys.oneThousand;
-    measurementSys.kmOrMiles = measurementSys.km;
-    measurementSys.mOrFt = measurementSys.meters;
+
+    
   };
 
   React.useEffect(() => {
@@ -66,17 +78,10 @@ export default function App() {
 
   return (
     <NavigationContainer  theme={nexTheme} >
-      <DrawerNavigator setThemeState={setThemeState} themeState={themeState}/>
+      <DrawerNavigator setThemeState={setThemeState}
+                       themeState={themeState}
+                       setNumSystem={setNumSystem} 
+                       numSystem={numSystem} />
     </NavigationContainer>
   );
 }
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => {
-    return {
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: true,
-    };
-  },
-});
