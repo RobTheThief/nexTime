@@ -15,7 +15,7 @@ const checkLocationTask = () => {
     distanceInterval: 1,
     foregroundService: {
         notificationTitle: 'nexTime',
-        notificationBody: 'Reminders service running...'
+        notificationBody: 'Reminder service running...'
     }
   });
 }

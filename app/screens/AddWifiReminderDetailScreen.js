@@ -1,10 +1,11 @@
 import { AntDesign } from "@expo/vector-icons";
-import React, { useEffect, useState } from 'react';
 import { Alert, KeyboardAvoidingView, StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+
+import appTasks from "../utility/appTasks";
 import AppText from "../components/AppText";
 import AppTextInput from "../components/AppTextInput";
 import colors from "../config/colors";
-import appTasks from "../utility/appTasks";
 import storage from "../utility/storage";
 
 function AddWifiReminderDetailScreen({

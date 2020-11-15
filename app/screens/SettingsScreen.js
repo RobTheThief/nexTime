@@ -1,4 +1,5 @@
 import { Alert, StyleSheet, Switch, View } from 'react-native';
+import * as Location from "expo-location";
 import { Fontisto, MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 
@@ -6,16 +7,35 @@ import AppHeader from '../components/AppHeader';
 import AppText from '../components/AppText';
 import colors from '../config/colors';
 import storage from '../utility/storage';
+import appTasks from '../utility/appTasks';
 
 function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNumSystem }) {
   var options = storage.getOptions();
 
 
   const toggleMeasurementSys = () => {
-    const mySetting = numSystem == 'metric' ? 'imperial' : 'metric';
-    options.measurementSys = mySetting;
-    storage.store('options', options);
-    setNumSystem(mySetting);
+    
+    Alert.alert(
+      "Switch measurement system",
+      `All current location reminders will be deleted. Are you sure you want to Switch to ${numSystem == 'metric' ? 'imperial' : 'metric'} system?`,
+      [
+        {
+          text: "No",
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: async () => {
+            const mySetting = numSystem == 'metric' ? 'imperial' : 'metric';
+            options.measurementSys = mySetting;
+            storage.store('options', options);
+            setNumSystem(mySetting);
+            storage.store('asyncMarkers', '');
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   }
 
   const toggleColor = () => {
@@ -35,6 +55,13 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
     setBtStart(mySetting);
     mySetting && Alert.alert('nexTime',
       'Allows the app to automatically enable bluetooth while scanning. Bluetooth is disabled again when finished to save power.')
+  }
+
+  const [running, setRunning] = useState(Location.hasStartedLocationUpdatesAsync('checkLocation'));
+  const toggleService = async () => {
+    var isRunning = await Location.hasStartedLocationUpdatesAsync('checkLocation');
+    isRunning ? Location.stopLocationUpdatesAsync('checkLocation') : appTasks.areTasksRunning();
+    setRunning(isRunning);
   }
 
     return (
@@ -94,6 +121,25 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
                   ios_backgroundColor="#3e3e3e"
                   onValueChange={toggleBtStart}
                   value={btStart}
+              />
+              <AppText >ON</AppText>
+            </View>
+          </View>
+
+          <View style={[styles.settingContainer, colors.mode[themeState].container ]}>
+            <View style={styles.settingsHeader}>
+              <MaterialCommunityIcons name="restart" size={18} color={colors.primaryLight} />
+              <AppText style={styles.settingsHeaderText} >Start / Stop Reminder Service</AppText>
+            </View>
+            <View style={styles.switchContainer}>
+              <AppText >OFF</AppText>
+              <Switch
+                  style={styles.switch}
+                  trackColor={{ false: "#767577", true: "#81b0ff" }}
+                  thumbColor={!running ? colors.primary : "#f4f3f4"}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleService}
+                  value={!running}
               />
               <AppText >ON</AppText>
             </View>

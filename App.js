@@ -8,7 +8,6 @@ import appTasks from "./app/utility/appTasks";
 import { askPermissionsNotifications } from "./app/utility/notifications";
 import colors from "./app/config/colors";
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
-import measurementSys from "./app/config/measurementSys";
 import nexTheme from "./app/config/drawerTheme";
 import storage from './app/utility/storage';
 
@@ -60,13 +59,10 @@ export default function App() {
 
   const loadOptionsToMemAndSetAsync = async () => {
     await storage.formatStorage();
+    await storage.firstPickNumSystem();
     setThemeState(storage.getOptions().color);
-    setNumSystem(storage.getOptions().measurementSys);
-
     colors.btTabColor = colors.secondary;
     colors.wifiTabColor = colors.primaryLight;
-
-    
   };
 
   React.useEffect(() => {

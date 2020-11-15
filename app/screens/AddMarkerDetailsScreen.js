@@ -39,12 +39,6 @@ function AddMarkerDetailsScreen({
     return radius * 3.2808;
   }
 
-  const convertedRadius = (marker) => {
-    markers[id - 1].numSystem == 'imperial' ?
-    metersTofeetRadius(markers[id - 1].radius) 
-    : markers[id - 1].radius; 
-  }
-
   const [description, setDesc] = useState();
   const [kmOrMilesRadius, setKmOrMilesRadius] = useState(
     markers[id - 1] == undefined

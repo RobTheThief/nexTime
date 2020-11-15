@@ -16,6 +16,7 @@ function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
   };
 
   useEffect(() => {
+    setNumSystem(storage.getOptions().measurementSys);
     loadMarkers();
   });
 
