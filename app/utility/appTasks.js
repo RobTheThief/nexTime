@@ -135,12 +135,12 @@ const startCheckWifi = async (taskAsyncWifiNetworks) => {
   }
 
   var networkList = await WifiManager.loadWifiList();
-  var SSIDs = [];
-  networkList.forEach((item) => SSIDs.push(item.SSID));
+  var BSSIDs = [];
+  networkList.forEach((item) => BSSIDs.push(item.BSSID));
 
   for (let index = 0; index < taskAsyncWifiNetworks.length; index++)  {
     const wifiReminder = taskAsyncWifiNetworks[index];
-    var present = SSIDs.some((name) => wifiReminder.name == name);
+    var present = BSSIDs.some((id) => wifiReminder.id == id);
     if (present && !wifiReminder.taskDeleted) {
       sendNotificationImmediately("nexTime Reminders", `Bluetooth reminder: ${wifiReminder.name}`);
       cleanupTrigger = true;
