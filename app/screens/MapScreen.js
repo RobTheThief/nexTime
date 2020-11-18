@@ -5,20 +5,26 @@ import { StyleSheet} from "react-native";
 import AppHeader from '../components/AppHeader';
 import AddMarkerDetailsScreen from "./AddMarkerDetailsScreen";
 import colors from "../config/colors";
+import helpers from '../utility/helpers';
 import storage from "../utility/storage";
 
+var lastAsyncReminder;
+
 function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
+  
   const [markers, setMarkers] = useState([]);
 
+  
   const loadMarkers = async () => {
     const asyncMarkers = await storage.get("asyncMarkers");
     asyncMarkers ? setMarkers(asyncMarkers) : setMarkers([]);
   };
-
+  
   useEffect(() => {
     setNumSystem(storage.getOptions().measurementSys);
     loadMarkers();
-  });
+    helpers.loadReminderInterval("asyncMarkers", lastAsyncReminder, setMarkers);
+  }, []);
 
   const addMarker = async (latlng) => {
     addMarkerDetailVisibility();

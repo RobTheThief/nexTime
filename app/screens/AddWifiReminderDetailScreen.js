@@ -60,6 +60,7 @@ function AddWifiReminderDetailScreen({
                                 repeat: repeatReminder,
                                 delete: deleteOnTrig,
                                 junk: false,
+                                timeStamp: Date.now(),
                             });
         await storage.store("asyncWifiReminders", wifiRemindersArray);
         updateReminderList();

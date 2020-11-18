@@ -129,6 +129,7 @@ function AddMarkerDetailsScreen({
       notes: notes,
       taskDeleted: false,
       numSystem: numSystem,
+      timeStamp: Date.now(),
     };
 
     markers[id - 1] !== undefined

@@ -62,11 +62,14 @@ const firstPickNumSystem = () => {
 };
 
 const formatStorage = async () => {
-  await get("options") == null && await store("options", {startBluetooth : false, measurementSys: 'not set yet', color: 'light', });
-  await loadOptionsToMem();
-  await get("asyncMarkers") == null && await store("asyncMarkers", '');
-  await get("asyncSerialBTDevices") == null && await store("asyncSerialBTDevices", '');
-  await get("asyncWifiReminders") == null && await store("asyncWifiReminders", '');
+  return new Promise( async resolve => {
+    await get("options") == null && await store("options", {startBluetooth : false, measurementSys: 'not set yet', color: 'light', });
+    await loadOptionsToMem();
+    await get("asyncMarkers") == null && await store("asyncMarkers", '');
+    await get("asyncSerialBTDevices") == null && await store("asyncSerialBTDevices", '');
+    await get("asyncWifiReminders") == null && await store("asyncWifiReminders", '');
+    resolve();
+  });
 }
 
 export default {

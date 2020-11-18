@@ -78,6 +78,7 @@ const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) =>
   
   let enable = false;
   if (wasEnabled === false && startBluetooth == true) {enable = await BluetoothSerial.enable();}
+  //create a promise instead of this delay craic
   let timer = Date.now() + 1500;
   if (enable === true || wasEnabled === true){
     while (Date.now() < timer){

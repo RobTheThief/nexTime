@@ -3,19 +3,23 @@ import { Alert, FlatList, StyleSheet, TouchableOpacity, View } from "react-nativ
 import { Octicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useEffect, useState } from "react";
 
+import AddBtReminderDetailScreen from './AddBtReminderDetailScreen';
+import AppHeader from '../components/AppHeader';
 import AppText from "../components/AppText";
 import colors from "../config/colors";
+import helpers from '../utility/helpers';
 import storage from "../utility/storage";
-import AppHeader from '../components/AppHeader';
-import AddBtReminderDetailScreen from './AddBtReminderDetailScreen';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+
+var lastAsyncReminder;
 
 function BluetoothScreen({navigation, themeState}) {
 
   useEffect(() => {
     getPaired();
     updateReminderList();
-  },[]);
+    helpers.loadReminderInterval("asyncSerialBTDevices", lastAsyncReminder, setBtRemindersArray);
+  }, []);
 
   const [btDevicesArray, setBtDevicesArray] = useState(
     [{ name: "Pull down to refresh device list", id: "123456789" , junk: true }]
@@ -44,44 +48,49 @@ function BluetoothScreen({navigation, themeState}) {
 
   const updateReminderList = async () => {
     const serialBTReminders = await storage.get("asyncSerialBTDevices");
-    setBtRemindersArray(serialBTReminders && serialBTReminders);
+    serialBTReminders ? setBtRemindersArray(serialBTReminders) : setBtRemindersArray([]);
   }
 
   const getPaired = async () => {
     const pairedDevices = await BluetoothSerial.list();
     setBtPairedDevicesArray(pairedDevices);
-    updateReminderList();
   } 
 
   const updateDevices = async () => {
-    setBtDevicesArray([{ name: "Searching... ", id: "123456789" , junk: true}]);
+    try {
+      setBtDevicesArray([{ name: "Searching... ", id: "123456789" , junk: true}]);
+    
+      getPaired();
 
-    getPaired();
-
-    var unfilteredUnpairedDevices = await BluetoothSerial.discoverUnpairedDevices();
-
-    var bTDeviceIDs = [];
-    var unpairedDevices = [];
-    unfilteredUnpairedDevices.forEach((item) => bTDeviceIDs.push(item.id));
-    var uniqueIDs = bTDeviceIDs.filter(function (item, pos, self) {
-      return self.indexOf(item) == pos;
-    });
-  
-    for (let i = 0; i < uniqueIDs.length; i++) {
-      for (let j = 0; j < unfilteredUnpairedDevices.length; j++) {
-        if (uniqueIDs[i] === unfilteredUnpairedDevices[j].id) {
-          unpairedDevices.push(unfilteredUnpairedDevices[j]);
-          j = unfilteredUnpairedDevices.length + 1;
+      var unfilteredUnpairedDevices = await BluetoothSerial.discoverUnpairedDevices();
+      
+      var bTDeviceIDs = [];
+      var unpairedDevices = [];
+      unfilteredUnpairedDevices.forEach((item) => bTDeviceIDs.push(item.id));
+      var uniqueIDs = bTDeviceIDs.filter(function (item, pos, self) {
+        return self.indexOf(item) == pos;
+      });
+    
+      for (let i = 0; i < uniqueIDs.length; i++) {
+        for (let j = 0; j < unfilteredUnpairedDevices.length; j++) {
+          if (uniqueIDs[i] === unfilteredUnpairedDevices[j].id) {
+            unpairedDevices.push(unfilteredUnpairedDevices[j]);
+            j = unfilteredUnpairedDevices.length + 1;
+          }
         }
       }
-    }
 
-    setBtDevicesArray(
-      unpairedDevices[0] !== undefined
-        ? unpairedDevices
-        : [{ name: "No new unpaired devices found ", id: "123456789" , junk: true}]);
-        
-    setIsFetching(false);
+      setBtDevicesArray(
+        unpairedDevices[0] !== undefined
+          ? unpairedDevices
+          : [{ name: "No new unpaired devices found ", id: "123456789" , junk: true}]);
+          
+      setIsFetching(false);
+    } catch (error) {
+      setIsFetching(false);
+      Alert.alert('nexTime', error);
+    }
+    
   };
 
 

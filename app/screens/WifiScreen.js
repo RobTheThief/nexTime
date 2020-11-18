@@ -3,17 +3,22 @@ import { Octicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Alert, FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 import WifiManager from "react-native-wifi-reborn";
 
+import AddWifiReminderDetailScreen from "./AddWifiReminderDetailScreen";
 import AppHeader from "../components/AppHeader";
 import AppText from "../components/AppText";
 import colors from "../config/colors";
-import AddWifiReminderDetailScreen from "./AddWifiReminderDetailScreen";
-import Swipeable from "react-native-gesture-handler/Swipeable";
+import helpers from '../utility/helpers';
 import storage from "../utility/storage";
+import Swipeable from "react-native-gesture-handler/Swipeable";
+
+var lastAsyncReminder;
 
 function WifiScreen({navigation, themeState}) {
+
   useEffect(() => {
     updateReminderList();
-  },[]);
+    helpers.loadReminderInterval("asyncWifiReminders", lastAsyncReminder, setWifiRemindersArray);
+  }, []);
 
   const [wifiDevicesArray, setWifiDevicesArray] = useState(
     [{ SSID: "Pull down to refresh network list", BSSID: "123456789" , junk: true }]
@@ -22,7 +27,7 @@ function WifiScreen({navigation, themeState}) {
   const [wifiRemindersArray, setWifiRemindersArray] = useState([]);
   const updateReminderList = async () => {
     const wifiReminders = await storage.get("asyncWifiReminders");
-    setWifiRemindersArray(wifiReminders && wifiReminders);
+    wifiReminders ? setWifiRemindersArray(wifiReminders) : setWifiRemindersArray([]);
   }
   const [isFetching, setIsFetching] = useState(false);
 

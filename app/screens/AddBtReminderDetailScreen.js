@@ -64,6 +64,7 @@ function AddBtReminderDetailScreen({
                                 repeat: repeatReminder,
                                 delete: deleteOnTrig,
                                 junk: false,
+                                timeStamp: Date.now(),
                             });
         await storage.store("asyncSerialBTDevices", btRemindersArray);
         updateReminderList();
