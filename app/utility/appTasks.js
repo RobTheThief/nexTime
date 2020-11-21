@@ -5,6 +5,7 @@ import WifiManager from "react-native-wifi-reborn";
 import geoFencing from './geoFencing';
 import { sendNotificationImmediately } from "./notifications";
 import storage from "./storage";
+import helpers from "./helpers";
 
 var warned = false;
   
@@ -76,15 +77,8 @@ const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) =>
   var options = await storage.get('options');
   startBluetooth = options.startBluetooth;
   
-  let enable = false;
-  if (wasEnabled === false && startBluetooth == true) {enable = await BluetoothSerial.enable();}
-  //create a promise instead of this delay craic
-  let timer = Date.now() + 1500;
-  if (enable === true || wasEnabled === true){
-    while (Date.now() < timer){
-      let life = 'go by..'; 
-    };
-  }
+  var enable = false;
+  enable = await helpers.enableBluetooth(wasEnabled, startBluetooth, BluetoothSerial);
 
   wasEnabled && (warned = false);
   if (!wasEnabled && !warned && !startBluetooth) {
@@ -93,8 +87,19 @@ const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) =>
   } else if (!wasEnabled && warned === true) {
     return;
   }
+  
+  const isEnabled = await helpers.waitForBtEnabled(BluetoothSerial);
+  
+  var serialListUnpaired = [];
+  if (isEnabled){
+    serialListUnpaired = await BluetoothSerial.discoverUnpairedDevices();
+  }else{
+    !wasEnabled && BluetoothSerial.disable();
+    return;
+  }
+  
+  console.log(serialListUnpaired);
 
-  var serialListUnpaired = await BluetoothSerial.discoverUnpairedDevices();
   var bTDeviceIDs = [];
   serialListUnpaired.forEach((item) => bTDeviceIDs.push(item.id));
 
