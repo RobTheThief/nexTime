@@ -46,6 +46,9 @@ function BluetoothScreen({navigation, themeState}) {
   const onRefresh = () => {
     setIsFetching(true);
     updateDevices();
+    setTimeout(() => {
+      finishUnpairedSearch();
+    }, 40000);
   }
 
   const updateReminderList = async () => {
@@ -58,6 +61,16 @@ function BluetoothScreen({navigation, themeState}) {
     setBtPairedDevicesArray(pairedDevices);
   } 
 
+  const finishUnpairedSearch = () => {
+    setBtDevicesArray(
+      unpairedDevices[0] !== undefined
+        ? unpairedDevices
+        : [{ name: "No new unpaired devices found ", id: "123456789" , junk: true}]);
+        
+    setIsFetching(false);
+  }
+
+  var unpairedDevices = [];
   const updateDevices = async () => {
     try {
       setBtDevicesArray([{ name: "Searching... ", id: "123456789" , junk: true}]);
@@ -67,7 +80,6 @@ function BluetoothScreen({navigation, themeState}) {
       var unfilteredUnpairedDevices = await BluetoothSerial.discoverUnpairedDevices();
       
       var bTDeviceIDs = [];
-      var unpairedDevices = [];
       unfilteredUnpairedDevices.forEach((item) => bTDeviceIDs.push(item.id));
       var uniqueIDs = bTDeviceIDs.filter(function (item, pos, self) {
         return self.indexOf(item) == pos;
@@ -82,12 +94,8 @@ function BluetoothScreen({navigation, themeState}) {
         }
       }
 
-      setBtDevicesArray(
-        unpairedDevices[0] !== undefined
-          ? unpairedDevices
-          : [{ name: "No new unpaired devices found ", id: "123456789" , junk: true}]);
-          
-      setIsFetching(false);
+      finishUnpairedSearch();
+
     } catch (error) {
       setIsFetching(false);
       Alert.alert('nexTime', error);
