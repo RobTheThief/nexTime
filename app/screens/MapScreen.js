@@ -9,22 +9,26 @@ import helpers from '../utility/helpers';
 import storage from "../utility/storage";
 
 var lastAsyncReminder;
+var markerIntervalClass;
 
 function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
-  
+
+  const [reRenderMap, setReRenderMap] = useState(1)
+
   const [markers, setMarkers] = useState([]);
 
-  
   const loadMarkers = async () => {
     const asyncMarkers = await storage.get("asyncMarkers");
     asyncMarkers ? setMarkers(asyncMarkers) : setMarkers([]);
   };
-  
+
   useEffect(() => {
+    setReRenderMap(1) //MapView Bug workaround
     setNumSystem(storage.getOptions().measurementSys);
     loadMarkers();
-    helpers.loadReminderInterval("asyncMarkers", lastAsyncReminder, setMarkers);
-  }, []);
+    helpers.loadReminderInterval("asyncMarkers", lastAsyncReminder, setMarkers, markerIntervalClass);
+    markerIntervalClass = 'once is enough thanks';
+  }, [reRenderMap]);
 
   const addMarker = async (latlng) => {
     addMarkerDetailVisibility();
@@ -64,7 +68,8 @@ function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
           showsUserLocation={true}
           showsMyLocationButton={true}
           onPress={addMarker}
-          style={styles.mapStyle}
+          style={[styles.mapStyle, {flex: reRenderMap}]}
+          onMapReady={()=> reRenderMap === 1 && setReRenderMap(0)} //Workaround for MapView bug with showsMyLocationButton to rerender map
         >
           {markers.map((marker) => (
             <React.Fragment key={marker.id}>
@@ -93,7 +98,8 @@ function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
           showsUserLocation={true}
           showsMyLocationButton={true}
           onPress={addMarker}
-          style={styles.mapStyle}
+          style={[styles.mapStyle, {flex: reRenderMap}]}
+          onMapReady={()=> reRenderMap === 1 && setReRenderMap(0)} //Workaround for MapView bug with showsMyLocationButton to rerender map
         ></MapView>
       )}
     </>

@@ -10,18 +10,49 @@ const arraysEqual = (a, b) => {
     return true;
   }
 
-const loadReminderInterval = ( asyncIndex, lastAsyncReminder, setReminder) => {
-  setInterval(async function() {
+function Interval(fn, time) {
+  var timer = false;
+  this.start = function () {
+      if (!this.isRunning())
+          timer = setInterval(fn, time);
+  };
+  this.stop = function () {
+      clearInterval(timer);
+      timer = false;
+  };
+  this.isRunning = function () {
+      return timer !== false;
+  };
+}
+
+const loadReminderInterval = ( asyncIndex, lastAsyncReminder, setReminder, intervalClass) => {
+  
+  const myIntervalFunc = async () => {
     const asyncReminders = await storage.get(asyncIndex);
     const compareResult = arraysEqual(asyncReminders, lastAsyncReminder);
     if(!compareResult || (compareResult === 'nothing to compare' && lastAsyncReminder !== null)) {
       setReminder(asyncReminders);
     }
-    lastAsyncReminder = JSON.parse(JSON.stringify(asyncReminders));
-  }, 3000);
+    lastAsyncReminder = asyncReminders;
+  }
+
+  if (intervalClass === undefined) {
+    intervalClass = new Interval(myIntervalFunc, 3000);
+  }
+
+  if (intervalClass !== 'once is enough thanks' && intervalClass !== undefined) {
+    if(!intervalClass.isRunning()){
+      intervalClass.start();
+    }
+  }
+  
 }
 
   export default {
     arraysEqual,
     loadReminderInterval
   }
+
+
+
+  

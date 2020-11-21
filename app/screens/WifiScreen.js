@@ -12,12 +12,14 @@ import storage from "../utility/storage";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 
 var lastAsyncReminder;
+var btIntervalClass;
 
 function WifiScreen({navigation, themeState}) {
 
   useEffect(() => {
     updateReminderList();
-    helpers.loadReminderInterval("asyncWifiReminders", lastAsyncReminder, setWifiRemindersArray);
+    helpers.loadReminderInterval("asyncWifiReminders", lastAsyncReminder, setWifiRemindersArray, btIntervalClass);
+    btIntervalClass = 'once is enough thanks';
   }, []);
 
   const [wifiDevicesArray, setWifiDevicesArray] = useState(

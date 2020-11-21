@@ -25,7 +25,7 @@ TaskManager.defineTask('checkLocation', async ({ data: { locations }, error }) =
   console.log('Tasks running !!!');
 
   var taskAsyncMarkers = await storage.get('asyncMarkers');
-  if(taskAsyncMarkers && taskAsyncMarkers[0].id){
+  if(taskAsyncMarkers[0] && taskAsyncMarkers[0].id){
     appTasks.startCheckLocation(locations, taskAsyncMarkers);
   }
 

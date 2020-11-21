@@ -15,12 +15,12 @@ import {
 import React, { useEffect, useState } from "react";
 import Slider from "@react-native-community/slider";
 
+import appTasks from "../utility/appTasks";
 import AppText from "../components/AppText";
 import AppTextInput from "../components/AppTextInput";
 import colors from "../config/colors";
 import measurementSys from "../config/measurementSys";
 import storage from "../utility/storage";
-import appTasks from "../utility/appTasks";
 
 function AddMarkerDetailsScreen({
   addMarkerDetailVisibility,
@@ -65,26 +65,27 @@ function AddMarkerDetailsScreen({
   );
   const toggleDelete = () => setDeleteOnTrig((previousState) => !previousState);
 
-  const setTitleInputValue = () =>
+  const getTitleInputValue = () =>
     markers[id - 1] !== undefined ? markers[id - 1].title : undefined;
-  const setDescInputValue = () =>
+  const getDescInputValue = () =>
     markers[id - 1] !== undefined && markers[id - 1].description
       ? markers[id - 1].description
       : undefined;
-  const setNotesInputValue = () =>
+  const getNotesInputValue = () =>
     markers[id - 1] !== undefined && markers[id - 1].notes
       ? markers[id - 1].notes
       : undefined;
-  const setRadiusInputValue = () =>
+  const getRadiusInputValue = () =>
     markers[id - 1] !== undefined && markers[id - 1].radius
-      ?  (markers[id - 1].numSystem == 'imperial' ? metersTofeetRadius(markers[id - 1].radius) : markers[id - 1].radius)
-        : 100;
+      ?  (markers[id - 1].numSystem == 'imperial' ? metersTofeetRadius(markers[id - 1].radius) 
+        : markers[id - 1].radius)
+      : 100;
 
   useEffect(() => {
-    setTitle(setTitleInputValue);
-    setDesc(setDescInputValue);
-    setNotes(setNotesInputValue);
-    setRadius(setRadiusInputValue);
+    setTitle(getTitleInputValue);
+    setDesc(getDescInputValue);
+    setNotes(getNotesInputValue);
+    setRadius(getRadiusInputValue);
   }, []);
 
   const handleChangeRadiusText = (value) => {
@@ -103,9 +104,6 @@ function AddMarkerDetailsScreen({
     setKmOrMilesRadius(value / measurementSys.numRules[numSystem].unitDivider);
   };
 
-  
-  
-
   const handleSubmitMarker = () => {
     if (radius < measurementSys.numRules[numSystem].unitDivider / 10 || title == null)
       return Alert.alert('nexTime',
@@ -115,7 +113,6 @@ function AddMarkerDetailsScreen({
           measurementSys.numRules[numSystem].mOrFt +
           " or Title cannot be Empty!"
       );
-      console.log(radius);
       
     const markerObject = {
       id: id,
@@ -129,7 +126,6 @@ function AddMarkerDetailsScreen({
       notes: notes,
       taskDeleted: false,
       numSystem: numSystem,
-      timeStamp: Date.now(),
     };
 
     markers[id - 1] !== undefined
@@ -160,7 +156,7 @@ function AddMarkerDetailsScreen({
               markers[i].circleId = i + 1 + "c";
             }
             markers.length === 0 ? 
-            await storage.store("asyncMarkers", '') :
+            await storage.store("asyncMarkers", []) :
             await storage.store("asyncMarkers", markers);
             addMarkerDetailVisibility();
           },
@@ -184,12 +180,12 @@ function AddMarkerDetailsScreen({
               if (text === "") text = undefined;
               setTitle(text);
             }}
-            defaultValue={setTitleInputValue()}
+            defaultValue={getTitleInputValue()}
           />
           <AppTextInput
             placeholder={"Description (Displayed in callout on Map Screen)"}
             onChangeText={(text) => setDesc(text)}
-            defaultValue={setDescInputValue()}
+            defaultValue={getDescInputValue()}
           />
           <AppTextInput
             placeholder={"Notes eg. Shopping list..."}
@@ -198,7 +194,7 @@ function AddMarkerDetailsScreen({
             spellCheck={true}
             style={styles.notes}
             onChangeText={(text) => setNotes(text)}
-            defaultValue={setNotesInputValue()}
+            defaultValue={getNotesInputValue()}
           />
           <View style={styles.radiInputandTotal}>
             <AppText style={styles.radiTotal}>

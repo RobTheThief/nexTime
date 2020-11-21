@@ -12,13 +12,15 @@ import storage from "../utility/storage";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 var lastAsyncReminder;
+var btIntervalClass;
 
 function BluetoothScreen({navigation, themeState}) {
 
   useEffect(() => {
     getPaired();
     updateReminderList();
-    helpers.loadReminderInterval("asyncSerialBTDevices", lastAsyncReminder, setBtRemindersArray);
+    helpers.loadReminderInterval("asyncSerialBTDevices", lastAsyncReminder, setBtRemindersArray, btIntervalClass);
+    btIntervalClass = 'once is enough thanks';
   }, []);
 
   const [btDevicesArray, setBtDevicesArray] = useState(
