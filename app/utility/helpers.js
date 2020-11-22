@@ -10,19 +10,21 @@ const arraysEqual = (a, b) => {
     return true;
   }
 
-function Interval(fn, time) {
-  var timer = false;
-  this.start = function () {
+class Interval {
+  constructor(fn, time) {
+    var timer = false;
+    this.start = function () {
       if (!this.isRunning())
-          timer = setInterval(fn, time);
-  };
-  this.stop = function () {
+        timer = setInterval(fn, time);
+    };
+    this.stop = function () {
       clearInterval(timer);
       timer = false;
-  };
-  this.isRunning = function () {
+    };
+    this.isRunning = function () {
       return timer !== false;
-  };
+    };
+  }
 }
 
 const loadReminderInterval = ( asyncIndex, lastAsyncReminder, setReminder, intervalClass) => {

@@ -13,7 +13,7 @@ var markerIntervalClass;
 
 function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
 
-  const [reRenderMap, setReRenderMap] = useState(1)
+  const [reRenderMap, setReRenderMap] = useState(1) //MapView Bug workaround
 
   const [markers, setMarkers] = useState([]);
 

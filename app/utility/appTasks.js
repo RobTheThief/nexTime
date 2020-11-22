@@ -98,8 +98,6 @@ const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) =>
     return;
   }
   
-  console.log(serialListUnpaired);
-
   var bTDeviceIDs = [];
   serialListUnpaired.forEach((item) => bTDeviceIDs.push(item.id));
 

@@ -1,7 +1,7 @@
 import { Alert, StyleSheet, Switch, View } from 'react-native';
 import * as Location from "expo-location";
 import { Fontisto, MaterialCommunityIcons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import AppHeader from '../components/AppHeader';
 import AppText from '../components/AppText';
@@ -10,8 +10,12 @@ import storage from '../utility/storage';
 import appTasks from '../utility/appTasks';
 
 function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNumSystem }) {
-  var options = storage.getOptions();
 
+  useEffect(()=> {
+    setNumSystem(storage.getOptions().measurementSys);
+  }, [])
+
+  var options = storage.getOptions();
 
   const toggleMeasurementSys = () => {
     
@@ -30,7 +34,7 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
             options.measurementSys = mySetting;
             storage.store('options', options);
             setNumSystem(mySetting);
-            storage.store('asyncMarkers', '');
+            storage.store('asyncMarkers', []);
           },
         },
       ],
