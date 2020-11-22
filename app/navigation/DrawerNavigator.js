@@ -19,7 +19,7 @@ const DrawerNavigator = ({setThemeState, themeState, numSystem, setNumSystem}) =
                     themeState && colors.mode[themeState].drawerThemeStyles
                   ]}
       initialRouteName="Welcome Screen"
-      edgeWidth={40}
+      edgeWidth={30}
       lazy={true}
     >
       <Drawer.Screen name="Locations" >

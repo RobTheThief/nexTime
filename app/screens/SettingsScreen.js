@@ -62,11 +62,14 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
       'Allows the app to automatically enable bluetooth while scanning. Bluetooth is disabled again when finished to save power.')
   }
 
-  const [running, setRunning] = useState(Location.hasStartedLocationUpdatesAsync('checkLocation'));
-  const toggleService = async () => {
+  const handleToggleService = () => {
+    return new Promise( async resolve => {
     var isRunning = await Location.hasStartedLocationUpdatesAsync('checkLocation');
-    isRunning ? Location.stopLocationUpdatesAsync('checkLocation') : appTasks.areTasksRunning();
-    setRunning(isRunning);
+    isRunning ? await Location.stopLocationUpdatesAsync('checkLocation') : await appTasks.areTasksRunning();
+    isRunning = await Location.hasStartedLocationUpdatesAsync('checkLocation');
+    Alert.alert('nexTime', `Reminder service ${isRunning ? 'Started' : 'Stopped'}`);
+    resolve();
+    });
   }
 
     return (
@@ -137,10 +140,7 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
               <AppText style={styles.settingsHeaderText} >Start / Stop Reminder Service</AppText>
             </View>
               <View style={styles.controlContainer}>
-                <TouchableOpacity style={styles.startStopButton} onPress={() => {
-                      toggleService();
-                      Alert.alert('nexTime', `Reminder service ${running ? 'Started' : 'Stopped'}`)
-                    }}>
+                <TouchableOpacity style={styles.startStopButton} onPress={ () => handleToggleService() }>
                 <AppText>Start / Stop</AppText>
                 </TouchableOpacity>
               </View>

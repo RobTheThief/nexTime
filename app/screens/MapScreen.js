@@ -1,6 +1,7 @@
 import MapView, { Marker, Circle } from "react-native-maps";
-import React, { useState, useEffect } from "react";
-import { StyleSheet} from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { Alert, StyleSheet} from "react-native";
+import * as Location from "expo-location";
 
 import AppHeader from '../components/AppHeader';
 import AddMarkerDetailsScreen from "./AddMarkerDetailsScreen";
@@ -10,25 +11,20 @@ import storage from "../utility/storage";
 
 var lastAsyncReminder;
 var markerIntervalClass;
+var seenTutorialMsg = false;
 
 function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
 
-  const [reRenderMap, setReRenderMap] = useState(1) //MapView Bug workaround
+  const [reRenderMap, setReRenderMap] = useState(1);
+
+  const mapRef = useRef();
 
   const [markers, setMarkers] = useState([]);
-
+  
   const loadMarkers = async () => {
     const asyncMarkers = await storage.get("asyncMarkers");
     asyncMarkers ? setMarkers(asyncMarkers) : setMarkers([]);
   };
-
-  useEffect(() => {
-    setReRenderMap(1) //MapView Bug workaround
-    setNumSystem(storage.getOptions().measurementSys);
-    loadMarkers();
-    helpers.loadReminderInterval("asyncMarkers", lastAsyncReminder, setMarkers, markerIntervalClass);
-    markerIntervalClass = 'once is enough thanks';
-  }, [reRenderMap]);
 
   const addMarker = async (latlng) => {
     addMarkerDetailVisibility();
@@ -41,6 +37,35 @@ function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
     setPickedLocation(e.nativeEvent.coordinate);
   };
 
+  const zoomToLastKnown = () => {
+    return new Promise( async resolve => {
+      const lastKnown = await Location.getLastKnownPositionAsync();
+      const region = {
+        latitude: lastKnown.coords.latitude,
+        longitude: lastKnown.coords.longitude,
+        latitudeDelta: 0.004757,
+        longitudeDelta: 0.006866
+      }
+      mapRef.current.animateToRegion(region, 3000);
+    resolve(true); 
+    });
+  }
+
+  const addMarkerTutorial = async () => {  
+    if (seenTutorialMsg === false) {
+      setTimeout(async () => {
+        const asyncMarkers = await storage.get("asyncMarkers");
+        if (asyncMarkers[0] == null) {
+          Alert.alert('nexTime', 'To add a location reminder tap once on the map where you would like to be reminded.')
+        } 
+      }, 3500);
+      seenTutorialMsg = true;
+      setTimeout(() => {
+        seenTutorialMsg = false;
+      }, 30000);
+    } 
+  };
+  
   const [visible, setVisible] = useState(false);
   const addMarkerDetailVisibility = () =>{
     visible && loadMarkers();
@@ -48,6 +73,16 @@ function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
 }
   const [pickedLocation, setPickedLocation] = useState();
   const [id, setId] = useState();
+
+  useEffect(() => {
+    setReRenderMap(1) //MapView Bug workaround
+    setNumSystem(storage.getOptions().measurementSys);
+    loadMarkers();
+    helpers.loadReminderInterval("asyncMarkers", lastAsyncReminder, setMarkers, markerIntervalClass);
+    markerIntervalClass = 'once is enough thanks';
+    zoomToLastKnown();
+    addMarkerTutorial();
+  }, [reRenderMap]);
 
   return (
     <>
@@ -69,6 +104,7 @@ function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
           showsMyLocationButton={true}
           onPress={addMarker}
           style={[styles.mapStyle, {flex: reRenderMap}]}
+          ref={mapRef}
           onMapReady={()=> reRenderMap === 1 && setReRenderMap(0)} //Workaround for MapView bug with showsMyLocationButton to rerender map
         >
           {markers.map((marker) => (
@@ -99,6 +135,7 @@ function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
           showsMyLocationButton={true}
           onPress={addMarker}
           style={[styles.mapStyle, {flex: reRenderMap}]}
+          ref={mapRef}
           onMapReady={()=> reRenderMap === 1 && setReRenderMap(0)} //Workaround for MapView bug with showsMyLocationButton to rerender map
         ></MapView>
       )}
