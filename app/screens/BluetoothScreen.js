@@ -13,11 +13,12 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 var lastAsyncReminder;
 var btIntervalClass;
+const btDisabledMessage = 'To refresh Paired and Unpaired devices please enable bluetooth and pull down on the Unpaired devices list.'
 
 function BluetoothScreen({navigation, themeState}) {
 
   useEffect(() => {
-    btDisabledMessage();
+    helpers.ConnectivityDisabledMessage(BluetoothSerial, btDisabledMessage);
     getPaired();
     updateReminderList();
     helpers.loadReminderInterval("asyncSerialBTDevices", lastAsyncReminder, setBtRemindersArray, btIntervalClass);
@@ -62,16 +63,6 @@ function BluetoothScreen({navigation, themeState}) {
     setBtPairedDevicesArray(pairedDevices);
   } 
 
-  const btDisabledMessage = () => {
-    return new Promise( async resolve => {
-      if (!await BluetoothSerial.isEnabled()) {
-        Alert.alert('nexTime', 'To refresh Paired and Unpaired devices please enable bluetooth and pull down on the Unpaired devices list.');
-        resolve(true);
-      }
-      resolve(false);
-     })
-  };
-
   const finishUnpairedSearch = () => {
     setBtDevicesArray(
       unpairedDevices[0] !== undefined
@@ -84,7 +75,7 @@ function BluetoothScreen({navigation, themeState}) {
   var unpairedDevices = [];
   const updateDevices = async () => {
 
-    const isBtDisabled = await btDisabledMessage();
+    const isBtDisabled = await helpers.ConnectivityDisabledMessage(BluetoothSerial, btDisabledMessage);
     if (isBtDisabled === true){
       finishUnpairedSearch();
       return;

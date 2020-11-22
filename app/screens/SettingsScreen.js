@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Switch, View } from 'react-native';
+import { Alert, Button, StyleSheet, Switch, View } from 'react-native';
 import * as Location from "expo-location";
 import { Fontisto, MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
@@ -8,6 +8,7 @@ import AppText from '../components/AppText';
 import colors from '../config/colors';
 import storage from '../utility/storage';
 import appTasks from '../utility/appTasks';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNumSystem }) {
 
@@ -78,7 +79,7 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
               <MaterialCommunityIcons name="tape-measure" size={18} color={colors.primaryLight} />
               <AppText style={styles.settingsHeaderText} >Measurement System</AppText>
             </View>
-            <View style={styles.switchContainer}>
+            <View style={styles.controlContainer}>
               <AppText >Imperial</AppText>
               <Switch
                   style={styles.switch}
@@ -97,7 +98,7 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
               <MaterialCommunityIcons name="invert-colors" size={18} color={colors.primaryLight} />
               <AppText style={styles.settingsHeaderText} >Colour Scheme</AppText>
             </View>
-            <View style={styles.switchContainer}>
+            <View style={styles.controlContainer}>
               <AppText >Dark Mode</AppText>
               <Switch
                   style={styles.switch}
@@ -116,7 +117,7 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
               <Fontisto name="bluetooth-b" size={18} color={colors.primaryLight} />
               <AppText style={styles.settingsHeaderText} >Bluetooth Start</AppText>
             </View>
-            <View style={styles.switchContainer}>
+            <View style={styles.controlContainer}>
               <AppText >OFF</AppText>
               <Switch
                   style={styles.switch}
@@ -135,18 +136,14 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
               <MaterialCommunityIcons name="restart" size={18} color={colors.primaryLight} />
               <AppText style={styles.settingsHeaderText} >Start / Stop Reminder Service</AppText>
             </View>
-            <View style={styles.switchContainer}>
-              <AppText >OFF</AppText>
-              <Switch
-                  style={styles.switch}
-                  trackColor={{ false: "#767577", true: "#81b0ff" }}
-                  thumbColor={!running ? colors.primary : "#f4f3f4"}
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={toggleService}
-                  value={!running}
-              />
-              <AppText >ON</AppText>
-            </View>
+              <View style={styles.controlContainer}>
+                <TouchableOpacity style={styles.startStopButton} onPress={() => {
+                      toggleService();
+                      Alert.alert('nexTime', `Reminder service ${running ? 'Started' : 'Stopped'}`)
+                    }}>
+                <AppText>Start / Stop</AppText>
+                </TouchableOpacity>
+              </View>
           </View>
         </View>
     </>
@@ -175,7 +172,14 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         marginHorizontal: 20,
       },
-    switchContainer: {
+      startStopButton: {
+        backgroundColor: colors.primary,
+        padding: 7,
+        borderWidth: 1,
+        borderColor: colors.primaryLight,
+        borderRadius: 7,
+      },
+    controlContainer: {
         alignItems: 'center',
         justifyContent: 'flex-start',
         flexDirection: 'row',

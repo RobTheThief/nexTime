@@ -14,6 +14,8 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 var lastAsyncReminder;
 var btIntervalClass;
 
+const WifiDisabledMessage = 'Please enable wifi to and pull down on the Availible Networks list to refresh.'
+
 function WifiScreen({navigation, themeState}) {
 
   useEffect(() => {
@@ -43,6 +45,7 @@ function WifiScreen({navigation, themeState}) {
   }
 
   const updateDevices = async () => {
+    helpers.ConnectivityDisabledMessage(WifiManager, WifiDisabledMessage);
     setWifiDevicesArray([{ SSID: "Searching... ", BSSID: "123456789" , junk: true}]);
 
     var unfilteredNetworks = await WifiManager.loadWifiList();

@@ -1,3 +1,4 @@
+import { Alert } from 'react-native';
 import storage from './storage';
 
 const arraysEqual = (a, b) => {
@@ -72,8 +73,19 @@ const waitForBtEnabled = (BluetoothSerial) => {
   });
 };
 
+const ConnectivityDisabledMessage = (ConnectionManager, message) => {
+  return new Promise( async resolve => {
+    if (!await ConnectionManager.isEnabled()) {
+      Alert.alert('nexTime', message);
+      resolve(true);
+    }
+    resolve(false);
+   })
+};
+
   export default {
     arraysEqual,
+    ConnectivityDisabledMessage,
     enableBluetooth,
     loadReminderInterval,
     waitForBtEnabled,
