@@ -62,7 +62,7 @@ function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
       seenTutorialMsg = true;
       setTimeout(() => {
         seenTutorialMsg = false;
-      }, 30000);
+      }, 45000);
     } 
   };
   

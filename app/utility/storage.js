@@ -32,6 +32,9 @@ const getOptions = () => {
 };
 
 const firstPickNumSystem = () => {
+  const firstUseTutorialMsg = () => {
+    Alert.alert('nexTime', 'Keep in mind that reminders will be checked in the background as frequently as possible\nbut due to Android background task handling, they cannot be expected to run any more frequently than every 15 minutes.');
+  };
   if (options.measurementSys == 'not set yet'){
     return new Promise( resolve => { 
       Alert.alert(
@@ -43,6 +46,7 @@ const firstPickNumSystem = () => {
             onPress:  () => {
                 store("options", {startBluetooth : false, measurementSys: 'metric', color: 'light', });
                 loadOptionsToMem();
+                firstUseTutorialMsg();
                 resolve();
               }
           },
@@ -51,6 +55,7 @@ const firstPickNumSystem = () => {
             onPress: () => {
                 store("options", {startBluetooth : false, measurementSys: 'imperial', color: 'light', });
                 loadOptionsToMem();
+                firstUseTutorialMsg();
                 resolve();
               }
           },
