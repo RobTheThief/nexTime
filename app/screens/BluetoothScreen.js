@@ -17,6 +17,7 @@ var btIntervalClass;
 function BluetoothScreen({navigation, themeState}) {
 
   useEffect(() => {
+    btDisabledMessage();
     getPaired();
     updateReminderList();
     helpers.loadReminderInterval("asyncSerialBTDevices", lastAsyncReminder, setBtRemindersArray, btIntervalClass);
@@ -47,7 +48,7 @@ function BluetoothScreen({navigation, themeState}) {
     setIsFetching(true);
     updateDevices();
     setTimeout(() => {
-      finishUnpairedSearch();
+      btDevicesArray[0].name === "Searching... " && finishUnpairedSearch();
     }, 40000);
   }
 
@@ -61,6 +62,16 @@ function BluetoothScreen({navigation, themeState}) {
     setBtPairedDevicesArray(pairedDevices);
   } 
 
+  const btDisabledMessage = () => {
+    return new Promise( async resolve => {
+      if (!await BluetoothSerial.isEnabled()) {
+        Alert.alert('nexTime', 'To refresh Paired and Unpaired devices please enable bluetooth and pull down on the Unpaired devices list.');
+        resolve(true);
+      }
+      resolve(false);
+     })
+  };
+
   const finishUnpairedSearch = () => {
     setBtDevicesArray(
       unpairedDevices[0] !== undefined
@@ -72,6 +83,13 @@ function BluetoothScreen({navigation, themeState}) {
 
   var unpairedDevices = [];
   const updateDevices = async () => {
+
+    const isBtDisabled = await btDisabledMessage();
+    if (isBtDisabled === true){
+      finishUnpairedSearch();
+      return;
+    }
+
     try {
       setBtDevicesArray([{ name: "Searching... ", id: "123456789" , junk: true}]);
     

@@ -63,7 +63,6 @@ export default function App() {
     setThemeState(storage.getOptions().color);
     colors.btTabColor = colors.secondary;
     colors.wifiTabColor = colors.primaryLight;
-    
   };
 
   React.useEffect(() => {
