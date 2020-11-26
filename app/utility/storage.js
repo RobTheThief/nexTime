@@ -47,7 +47,9 @@ const firstPickNumSystem = () => {
                 store("options", {startBluetooth : false, measurementSys: 'metric', color: 'light', });
                 loadOptionsToMem();
                 firstUseTutorialMsg();
-                resolve();
+                setTimeout(() => {
+                  resolve();
+                }, 5000);
               }
           },
           {
@@ -56,7 +58,9 @@ const firstPickNumSystem = () => {
                 store("options", {startBluetooth : false, measurementSys: 'imperial', color: 'light', });
                 loadOptionsToMem();
                 firstUseTutorialMsg();
-                resolve();
+                setTimeout(() => {
+                  resolve();
+                }, 5000);
               }
           },
         ],

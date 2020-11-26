@@ -1,32 +1,36 @@
-import React, { useEffect } from "react";
+import DrawerNavigator from "../navigation/DrawerNavigator";
+import { NavigationContainer } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, ImageBackground, Image, View, Text, Button } from "react-native";
+
 import colors from "../config/colors";
+import nexTheme from "../config/drawerTheme";
 
-function WelcomeScreen({ navigation }) {
-
-  useEffect(()=>{
-    openDrawerTimer();
-  }, [])
-
-  const openDrawerTimer = () => {
-    setTimeout(() => {
-      navigation.openDrawer();
-    }, 2000);
-  };
+function WelcomeScreen({ themeState, setThemeState, numSystem, setNumSystem , welcome}) {
 
   return (
-    <ImageBackground
-      source={require("../assets/background.jpg")}
-      style={styles.background}
-    >
-      <View style={styles.logoContainer}>
-        <Image
-          source={require("../assets/nexTimeLogo.png")}
-          style={styles.logo}
-        />
-        <Text style={styles.tagline}>Next time you're there</Text>
-      </View>
-    </ImageBackground>
+    <>
+      {welcome ? (
+          <ImageBackground
+            source={require("../assets/background.jpg")}
+            style={styles.background}
+          >
+            <View style={styles.logoContainer}>
+              <Image
+                source={require("../assets/nexTimeLogo.png")}
+                style={styles.logo}
+              />
+              <Text style={styles.tagline}>Next time you're there</Text>
+            </View>
+          </ImageBackground>) 
+          : ( <NavigationContainer theme={nexTheme} independent={true} >
+                <DrawerNavigator  setThemeState={setThemeState}
+                                  themeState={themeState}
+                                  setNumSystem={setNumSystem} 
+                                  numSystem={numSystem} />
+              </NavigationContainer>)
+        }
+    </>
   );
 }
 

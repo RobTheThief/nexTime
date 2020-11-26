@@ -6,7 +6,6 @@ import { StyleSheet} from 'react-native';
 
 import BluetoothScreen from "../screens/BluetoothScreen";
 import MapScreen from "../screens/MapScreen";
-import WelcomeScreen from "../screens/WelcomeScreen";
 import WifiScreen from "../screens/WifiScreen";
 import colors from "../config/colors";
 import SettingsScreen from "../screens/SettingsScreen";
@@ -18,7 +17,7 @@ const DrawerNavigator = ({setThemeState, themeState, numSystem, setNumSystem}) =
       drawerStyle={ [{width: "50%", borderRightColor: colors.secondary, borderRightWidth: 2},
                     themeState && colors.mode[themeState].drawerThemeStyles
                   ]}
-      initialRouteName=" "
+      initialRouteName="Locations"
       edgeWidth={30}
       lazy={true}
     >
@@ -37,7 +36,6 @@ const DrawerNavigator = ({setThemeState, themeState, numSystem, setNumSystem}) =
                                     setNumSystem={setNumSystem} 
                                     numSystem={numSystem} />}
       </Drawer.Screen> 
-      <Drawer.Screen name=" " component={WelcomeScreen} />
     </Drawer.Navigator>
   );
 };

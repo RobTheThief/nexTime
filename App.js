@@ -1,4 +1,3 @@
-import { NavigationContainer } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
 import * as React from "react";
@@ -8,9 +7,8 @@ import * as TaskManager from "expo-task-manager";
 import appTasks from "./app/utility/appTasks";
 import { askPermissionsNotifications } from "./app/utility/notifications";
 import colors from "./app/config/colors";
-import DrawerNavigator from "./app/navigation/DrawerNavigator";
-import nexTheme from "./app/config/drawerTheme";
 import storage from './app/utility/storage';
+import WelcomeScreen from "./app/screens/WelcomeScreen";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
@@ -48,14 +46,18 @@ TaskManager.defineTask('checkLocation', async ({ data: { locations }, error }) =
 
 export default function App() {
   
-  const requestPermission = async () => {
-    const result = await Permissions.askAsync(Permissions.LOCATION);
-    if (!result.granted)
-      alert(
-        "You will need to enable location permissions to get current location and for the reminders to work."
-      );
+  const requestPermission = () => {
+    return new Promise( async resolve => {
+      const result = await Permissions.askAsync(Permissions.LOCATION);
+      if (!result.granted)
+        alert(
+          "You will need to enable location permissions to get current location and for the reminders to work."
+        );
+      resolve();
+      });
   };
 
+  const [welcome, setWelcome] = React.useState(true);
   const [themeState, setThemeState] = React.useState();
   const [numSystem, setNumSystem] = React.useState();
 
@@ -67,6 +69,9 @@ export default function App() {
       setThemeState(storage.getOptions().color);
       colors.btTabColor = colors.secondary;
       colors.wifiTabColor = colors.primaryLight;
+      setTimeout(() => {
+        setWelcome(false);
+      }, 2000);
   
   };
 
@@ -87,11 +92,11 @@ export default function App() {
   
 
   return (
-    <NavigationContainer  theme={nexTheme} >
-      <DrawerNavigator setThemeState={setThemeState}
-                       themeState={themeState}
-                       setNumSystem={setNumSystem} 
-                       numSystem={numSystem} />
-    </NavigationContainer>
+    <WelcomeScreen  setThemeState={setThemeState}
+                    themeState={themeState}
+                    setNumSystem={setNumSystem} 
+                    numSystem={numSystem}
+                    welcome={welcome}
+    />
   );
 }
