@@ -88,6 +88,8 @@ target 'nexTime' do
   add_flipper_pods!
   pod 'react-native-ble-plx', :path => '../node_modules/react-native-ble-plx'
 
+  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+
   post_install do |installer|
     flipper_post_install(installer)
   end

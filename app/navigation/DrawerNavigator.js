@@ -18,7 +18,7 @@ const DrawerNavigator = ({setThemeState, themeState, numSystem, setNumSystem}) =
       drawerStyle={ [{width: "50%", borderRightColor: colors.secondary, borderRightWidth: 2},
                     themeState && colors.mode[themeState].drawerThemeStyles
                   ]}
-      initialRouteName="Welcome Screen"
+      initialRouteName=" "
       edgeWidth={30}
       lazy={true}
     >
@@ -37,7 +37,7 @@ const DrawerNavigator = ({setThemeState, themeState, numSystem, setNumSystem}) =
                                     setNumSystem={setNumSystem} 
                                     numSystem={numSystem} />}
       </Drawer.Screen> 
-      <Drawer.Screen name="Welcome Screen" component={WelcomeScreen} />
+      <Drawer.Screen name=" " component={WelcomeScreen} />
     </Drawer.Navigator>
   );
 };

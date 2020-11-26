@@ -2,6 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
 import * as React from "react";
+import SplashScreen from 'react-native-splash-screen';
 import * as TaskManager from "expo-task-manager";
 
 import appTasks from "./app/utility/appTasks";
@@ -46,6 +47,7 @@ TaskManager.defineTask('checkLocation', async ({ data: { locations }, error }) =
 });
 
 export default function App() {
+  
   const requestPermission = async () => {
     const result = await Permissions.askAsync(Permissions.LOCATION);
     if (!result.granted)
@@ -57,17 +59,29 @@ export default function App() {
   const [themeState, setThemeState] = React.useState();
   const [numSystem, setNumSystem] = React.useState();
 
+
   const loadOptionsToMemAndSetAsync = async () => {
-    await storage.formatStorage();
-    await storage.firstPickNumSystem();
-    setThemeState(storage.getOptions().color);
-    colors.btTabColor = colors.secondary;
-    colors.wifiTabColor = colors.primaryLight;
+     
+      await storage.formatStorage();
+      await storage.firstPickNumSystem();
+      setThemeState(storage.getOptions().color);
+      colors.btTabColor = colors.secondary;
+      colors.wifiTabColor = colors.primaryLight;
+  
   };
 
-  React.useEffect(() => {
-    loadOptionsToMemAndSetAsync();
-    requestPermission();
+  const requestPermissionAndLoadOptions = () => {
+    return new Promise( async resolve => {
+      SplashScreen.show();
+      await requestPermission();
+      await loadOptionsToMemAndSetAsync();
+      SplashScreen.hide();
+      resolve();
+    });
+  };
+
+  React.useEffect(() => {    
+    requestPermissionAndLoadOptions();
     askPermissionsNotifications();
   }, []);
   
