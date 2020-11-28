@@ -8,6 +8,16 @@ import storage from "./storage";
 import helpers from "./helpers";
 
 var warned = false;
+var servicesRunning = 0;
+
+const getServiceStatus = () => {
+  return servicesRunning;
+};
+
+const serviceStatus = (IO) => {
+  servicesRunning = servicesRunning + IO;
+  return servicesRunning;
+};
   
 const checkLocationTask = () => {
   Location.startLocationUpdatesAsync('checkLocation', { 
@@ -37,6 +47,7 @@ const areTasksRunning = async () => {
 }
 
 const startCheckLocation = async (locations, taskAsyncMarkers) => {
+  serviceStatus(1);
   const { status } = await Location.requestPermissionsAsync();
   if (status === "granted") {
     var cleanupTrigger = false;
@@ -63,14 +74,17 @@ const startCheckLocation = async (locations, taskAsyncMarkers) => {
         taskAsyncMarkers[i].circleId = i + 1 + "c";
       }
       taskAsyncMarkers.length === 0 ? 
-      await storage.store("asyncMarkers", '') :
+      await storage.store("asyncMarkers", []) :
       await storage.store("asyncMarkers", taskAsyncMarkers);
       var cleanupTrigger = false;
     }
   }
+  serviceStatus(-1);
 };
 
 const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) => {
+  serviceStatus(1);
+  
   var cleanupTrigger = false;
 
   const wasEnabled = await BluetoothSerial.isEnabled();
@@ -122,10 +136,13 @@ const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) =>
     await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
     cleanupTrigger = false;
   }
+  serviceStatus(-1);
 };
 
 var wifiWarned = false;
 const startCheckWifi = async (taskAsyncWifiNetworks) => {
+  serviceStatus(1);
+
   var cleanupTrigger = false;
 
   const isEnabled = await WifiManager.isEnabled();
@@ -161,11 +178,13 @@ const startCheckWifi = async (taskAsyncWifiNetworks) => {
     await storage.store("asyncWifiReminders", taskAsyncWifiNetworks);
     cleanupTrigger = false;
   }
+  serviceStatus(-1);
 };
 
 export default {
   areTasksRunning,
   checkLocationTask,
+  getServiceStatus,
   startCheckLocation,
   startCheckBluetoothAsync,
   startCheckWifi,

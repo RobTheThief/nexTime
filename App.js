@@ -65,7 +65,9 @@ export default function App() {
   const loadOptionsToMemAndSetAsync = async () => {
      
       await storage.formatStorage();
+      console.log('after format storage');
       await storage.firstPickNumSystem();
+      console.log('after pick num system');
       setThemeState(storage.getOptions().color);
       colors.btTabColor = colors.secondary;
       colors.wifiTabColor = colors.primaryLight;
