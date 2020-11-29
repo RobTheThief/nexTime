@@ -1,3 +1,4 @@
+import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
 import * as React from "react";
@@ -63,31 +64,38 @@ export default function App() {
 
 
   const loadOptionsToMemAndSetAsync = async () => {
-     
-      await storage.formatStorage();
-      console.log('after format storage');
-      await storage.firstPickNumSystem();
-      console.log('after pick num system');
-      setThemeState(storage.getOptions().color);
-      colors.btTabColor = colors.secondary;
-      colors.wifiTabColor = colors.primaryLight;
-      setTimeout(() => {
-        setWelcome(false);
-      }, 2000);
+    
+    await stopService();
+    await storage.formatStorage();
+    await storage.firstPickNumSystem();
+    setThemeState(storage.getOptions().color);
+    colors.btTabColor = colors.secondary;
+    colors.wifiTabColor = colors.primaryLight;
+    setTimeout(async () => {
+      setWelcome(false);
+      appTasks.checkLocationTask();
+    }, 2000);
   
   };
 
-  const requestPermissionAndLoadOptions = () => {
-    return new Promise( async resolve => {
-      SplashScreen.show();
-      await requestPermission();
-      await loadOptionsToMemAndSetAsync();
-      SplashScreen.hide();
-      resolve();
-    });
+  const requestPermissionAndLoadOptions = async () => {
+   
+    SplashScreen.show();
+    await requestPermission();
+    await loadOptionsToMemAndSetAsync();
+    SplashScreen.hide();
+    
   };
 
-  React.useEffect(() => {    
+  const stopService = () => {
+    return new Promise( async resolve => {
+      var isRunning = await Location.hasStartedLocationUpdatesAsync('checkLocation');
+      isRunning && await Location.stopLocationUpdatesAsync('checkLocation');
+      resolve();
+    });  
+  };
+
+  React.useEffect(() => {   
     requestPermissionAndLoadOptions();
     askPermissionsNotifications();
   }, []);

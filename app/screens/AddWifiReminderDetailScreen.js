@@ -66,7 +66,7 @@ function AddWifiReminderDetailScreen({
         updateReminderList();
         Alert.alert('nexTime', `Reminder ${title} set`);
         addWifiReminderDetailVisibility();
-        appTasks.areTasksRunning();
+        appTasks.isServiceRunning();
     };
 
     useEffect(() => {     

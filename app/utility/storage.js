@@ -1,6 +1,8 @@
 import { Alert } from 'react-native';
 import AsyncStorage from "@react-native-community/async-storage";
 
+var options = {};
+
 const store = async (key, value) => {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
@@ -22,7 +24,6 @@ const get = async (key) => {
   }
 };
 
-var options = {};
 const loadOptionsToMem = async () => {
  options = await get('options');
 }

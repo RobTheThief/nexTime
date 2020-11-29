@@ -135,7 +135,7 @@ function AddMarkerDetailsScreen({
     setMarkers(markers.map((marker) => marker));
     storage.store("asyncMarkers", markers);
     addMarkerDetailVisibility();
-    appTasks.areTasksRunning();
+    appTasks.isServiceRunning();
   };
 
   const handleDeleteMarker = () => {

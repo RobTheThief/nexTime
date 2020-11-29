@@ -10,6 +10,7 @@ import colors from "../config/colors";
 import helpers from '../utility/helpers';
 import storage from "../utility/storage";
 import Swipeable from "react-native-gesture-handler/Swipeable";
+import refreshData from "../utility/refreshData";
 
 var lastAsyncReminder;
 var btIntervalClass;
@@ -20,7 +21,7 @@ function WifiScreen({navigation, themeState}) {
 
   useEffect(() => {
     updateReminderList();
-    helpers.loadReminderInterval("asyncWifiReminders", lastAsyncReminder, setWifiRemindersArray, btIntervalClass);
+    refreshData.loadReminderIntervalAsync("asyncWifiReminders", lastAsyncReminder, setWifiRemindersArray, btIntervalClass);
     btIntervalClass = 'once is enough thanks';
   }, []);
 

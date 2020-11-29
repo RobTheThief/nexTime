@@ -70,7 +70,7 @@ function AddBtReminderDetailScreen({
         updateReminderList();
         Alert.alert('nexTime', `Reminder ${title} set`);
         addBtReminderDetailVisibility();
-        appTasks.areTasksRunning();
+        appTasks.isServiceRunning();
     };
 
     return (

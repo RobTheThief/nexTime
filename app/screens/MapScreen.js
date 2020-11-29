@@ -8,6 +8,8 @@ import AddMarkerDetailsScreen from "./AddMarkerDetailsScreen";
 import colors from "../config/colors";
 import helpers from '../utility/helpers';
 import storage from "../utility/storage";
+import refreshData from "../utility/refreshData";
+import appTasks from "../utility/appTasks";
 
 var lastAsyncReminder;
 var markerIntervalClass;
@@ -78,7 +80,7 @@ function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
     setReRenderMap(1) //MapView Bug workaround
     setNumSystem(storage.getOptions().measurementSys);
     loadMarkers();
-    helpers.loadReminderInterval("asyncMarkers", lastAsyncReminder, setMarkers, markerIntervalClass);
+    refreshData.loadReminderIntervalAsync("asyncMarkers", lastAsyncReminder, setMarkers, markerIntervalClass);
     markerIntervalClass = 'once is enough thanks';
     zoomToLastKnown();
     addMarkerTutorial();

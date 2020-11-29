@@ -10,6 +10,7 @@ import colors from "../config/colors";
 import helpers from '../utility/helpers';
 import storage from "../utility/storage";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import refreshData from '../utility/refreshData';
 
 var lastAsyncReminder;
 var btIntervalClass;
@@ -21,7 +22,7 @@ function BluetoothScreen({navigation, themeState}) {
     helpers.ConnectivityDisabledMessage(BluetoothSerial, btDisabledMessage);
     getPaired();
     updateReminderList();
-    helpers.loadReminderInterval("asyncSerialBTDevices", lastAsyncReminder, setBtRemindersArray, btIntervalClass);
+    refreshData.loadReminderIntervalAsync("asyncSerialBTDevices", lastAsyncReminder, setBtRemindersArray, btIntervalClass);
     btIntervalClass = 'once is enough thanks';
   }, []);
 

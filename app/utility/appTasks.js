@@ -8,26 +8,33 @@ import storage from "./storage";
 import helpers from "./helpers";
 
 var warned = false;
-var servicesRunning = 0;
+var tasksRunning = 0;
 
-const getServiceStatus = () => {
-  return servicesRunning;
+const areTasksRunning = () => {
+  if (tasksRunning <= 0)
+    return false;
+    else
+    return true;
 };
 
-const serviceStatus = (IO) => {
-  servicesRunning = servicesRunning + IO;
-  return servicesRunning;
+const serviceStatus = (checkInOut) => {
+  tasksRunning = tasksRunning + checkInOut;
+  return tasksRunning;
 };
   
 const checkLocationTask = () => {
-  Location.startLocationUpdatesAsync('checkLocation', { 
-    accuracy: Location.Accuracy.BestForNavigation,
-    timeInterval: 30000,
-    distanceInterval: 1,
-    foregroundService: {
-        notificationTitle: 'nexTime',
-        notificationBody: 'Reminder service running...'
-    }
+  return new Promise( async resolve => {
+
+   await Location.startLocationUpdatesAsync('checkLocation', { 
+      accuracy: Location.Accuracy.BestForNavigation,
+      timeInterval: 30000,
+      distanceInterval: 1,
+      foregroundService: {
+          notificationTitle: 'nexTime Service running...',
+          notificationBody: 'To stop the service open the app and go to Settings.'
+      }
+    });
+    resolve();
   });
 }
 
@@ -41,13 +48,13 @@ const toKeep = (reminder) => {
   return false;
 }
 
-const areTasksRunning = async () => {
+const isServiceRunning = async () => {
   const running = await Location.hasStartedLocationUpdatesAsync('checkLocation');
   !running && checkLocationTask();
 }
 
 const startCheckLocation = async (locations, taskAsyncMarkers) => {
-  serviceStatus(1);
+  tasksRunning = serviceStatus(1);
   const { status } = await Location.requestPermissionsAsync();
   if (status === "granted") {
     var cleanupTrigger = false;
@@ -79,11 +86,11 @@ const startCheckLocation = async (locations, taskAsyncMarkers) => {
       var cleanupTrigger = false;
     }
   }
-  serviceStatus(-1);
+  tasksRunning = serviceStatus(-1);
 };
 
 const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) => {
-  serviceStatus(1);
+  tasksRunning = serviceStatus(1);
   
   var cleanupTrigger = false;
 
@@ -136,12 +143,12 @@ const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) =>
     await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
     cleanupTrigger = false;
   }
-  serviceStatus(-1);
+  tasksRunning = serviceStatus(-1);
 };
 
 var wifiWarned = false;
 const startCheckWifi = async (taskAsyncWifiNetworks) => {
-  serviceStatus(1);
+  tasksRunning = serviceStatus(1);
 
   var cleanupTrigger = false;
 
@@ -178,13 +185,13 @@ const startCheckWifi = async (taskAsyncWifiNetworks) => {
     await storage.store("asyncWifiReminders", taskAsyncWifiNetworks);
     cleanupTrigger = false;
   }
-  serviceStatus(-1);
+  tasksRunning = serviceStatus(-1);
 };
 
 export default {
   areTasksRunning,
   checkLocationTask,
-  getServiceStatus,
+  isServiceRunning,
   startCheckLocation,
   startCheckBluetoothAsync,
   startCheckWifi,
