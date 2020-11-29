@@ -95,7 +95,7 @@ function AddWifiReminderDetailScreen({
                 />
                 <View style={styles.switchBox}>
                     <View style={styles.switchContainer}>
-                        <AppText style={styles.switchText}>Repeat</AppText>
+                        <AppText style={[styles.switchText, colors.mode[themeState].switchText]}>Repeat</AppText>
                         <Switch
                             style={styles.switch}
                             trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -106,7 +106,7 @@ function AddWifiReminderDetailScreen({
                         />
                     </View>
                     <View style={styles.switchContainer}>
-                        <AppText style={styles.switchText}>Delete on Trigger</AppText>
+                        <AppText style={[styles.switchText, colors.mode[themeState].switchText]}>Delete on Trigger</AppText>
                         <Switch
                             style={styles.switch}
                             trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -121,11 +121,11 @@ function AddWifiReminderDetailScreen({
                 <View style={styles.buttonContainer}>
                         <TouchableOpacity style={styles.buttons} onPress={() => addWifiReminderDetailVisibility() }>
                             <AntDesign name="leftcircle" color={colors.primary} size={29} />
-                            <AppText style={styles.buttonText}>Go Back</AppText>
+                            <AppText style={[styles.buttonText, colors.mode[themeState].buttonText]}>Go Back</AppText>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.buttons} onPress={() => remindWifi(pickedId, pickedTitle) }>
                             <AntDesign name="enter" color={colors.primary} size={29} />
-                            <AppText style={styles.buttonText} >Set Reminder</AppText>
+                            <AppText style={[styles.buttonText, colors.mode[themeState].buttonText]} >Set Reminder</AppText>
                         </TouchableOpacity>
                     </View>
             </View>
@@ -148,7 +148,6 @@ const styles = StyleSheet.create({
     buttonText: {
         marginLeft: 5,
         fontSize: 15,
-        color: colors.primary,
     },
     inputBox: {
         width: "100%",
@@ -187,7 +186,6 @@ const styles = StyleSheet.create({
     },
     switchText: {
         marginRight: 10,
-        color: colors.primary,
         fontSize: 17,
     },
     title: {

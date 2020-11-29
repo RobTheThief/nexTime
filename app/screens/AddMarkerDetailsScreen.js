@@ -232,7 +232,7 @@ function AddMarkerDetailsScreen({
           />
           <View style={styles.switchBox}>
             <View style={styles.switchContainer}>
-              <AppText style={styles.switchText}>Repeat</AppText>
+              <AppText style={[styles.switchText, colors.mode[themeState].switchText]}>Repeat</AppText>
               <Switch
                 style={styles.switch}
                 trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -243,7 +243,7 @@ function AddMarkerDetailsScreen({
               />
             </View>
             <View style={styles.switchContainer}>
-              <AppText style={styles.switchText}>Delete on Trigger</AppText>
+              <AppText style={[styles.switchText, colors.mode[themeState].switchText]}>Delete on Trigger</AppText>
               <Switch
                 style={styles.switch}
                 trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -263,7 +263,7 @@ function AddMarkerDetailsScreen({
             style={styles.button}
           >
             <AntDesign name="leftcircle" color={colors.primary} size={29} />
-            <AppText style={styles.buttonText}>Go Back</AppText>
+            <AppText style={[styles.buttonText, colors.mode[themeState].buttonText]}>Go Back</AppText>
           </TouchableOpacity>
           {markers[id - 1] !== undefined && (
             <TouchableOpacity
@@ -275,7 +275,7 @@ function AddMarkerDetailsScreen({
                 size={30}
                 color={colors.primary}
               />
-              <AppText style={styles.buttonText}>Delete</AppText>
+              <AppText style={[styles.buttonText, colors.mode[themeState].buttonText]}>Delete</AppText>
             </TouchableOpacity>
           )}
           <TouchableOpacity
@@ -287,7 +287,7 @@ function AddMarkerDetailsScreen({
               size={24}
               color={colors.primary}
             />
-            <AppText style={styles.buttonText}>Submit</AppText>
+            <AppText style={[styles.buttonText, colors.mode[themeState].buttonText]}>Submit</AppText>
           </TouchableOpacity>
         </View>
       </View>
@@ -315,7 +315,6 @@ const styles = StyleSheet.create({
   buttonText: {
     paddingLeft: 5,
     fontSize: 15,
-    color: colors.primary,
   },
   inputBox: {
     width: "100%",
@@ -348,7 +347,6 @@ const styles = StyleSheet.create({
   switchText: {
     paddingRight: 20,
     fontSize: 17,
-    color: colors.primary,
   },
   radiInputandTotal: {
     flexDirection: "row-reverse",

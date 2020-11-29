@@ -1,7 +1,7 @@
 var btTabColor;
 var wifiTabColor;
-
-var primary = "#003380";
+ 
+var primary = "#004abb"; //original color #003380
 var primaryLight = '#bac8de';
 var secondary = "#cc6600";
 var black = "#000";
@@ -16,6 +16,9 @@ const mode = {
     appHeader: {
       backgroundColor: primary
     },
+    buttonText: {
+      color: secondary,
+    },
     container: {
       borderBottomColor: primaryLight
     },
@@ -28,7 +31,10 @@ const mode = {
       color: secondary,
       fontColor: secondary,
       width: '50%'
-    } 
+    }, 
+    switchText: {
+      color: secondary,
+    }
   },
 
 
@@ -39,6 +45,9 @@ const mode = {
     appHeader: {
       backgroundColor: primary
     },
+    buttonText: {
+      color: primary,
+    },
     container: {
       
     },
@@ -48,6 +57,9 @@ const mode = {
     },
     drawerThemeStyles: {
       width: '50%'
+    }, 
+    switchText: {
+      color: primary,
     } 
   }  
 };
