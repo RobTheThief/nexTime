@@ -31,7 +31,8 @@
       "favicon": "./app/assets/favicon.png"
     },
     "android": {
-      "package": "com.robthethief.nextime"
+      "package": "com.robthethief.nextime",
+      "useNextNotificationsApi": true
     },
     "entryPoint": "node_modules/expo/AppEntry.js"
   }

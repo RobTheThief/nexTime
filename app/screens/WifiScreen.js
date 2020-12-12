@@ -15,7 +15,7 @@ import refreshData from "../utility/refreshData";
 var lastAsyncReminder;
 var btIntervalClass;
 
-const WifiDisabledMessage = 'Please enable wifi to and pull down on the Availible Networks list to refresh.'
+const WifiDisabledMessage = 'Please enable WIFI and LOCATION and pull down on the Availible Networks list to refresh.'
 
 function WifiScreen({navigation, themeState}) {
 
@@ -46,7 +46,12 @@ function WifiScreen({navigation, themeState}) {
   }
 
   const updateDevices = async () => {
-    helpers.ConnectivityDisabledMessage(WifiManager, WifiDisabledMessage);
+    
+    const isWifiOrLoactionDisabled = await helpers.ServicesDisabledMessage(WifiManager, WifiDisabledMessage);
+    if (isWifiOrLoactionDisabled === true){
+      setIsFetching(false);
+      return;
+    }
     setWifiDevicesArray([{ SSID: "Searching... ", BSSID: "123456789" , junk: true}]);
 
     var unfilteredNetworks = await WifiManager.loadWifiList();

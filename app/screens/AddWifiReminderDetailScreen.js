@@ -64,7 +64,7 @@ function AddWifiReminderDetailScreen({
                             });
         await storage.store("asyncWifiReminders", wifiRemindersArray);
         updateReminderList();
-        Alert.alert('nexTime', `Reminder ${title} set`);
+        Alert.alert('nexTime', `Reminder ${title} set.\n\nLocation service must be enabled for reminders to work.`);
         addWifiReminderDetailVisibility();
         appTasks.isServiceRunning();
     };

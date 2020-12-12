@@ -14,12 +14,12 @@ import refreshData from '../utility/refreshData';
 
 var lastAsyncReminder;
 var btIntervalClass;
-const btDisabledMessage = 'To refresh Paired and Unpaired devices please enable bluetooth and pull down on the Unpaired devices list.'
+const btDisabledMessage = 'To refresh Paired and Unpaired devices please enable BLUETOOTH and LOCATION and pull down on the Unpaired devices list.'
 
 function BluetoothScreen({navigation, themeState}) {
 
   useEffect(() => {
-    helpers.ConnectivityDisabledMessage(BluetoothSerial, btDisabledMessage);
+    helpers.ServicesDisabledMessage(BluetoothSerial, btDisabledMessage);
     getPaired();
     updateReminderList();
     refreshData.loadReminderIntervalAsync("asyncSerialBTDevices", lastAsyncReminder, setBtRemindersArray, btIntervalClass);
@@ -48,10 +48,10 @@ function BluetoothScreen({navigation, themeState}) {
 
   const onRefresh = () => {
     setIsFetching(true);
-    updateDevices();
     setTimeout(() => {
-      btDevicesArray[0].name === "Searching... " && finishUnpairedSearch();
+       finishUnpairedSearch();
     }, 40000);
+    updateDevices();
   }
 
   const updateReminderList = async () => {
@@ -76,8 +76,8 @@ function BluetoothScreen({navigation, themeState}) {
   var unpairedDevices = [];
   const updateDevices = async () => {
 
-    const isBtDisabled = await helpers.ConnectivityDisabledMessage(BluetoothSerial, btDisabledMessage);
-    if (isBtDisabled === true){
+    const isBtOrLocationDisabled = await helpers.ServicesDisabledMessage(BluetoothSerial, btDisabledMessage);
+    if (isBtOrLocationDisabled === true){
       finishUnpairedSearch();
       return;
     }

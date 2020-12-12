@@ -68,7 +68,7 @@ function AddBtReminderDetailScreen({
                             });
         await storage.store("asyncSerialBTDevices", btRemindersArray);
         updateReminderList();
-        Alert.alert('nexTime', `Reminder ${title} set`);
+        Alert.alert('nexTime', `Reminder ${title} set.\n\nLocation service must be enabled for reminders to work.`);
         addBtReminderDetailVisibility();
         appTasks.isServiceRunning();
     };

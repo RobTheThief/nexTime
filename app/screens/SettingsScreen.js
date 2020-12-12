@@ -1,4 +1,4 @@
-import { Alert, Button, StyleSheet, Switch, View } from 'react-native';
+import { Alert, StyleSheet, Switch, View } from 'react-native';
 import * as Location from "expo-location";
 import { Fontisto, MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';

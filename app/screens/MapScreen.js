@@ -6,10 +6,8 @@ import * as Location from "expo-location";
 import AppHeader from '../components/AppHeader';
 import AddMarkerDetailsScreen from "./AddMarkerDetailsScreen";
 import colors from "../config/colors";
-import helpers from '../utility/helpers';
 import storage from "../utility/storage";
 import refreshData from "../utility/refreshData";
-import appTasks from "../utility/appTasks";
 
 var lastAsyncReminder;
 var markerIntervalClass;
@@ -39,18 +37,19 @@ function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
     setPickedLocation(e.nativeEvent.coordinate);
   };
 
-  const zoomToLastKnown = () => {
-    return new Promise( async resolve => {
+  const zoomToLastKnown = async () => {
+   
       const lastKnown = await Location.getLastKnownPositionAsync();
-      const region = {
-        latitude: lastKnown.coords.latitude,
-        longitude: lastKnown.coords.longitude,
-        latitudeDelta: 0.004757,
-        longitudeDelta: 0.006866
+      if (lastKnown){
+        const region = {
+          latitude: lastKnown.coords.latitude,
+          longitude: lastKnown.coords.longitude,
+          latitudeDelta: 0.004757,
+          longitudeDelta: 0.006866
+        }
+        mapRef.current.animateToRegion(region, 3000);
       }
-      mapRef.current.animateToRegion(region, 3000);
-    resolve(true); 
-    });
+  
   }
 
   const addMarkerTutorial = async () => {  

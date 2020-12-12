@@ -1,4 +1,5 @@
 import { Alert } from 'react-native';
+import * as Location from "expo-location";
 
 const enableBluetooth = (wasEnabled, startBluetooth, BluetoothSerial) => {
     return new Promise( async resolve => {
@@ -22,9 +23,9 @@ const waitForBtEnabled = (BluetoothSerial) => {
   });
 };
 
-const ConnectivityDisabledMessage = (ConnectionManager, message) => {
+const ServicesDisabledMessage = (ConnectionManager, message) => {
   return new Promise( async resolve => {
-    if (!await ConnectionManager.isEnabled()) {
+    if (!await ConnectionManager.isEnabled() || !await Location.hasServicesEnabledAsync()) {
       Alert.alert('nexTime', message);
       resolve(true);
     }
@@ -33,7 +34,7 @@ const ConnectivityDisabledMessage = (ConnectionManager, message) => {
 };
 
   export default {
-    ConnectivityDisabledMessage,
+    ServicesDisabledMessage,
     enableBluetooth,
     waitForBtEnabled,
   }
