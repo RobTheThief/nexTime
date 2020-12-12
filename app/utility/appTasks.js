@@ -30,7 +30,7 @@ const checkLocationTask = () => {
       timeInterval: 30000,
       distanceInterval: 1,
       foregroundService: {
-          notificationTitle: 'nexTime Service running...',
+          notificationTitle: 'nexTime location service running...',
           notificationBody: 'To stop the service open the app and go to Settings.'
       }
     });

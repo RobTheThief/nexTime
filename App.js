@@ -2,7 +2,6 @@ import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
 import * as React from "react";
-import SplashScreen from 'react-native-splash-screen';
 import * as TaskManager from "expo-task-manager";
 
 import appTasks from "./app/utility/appTasks";
@@ -10,6 +9,7 @@ import { askPermissionsNotifications } from "./app/utility/notifications";
 import colors from "./app/config/colors";
 import storage from './app/utility/storage';
 import WelcomeScreen from "./app/screens/WelcomeScreen";
+import { Alert } from "react-native";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
@@ -50,12 +50,41 @@ export default function App() {
   const requestPermission = () => {
     return new Promise( async resolve => {
       const result = await Permissions.askAsync(Permissions.LOCATION);
-      if (!result.granted)
+      if (!result.granted){
         alert(
           "You will need to enable location permissions to get current location and for the reminders to work."
         );
-      resolve();
+        return;
+      }else{
+        resolve();
+      }
       });
+  };
+
+  const permissionMessage = async () => {
+    const {status} = await Permissions.getAsync(Permissions.LOCATION);
+    setTimeout(() => {
+      if(status !== 'granted'){
+        Alert.alert(
+          "Background Location",
+          `To use the map and create reminders, allow nexTime to use your location all the time.\n\nnextTime will use your location in the background to trigger reminders you have set.\n\nLocation information is only stored on your device and is never shared.`,
+          [
+            {
+              text: "OK",
+              onPress:  () => {
+                requestPermissionAndLoadOptions();
+                }
+            },
+            {
+              text: "No thanks"
+            }
+          ],
+          { cancelable: false }
+        );
+      }else {
+        requestPermissionAndLoadOptions();
+      }
+    }, 2000);
   };
 
   const [welcome, setWelcome] = React.useState(true);
@@ -79,12 +108,8 @@ export default function App() {
   };
 
   const requestPermissionAndLoadOptions = async () => {
-   
-    SplashScreen.show();
     await requestPermission();
     await loadOptionsToMemAndSetAsync();
-    SplashScreen.hide();
-    
   };
 
   const stopService = () => {
@@ -96,7 +121,7 @@ export default function App() {
   };
 
   React.useEffect(() => {   
-    requestPermissionAndLoadOptions();
+    permissionMessage();
     askPermissionsNotifications();
   }, []);
   

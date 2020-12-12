@@ -34,7 +34,7 @@ const getOptions = () => {
 
 const firstPickNumSystem = () => {
   const firstUseTutorialMsg = () => {
-    Alert.alert('nexTime', 'Keep in mind that reminders will be checked in the background as frequently as possible\nbut due to Android background task handling, they cannot be expected to run any more frequently than every 15 minutes.');
+    Alert.alert('nexTime', 'Keep in mind that reminders will be checked in the background as frequently as possible.\n\nHowever due to Android background location handling, they cannot be expected to run any more frequently than every 15 minutes.');
   };
   if (options.measurementSys == 'not set yet'){
     return new Promise( resolve => { 
