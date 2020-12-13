@@ -1,3 +1,4 @@
+import { Alert } from "react-native";
 import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
@@ -7,9 +8,9 @@ import * as TaskManager from "expo-task-manager";
 import appTasks from "./app/utility/appTasks";
 import { askPermissionsNotifications } from "./app/utility/notifications";
 import colors from "./app/config/colors";
+import refreshData from "./app/utility/refreshData";
 import storage from './app/utility/storage';
 import WelcomeScreen from "./app/screens/WelcomeScreen";
-import { Alert } from "react-native";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
@@ -26,17 +27,20 @@ TaskManager.defineTask('checkLocation', async ({ data: { locations }, error }) =
 
   var taskAsyncMarkers = await storage.get('asyncMarkers');
   if(taskAsyncMarkers[0] && taskAsyncMarkers[0].id){
-    appTasks.startCheckLocation(locations, taskAsyncMarkers);
+    await appTasks.startCheckLocation(locations, taskAsyncMarkers);
+    refreshData.refreshReminders('asyncMarkers');
   }
 
   var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
   if(taskAsyncBTDevices && taskAsyncBTDevices[0].id){
-    appTasks.startCheckBluetoothAsync( taskAsyncBTDevices );
+    await appTasks.startCheckBluetoothAsync( taskAsyncBTDevices );
+    refreshData.refreshReminders('asyncSerialBTDevices');
   }
 
   var taskAsyncWifiNetworks = await storage.get("asyncWifiReminders");
   if(taskAsyncWifiNetworks && taskAsyncWifiNetworks[0].id){
-    appTasks.startCheckWifi( taskAsyncWifiNetworks );
+    await appTasks.startCheckWifi( taskAsyncWifiNetworks );
+    refreshData.refreshReminders('asyncWifiReminders');
   }
 
   if (error){
@@ -120,7 +124,8 @@ export default function App() {
     });  
   };
 
-  React.useEffect(() => {   
+  React.useEffect(() => {
+    refreshData.resetRefreshObj();   
     permissionMessage();
     askPermissionsNotifications();
   }, []);

@@ -10,7 +10,6 @@ import storage from "../utility/storage";
 import refreshData from "../utility/refreshData";
 
 var lastAsyncReminder;
-var markerIntervalClass;
 var seenTutorialMsg = false;
 
 function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
@@ -79,8 +78,7 @@ function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
     setReRenderMap(1) //MapView Bug workaround
     setNumSystem(storage.getOptions().measurementSys);
     loadMarkers();
-    refreshData.loadReminderIntervalAsync("asyncMarkers", lastAsyncReminder, setMarkers, markerIntervalClass);
-    markerIntervalClass = 'once is enough thanks';
+    refreshData.transferFuncAndVars('MapScreen', lastAsyncReminder, setMarkers);
     zoomToLastKnown();
     addMarkerTutorial();
   }, [reRenderMap]);

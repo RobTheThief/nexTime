@@ -1,5 +1,30 @@
-import appTasks from './appTasks';
 import storage from './storage';
+
+var screenFuncsAndVars = {
+  asyncMarkers: {
+    
+  },
+  asyncWifiReminders: {
+    
+  },
+  asyncSerialBTDevices: {
+    
+  },
+}
+
+const resetRefreshObj = () => {
+  screenFuncsAndVars = {
+    asyncMarkers: {
+      
+    },
+    asyncWifiReminders: {
+      
+    },
+    asyncSerialBTDevices: {
+      
+    },
+  }
+}
 
 const arraysEqual = (a, b) => {
   if (a == null || b == null) return 'nothing to compare';
@@ -11,50 +36,41 @@ const arraysEqual = (a, b) => {
   return true;
 }
 
-class Interval {
-  constructor(fn, time) {
-    var timer = false;
-    this.start = function () {
-      if (!this.isRunning())
-        timer = setInterval(fn, time);
-    };
-    this.stop = function () {
-      clearInterval(timer);
-      timer = false;
-    };
-    this.isRunning = function () {
-      return timer !== false;
-    };
+const refreshReminders = async (asyncIndex) => {
+  if (screenFuncsAndVars[asyncIndex].setReminder !== undefined){
+    const asyncReminders = await storage.get(asyncIndex);
+    const compareResult = arraysEqual(asyncReminders, screenFuncsAndVars[asyncIndex].lastAsyncReminder);
+    if(!compareResult || (compareResult === 'nothing to compare' && screenFuncsAndVars[asyncIndex].lastAsyncReminder !== null)) {
+      screenFuncsAndVars[asyncIndex].setReminder(asyncReminders);
+    }
+    lastAsyncReminder = asyncReminders;
   }
 }
 
-const loadReminderIntervalAsync = ( asyncIndex, lastAsyncReminder, setReminder, intervalClass) => {
-
-  const myIntervalFunc = async () => {
-    
-      if (appTasks.areTasksRunning() === false){
-        const asyncReminders = await storage.get(asyncIndex);
-        const compareResult = arraysEqual(asyncReminders, lastAsyncReminder);
-        if(!compareResult || (compareResult === 'nothing to compare' && lastAsyncReminder !== null)) {
-          setReminder(asyncReminders);
-        }
-        lastAsyncReminder = asyncReminders;
-      }
+const transferFuncAndVars = (screen, lastAsyncReminder, setReminder) => {
+  if (screen === 'MapScreen'){
+    screenFuncsAndVars.asyncMarkers = {
+      lastAsyncReminder: lastAsyncReminder,
+      setReminder: setReminder,
     }
-
-    if (intervalClass === undefined) {
-      intervalClass = new Interval(myIntervalFunc, 3000);
+  }
+  if (screen === 'WifiScreen'){
+    screenFuncsAndVars.asyncWifiReminders = {
+      lastAsyncReminder: lastAsyncReminder,
+      setReminder: setReminder,
     }
-
-    if (intervalClass !== 'once is enough thanks' && intervalClass !== undefined) {
-      if(!intervalClass.isRunning()){
-        intervalClass.start();
-      }
+  }
+  if (screen === 'BluetoothScreen'){
+    screenFuncsAndVars.asyncSerialBTDevices = {
+      lastAsyncReminder: lastAsyncReminder,
+      setReminder: setReminder,
     }
-  
+  }
 }
 
 
   export default {
-    loadReminderIntervalAsync,
+    refreshReminders,
+    resetRefreshObj,
+    transferFuncAndVars,
   }

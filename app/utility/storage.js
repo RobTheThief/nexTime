@@ -83,10 +83,10 @@ const formatStorage = () => {
 }
 
 export default {
-  store,
+  firstPickNumSystem,
+  formatStorage,
   get,
   getOptions,
   loadOptionsToMem,
-  firstPickNumSystem,
-  formatStorage,
+  store,
 };

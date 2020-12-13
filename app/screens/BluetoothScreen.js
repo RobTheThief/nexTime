@@ -13,7 +13,6 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import refreshData from '../utility/refreshData';
 
 var lastAsyncReminder;
-var btIntervalClass;
 const btDisabledMessage = 'To refresh Paired and Unpaired devices please enable BLUETOOTH and LOCATION and pull down on the Unpaired devices list.'
 
 function BluetoothScreen({navigation, themeState}) {
@@ -22,8 +21,7 @@ function BluetoothScreen({navigation, themeState}) {
     helpers.ServicesDisabledMessage(BluetoothSerial, btDisabledMessage);
     getPaired();
     updateReminderList();
-    refreshData.loadReminderIntervalAsync("asyncSerialBTDevices", lastAsyncReminder, setBtRemindersArray, btIntervalClass);
-    btIntervalClass = 'once is enough thanks';
+    refreshData.transferFuncAndVars('BluetoothScreen', lastAsyncReminder, setBtRemindersArray);
   }, []);
 
   const [btDevicesArray, setBtDevicesArray] = useState(
@@ -127,10 +125,12 @@ function BluetoothScreen({navigation, themeState}) {
           text: "Yes",
           onPress: async () => {
             var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
-            taskAsyncBTDevices = taskAsyncBTDevices.filter((reminder) => reminder.id !== item.id);
-            taskAsyncBTDevices.length === 0 ?
+            taskAsyncBTDevices && 
+            (taskAsyncBTDevices = taskAsyncBTDevices.filter((reminder) => reminder.id !== item.id));
+            taskAsyncBTDevices && 
+            (taskAsyncBTDevices.length === 0 ?
             await storage.store("asyncSerialBTDevices", '') :
-            await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
+            await storage.store("asyncSerialBTDevices", taskAsyncBTDevices));
             updateReminderList();
           },
         },

@@ -8,26 +8,13 @@ import storage from "./storage";
 import helpers from "./helpers";
 
 var warned = false;
-var tasksRunning = 0;
-
-const areTasksRunning = () => {
-  if (tasksRunning <= 0)
-    return false;
-    else
-    return true;
-};
-
-const serviceStatus = (checkInOut) => {
-  tasksRunning = tasksRunning + checkInOut;
-  return tasksRunning;
-};
   
 const checkLocationTask = () => {
   return new Promise( async resolve => {
 
    await Location.startLocationUpdatesAsync('checkLocation', { 
       accuracy: Location.Accuracy.BestForNavigation,
-      timeInterval: 30000,
+      timeInterval: 60000,
       distanceInterval: 1,
       foregroundService: {
           notificationTitle: 'nexTime location service running...',
@@ -53,143 +40,143 @@ const isServiceRunning = async () => {
   !running && checkLocationTask();
 }
 
-const startCheckLocation = async (locations, taskAsyncMarkers) => {
-  tasksRunning = serviceStatus(1);
-  const { status } = await Location.requestPermissionsAsync();
-  if (status === "granted") {
-    var cleanupTrigger = false;
-
-    for (let index = 0; index < taskAsyncMarkers.length; index++) {
-      const marker = taskAsyncMarkers[index];
-      if (!marker.taskDeleted) {
-        const adjustedDistance = geoFencing.getRelativeDistance(locations, marker);
-        
-        if (adjustedDistance <= marker.radius) {
-          sendNotificationImmediately("nexTime Reminders", "nexTime Location Reminder: " + marker.title);
-          cleanupTrigger = true;
-          if (marker.repeat === false) {
-            taskAsyncMarkers[index].taskDeleted = true;
-            await storage.store("asyncMarkers", taskAsyncMarkers);
-          }
-        }
-      }     
-    }
-    if(cleanupTrigger){
-      taskAsyncMarkers = taskAsyncMarkers.filter((marker) => toKeep(marker));
-      for (let i = 0; i < taskAsyncMarkers.length; i++) {
-        taskAsyncMarkers[i].id = i + 1;
-        taskAsyncMarkers[i].circleId = i + 1 + "c";
-      }
-      taskAsyncMarkers.length === 0 ? 
-      await storage.store("asyncMarkers", []) :
-      await storage.store("asyncMarkers", taskAsyncMarkers);
+const startCheckLocation = (locations, taskAsyncMarkers) => {
+  return new Promise( async resolve => {
+    const { status } = await Location.requestPermissionsAsync();
+    if (status === "granted") {
       var cleanupTrigger = false;
+
+      for (let index = 0; index < taskAsyncMarkers.length; index++) {
+        const marker = taskAsyncMarkers[index];
+        if (!marker.taskDeleted) {
+          const adjustedDistance = geoFencing.getRelativeDistance(locations, marker);
+          
+          if (adjustedDistance <= marker.radius) {
+            sendNotificationImmediately("nexTime Reminders", "nexTime Location Reminder: " + marker.title);
+            cleanupTrigger = true;
+            if (marker.repeat === false) {
+              taskAsyncMarkers[index].taskDeleted = true;
+              await storage.store("asyncMarkers", taskAsyncMarkers);
+            }
+          }
+        }     
+      }
+      if(cleanupTrigger){
+        taskAsyncMarkers = taskAsyncMarkers.filter((marker) => toKeep(marker));
+        for (let i = 0; i < taskAsyncMarkers.length; i++) {
+          taskAsyncMarkers[i].id = i + 1;
+          taskAsyncMarkers[i].circleId = i + 1 + "c";
+        }
+        taskAsyncMarkers.length === 0 ? 
+        await storage.store("asyncMarkers", []) :
+        await storage.store("asyncMarkers", taskAsyncMarkers);
+        var cleanupTrigger = false;
+      }
     }
-  }
-  tasksRunning = serviceStatus(-1);
+    resolve();
+  });
 };
 
-const startCheckBluetoothAsync = async ( taskAsyncBTDevices, startBluetooth ) => {
-  tasksRunning = serviceStatus(1);
-  
-  var cleanupTrigger = false;
+const startCheckBluetoothAsync = ( taskAsyncBTDevices, startBluetooth ) => {
+  return new Promise( async resolve => {
+    var cleanupTrigger = false;
 
-  const wasEnabled = await BluetoothSerial.isEnabled();
-  var options = await storage.get('options');
-  startBluetooth = options.startBluetooth;
-  
-  var enable = false;
-  enable = await helpers.enableBluetooth(wasEnabled, startBluetooth, BluetoothSerial);
+    const wasEnabled = await BluetoothSerial.isEnabled();
+    var options = await storage.get('options');
+    startBluetooth = options.startBluetooth;
+    
+    var enable = false;
+    enable = await helpers.enableBluetooth(wasEnabled, startBluetooth, BluetoothSerial);
 
-  wasEnabled && (warned = false);
-  if (!wasEnabled && !warned && !startBluetooth) {
-    warned = true;
-    return sendNotificationImmediately("nexTime Reminders", "Bluetooth must be on for your reminders to work");
-  } else if (!wasEnabled && warned === true) {
-    return;
-  }
-  
-  const isEnabled = await helpers.waitForBtEnabled(BluetoothSerial);
-  
-  var serialListUnpaired = [];
-  if (isEnabled){
-    serialListUnpaired = await BluetoothSerial.discoverUnpairedDevices();
-  }else{
+    wasEnabled && (warned = false);
+    if (!wasEnabled && !warned && !startBluetooth) {
+      warned = true;
+      return sendNotificationImmediately("nexTime Reminders", "Bluetooth must be on for your reminders to work");
+    } else if (!wasEnabled && warned === true) {
+      return;
+    }
+    
+    const isEnabled = await helpers.waitForBtEnabled(BluetoothSerial);
+    
+    var serialListUnpaired = [];
+    if (isEnabled){
+      serialListUnpaired = await BluetoothSerial.discoverUnpairedDevices();
+    }else{
+      !wasEnabled && BluetoothSerial.disable();
+      return;
+    }
+    
+    var bTDeviceIDs = [];
+    serialListUnpaired.forEach((item) => bTDeviceIDs.push(item.id));
+
     !wasEnabled && BluetoothSerial.disable();
-    return;
-  }
-  
-  var bTDeviceIDs = [];
-  serialListUnpaired.forEach((item) => bTDeviceIDs.push(item.id));
 
-  !wasEnabled && BluetoothSerial.disable();
-
-  for (let index = 0; index < taskAsyncBTDevices.length; index++)  {
-    const btReminder = taskAsyncBTDevices[index];
-    var present = bTDeviceIDs.some((id) => btReminder.id == id);
-    if (present && !btReminder.taskDeleted) {
-      sendNotificationImmediately("nexTime Reminders", `Bluetooth reminder: ${btReminder.name}`);
-      cleanupTrigger = true;
-      if (!btReminder.repeat) {
-        btReminder.taskDeleted = true;
-        await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
+    for (let index = 0; index < taskAsyncBTDevices.length; index++)  {
+      const btReminder = taskAsyncBTDevices[index];
+      var present = bTDeviceIDs.some((id) => btReminder.id == id);
+      if (present && !btReminder.taskDeleted) {
+        sendNotificationImmediately("nexTime Reminders", `Bluetooth reminder: ${btReminder.name}`);
+        cleanupTrigger = true;
+        if (!btReminder.repeat) {
+          btReminder.taskDeleted = true;
+          await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
+        }
       }
     }
-  }
-  if(cleanupTrigger) {
-    taskAsyncBTDevices = taskAsyncBTDevices.filter((reminder) => toKeep(reminder));
-    taskAsyncBTDevices.length === 0 ?
-    await storage.store("asyncSerialBTDevices", '') :
-    await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
-    cleanupTrigger = false;
-  }
-  tasksRunning = serviceStatus(-1);
+    if(cleanupTrigger) {
+      taskAsyncBTDevices = taskAsyncBTDevices.filter((reminder) => toKeep(reminder));
+      taskAsyncBTDevices.length === 0 ?
+      await storage.store("asyncSerialBTDevices", '') :
+      await storage.store("asyncSerialBTDevices", taskAsyncBTDevices);
+      cleanupTrigger = false;
+    }
+    resolve();
+  });
 };
 
 var wifiWarned = false;
-const startCheckWifi = async (taskAsyncWifiNetworks) => {
-  tasksRunning = serviceStatus(1);
+const startCheckWifi = (taskAsyncWifiNetworks) => {
+  return new Promise( async resolve => {
+    var cleanupTrigger = false;
 
-  var cleanupTrigger = false;
+    const isEnabled = await WifiManager.isEnabled();
+    isEnabled && (wifiWarned = false);
 
-  const isEnabled = await WifiManager.isEnabled();
-  isEnabled && (wifiWarned = false);
+    if (!isEnabled && !wifiWarned) {
+      wifiWarned = true;
+      return sendNotificationImmediately("nexTime Reminders", "WIFI must be on for your WIFI reminders to work");
+    } else if (!isEnabled && wifiWarned === true) {
+      return;
+    }
 
-  if (!isEnabled && !wifiWarned) {
-    wifiWarned = true;
-    return sendNotificationImmediately("nexTime Reminders", "WIFI must be on for your WIFI reminders to work");
-  } else if (!isEnabled && wifiWarned === true) {
-    return;
-  }
+    var networkList = await WifiManager.loadWifiList();
+    var BSSIDs = [];
+    networkList.forEach((item) => BSSIDs.push(item.BSSID));
 
-  var networkList = await WifiManager.loadWifiList();
-  var BSSIDs = [];
-  networkList.forEach((item) => BSSIDs.push(item.BSSID));
-
-  for (let index = 0; index < taskAsyncWifiNetworks.length; index++)  {
-    const wifiReminder = taskAsyncWifiNetworks[index];
-    var present = BSSIDs.some((id) => wifiReminder.id == id);
-    if (present && !wifiReminder.taskDeleted) {
-      sendNotificationImmediately("nexTime Reminders", `Bluetooth reminder: ${wifiReminder.name}`);
-      cleanupTrigger = true;
-      if (!wifiReminder.repeat) {
-        wifiReminder.taskDeleted = true;
-        await storage.store("asyncWifiReminders", taskAsyncWifiNetworks);
+    for (let index = 0; index < taskAsyncWifiNetworks.length; index++)  {
+      const wifiReminder = taskAsyncWifiNetworks[index];
+      var present = BSSIDs.some((id) => wifiReminder.id == id);
+      if (present && !wifiReminder.taskDeleted) {
+        sendNotificationImmediately("nexTime Reminders", `Bluetooth reminder: ${wifiReminder.name}`);
+        cleanupTrigger = true;
+        if (!wifiReminder.repeat) {
+          wifiReminder.taskDeleted = true;
+          await storage.store("asyncWifiReminders", taskAsyncWifiNetworks);
+        }
       }
     }
-  }
-  if(cleanupTrigger) {
-    taskAsyncWifiNetworks = taskAsyncWifiNetworks.filter((reminder) => toKeep(reminder));
-    taskAsyncWifiNetworks.length === 0 ?
-    await storage.store("asyncWifiReminders", '') :
-    await storage.store("asyncWifiReminders", taskAsyncWifiNetworks);
-    cleanupTrigger = false;
-  }
-  tasksRunning = serviceStatus(-1);
+    if(cleanupTrigger) {
+      taskAsyncWifiNetworks = taskAsyncWifiNetworks.filter((reminder) => toKeep(reminder));
+      taskAsyncWifiNetworks.length === 0 ?
+      await storage.store("asyncWifiReminders", '') :
+      await storage.store("asyncWifiReminders", taskAsyncWifiNetworks);
+      cleanupTrigger = false;
+    }
+    resolve();
+  });
 };
 
 export default {
-  areTasksRunning,
   checkLocationTask,
   isServiceRunning,
   startCheckLocation,

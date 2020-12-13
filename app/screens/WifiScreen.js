@@ -13,7 +13,6 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 import refreshData from "../utility/refreshData";
 
 var lastAsyncReminder;
-var btIntervalClass;
 
 const WifiDisabledMessage = 'Please enable WIFI and LOCATION and pull down on the Availible Networks list to refresh.'
 
@@ -21,8 +20,7 @@ function WifiScreen({navigation, themeState}) {
 
   useEffect(() => {
     updateReminderList();
-    refreshData.loadReminderIntervalAsync("asyncWifiReminders", lastAsyncReminder, setWifiRemindersArray, btIntervalClass);
-    btIntervalClass = 'once is enough thanks';
+    refreshData.transferFuncAndVars('WifiScreen', lastAsyncReminder, setWifiRemindersArray);
   }, []);
 
   const [wifiDevicesArray, setWifiDevicesArray] = useState(
@@ -102,10 +100,12 @@ function WifiScreen({navigation, themeState}) {
           text: "Yes",
           onPress: async () => {
             var taskAsyncWifiReminders = await storage.get("asyncWifiReminders");
-            taskAsyncWifiReminders = taskAsyncWifiReminders.filter((reminder) => reminder.id !== item.id);
-            taskAsyncWifiReminders.length === 0 ?
+            taskAsyncWifiReminders && 
+            (taskAsyncWifiReminders = taskAsyncWifiReminders.filter((reminder) => reminder.id !== item.id));
+            taskAsyncWifiReminders && 
+            (taskAsyncWifiReminders.length === 0 ?
             await storage.store("asyncWifiReminders", '') :
-            await storage.store("asyncWifiReminders", taskAsyncWifiReminders);
+            await storage.store("asyncWifiReminders", taskAsyncWifiReminders));
             updateReminderList();
           },
         },
