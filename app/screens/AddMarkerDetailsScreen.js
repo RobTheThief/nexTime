@@ -42,7 +42,7 @@ function AddMarkerDetailsScreen({
   const [description, setDesc] = useState();
   const [kmOrMilesRadius, setKmOrMilesRadius] = useState(
     markers[id - 1] == undefined
-      ? 0.1
+      ? (numSystem === 'metric' ? 0.1 : 0.01893)
       : (markers[id - 1].numSystem == 'imperial' ?
       metersTofeetRadius(markers[id - 1].radius) 
       : markers[id - 1].radius) / measurementSys.numRules[numSystem].unitDivider

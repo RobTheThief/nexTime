@@ -4,10 +4,11 @@ import { Fontisto, MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 
 import AppHeader from '../components/AppHeader';
+import appTasks from '../utility/appTasks';
 import AppText from '../components/AppText';
 import colors from '../config/colors';
+import refreshData from '../utility/refreshData';
 import storage from '../utility/storage';
-import appTasks from '../utility/appTasks';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNumSystem }) {
@@ -36,6 +37,7 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
             storage.store('options', options);
             setNumSystem(mySetting);
             storage.store('asyncMarkers', []);
+            refreshData.refreshReminders('asyncMarkers');
           },
         },
       ],

@@ -30,17 +30,17 @@ TaskManager.defineTask('checkLocation', async ({ data: { locations }, error }) =
     await appTasks.startCheckLocation(locations, taskAsyncMarkers);
     refreshData.refreshReminders('asyncMarkers');
   }
-
-  var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
-  if(taskAsyncBTDevices && taskAsyncBTDevices[0].id){
-    await appTasks.startCheckBluetoothAsync( taskAsyncBTDevices );
-    refreshData.refreshReminders('asyncSerialBTDevices');
-  }
-
+  
   var taskAsyncWifiNetworks = await storage.get("asyncWifiReminders");
   if(taskAsyncWifiNetworks && taskAsyncWifiNetworks[0].id){
     await appTasks.startCheckWifi( taskAsyncWifiNetworks );
     refreshData.refreshReminders('asyncWifiReminders');
+  }
+  
+  var taskAsyncBTDevices = await storage.get("asyncSerialBTDevices");
+  if(taskAsyncBTDevices && taskAsyncBTDevices[0].id){
+    await appTasks.startCheckBluetoothAsync( taskAsyncBTDevices );
+    refreshData.refreshReminders('asyncSerialBTDevices');
   }
 
   if (error){
