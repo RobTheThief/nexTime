@@ -1,2 +1,2 @@
 # nexTime
-React Native Mobile App for reminders based on gps location or proximity to Bluetooth of wifi device. May add reminder on connect to device. Building in Expo environment.
+React Native Mobile App for reminders based on GPS location or proximity to Bluetooth or WIFI device. Started in Expo environment but later ejected to add support for Bluetooth.
