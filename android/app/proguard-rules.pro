@@ -8,5 +8,5 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
--keep class expo.modules.backgroundfetch.** { *; }
--keep class expo.modules.notifications.NotificationsScoper { *; }
+
+-keep class com.facebook.react.turbomodule.** { *; }

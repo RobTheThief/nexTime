@@ -14,7 +14,7 @@ import refreshData from "../utility/refreshData";
 
 var lastAsyncReminder;
 
-const WifiDisabledMessage = 'Please enable WIFI and LOCATION and pull down on the Availible Networks list to refresh.'
+const WifiDisabledMessage = 'Please enable WIFI and LOCATION and pull down on the Available Networks list to refresh.'
 
 function WifiScreen({navigation, themeState}) {
 

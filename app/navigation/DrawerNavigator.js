@@ -9,6 +9,7 @@ import MapScreen from "../screens/MapScreen";
 import WifiScreen from "../screens/WifiScreen";
 import colors from "../config/colors";
 import SettingsScreen from "../screens/SettingsScreen";
+import PrivacyPolicyScreen from "../screens/PrivacyPolicyScreen";
 
 const Drawer = createDrawerNavigator();
 const DrawerNavigator = ({setThemeState, themeState, numSystem, setNumSystem}) => {
@@ -19,7 +20,10 @@ const DrawerNavigator = ({setThemeState, themeState, numSystem, setNumSystem}) =
                   ]}
       initialRouteName="Locations"
       edgeWidth={30}
-      lazy={true}
+      screenOptions = {{
+        headerShown: false
+      }}
+      //lazy={true}
     >
       <Drawer.Screen name="Locations" >
         {(props) => <MapScreen  {...props} themeState={themeState} numSystem={numSystem} setNumSystem={setNumSystem} />}
@@ -36,6 +40,11 @@ const DrawerNavigator = ({setThemeState, themeState, numSystem, setNumSystem}) =
                                     setNumSystem={setNumSystem} 
                                     numSystem={numSystem} />}
       </Drawer.Screen> 
+      <Drawer.Screen name='Privacy Policy'>
+        {(props) => <PrivacyPolicyScreen {...props}
+                                    setThemeState={setThemeState}
+                                    themeState={themeState} />}
+      </Drawer.Screen>
     </Drawer.Navigator>
   );
 };
@@ -43,11 +52,12 @@ const DrawerNavigator = ({setThemeState, themeState, numSystem, setNumSystem}) =
 const Tab = createBottomTabNavigator();
 const ConnectionsNavigator = ({ themeState}) => {
   return (
-    <Tab.Navigator tabBarOptions= {{
-                          style: colors.mode[themeState].tabBar
+    <Tab.Navigator screenOptions= {{
+                          style: colors.mode[themeState].tabBar,
+                          headerShown: false
                       }}
                    tabStyle={{ fontSize: 12 }}
-                   lazy={true}
+                   //lazy={true}
                     >
       <Tab.Screen listeners ={{
                     tabPress: () => {

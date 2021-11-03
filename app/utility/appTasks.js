@@ -16,6 +16,7 @@ const checkLocationTask = () => {
       accuracy: Location.Accuracy.BestForNavigation,
       timeInterval: 60000,
       distanceInterval: 1,
+      showsBackgroundLocationIndicator: true,
       foregroundService: {
           notificationTitle: 'nexTime location service running...',
           notificationBody: 'To stop the service open the app and go to Settings.'
@@ -42,7 +43,7 @@ const isServiceRunning = async () => {
 
 const startCheckLocation = (locations, taskAsyncMarkers) => {
   return new Promise( async resolve => {
-    const { status } = await Location.requestPermissionsAsync();
+    const {status} = await Location.getForegroundPermissionsAsync();
     if (status === "granted") {
       var cleanupTrigger = false;
 
@@ -157,7 +158,7 @@ const startCheckWifi = (taskAsyncWifiNetworks) => {
       const wifiReminder = taskAsyncWifiNetworks[index];
       var present = BSSIDs.some((id) => wifiReminder.id == id);
       if (present && !wifiReminder.taskDeleted) {
-        sendNotificationImmediately("nexTime Reminders", `Bluetooth reminder: ${wifiReminder.name}`);
+        sendNotificationImmediately("nexTime Reminders", `WIFI reminder: ${wifiReminder.name}`);
         cleanupTrigger = true;
         if (!wifiReminder.repeat) {
           wifiReminder.taskDeleted = true;

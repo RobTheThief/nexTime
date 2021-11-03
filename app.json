@@ -1,39 +1,9 @@
 {
+  "name": "nexTime",
+  "displayName": "nexTime",
   "expo": {
     "name": "nexTime",
     "slug": "nexTime",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./app/assets/icon.png",
-    "splash": {
-      "image": "./app/assets/splash.png",
-      "resizeMode": "cover",
-      "backgroundColor": "#000"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "This app uses the location to help the user pick a location from the map to add a reminder",
-        "UIBackgroundModes": [
-          "location",
-          "fetch"
-        ]
-      },
-      "bundleIdentifier": "com.robthethief.nextime"
-    },
-    "web": {
-      "favicon": "./app/assets/favicon.png"
-    },
-    "android": {
-      "package": "com.robthethief.nextime",
-      "useNextNotificationsApi": true
-    },
-    "entryPoint": "node_modules/expo/AppEntry.js"
+    "sdkVersion": "43.0.1"
   }
 }
