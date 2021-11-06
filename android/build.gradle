@@ -2,14 +2,11 @@
 
 buildscript {
     ext {
+        buildToolsVersion = "30.0.2"
+        minSdkVersion = 21
         compileSdkVersion = 30
         targetSdkVersion = 30
-        buildToolsVersion = "30.0.2"
-        minSdkVersion = 29
         ndkVersion = "21.4.7075529"
-        supportLibVersion   = "30.0.2"
-        playServicesVersion = "17.0.0" // or find latest version
-        androidMapsUtilsVersion = "2.2.6"
     }
     repositories {
         google()
@@ -26,7 +23,6 @@ allprojects {
     repositories {
         mavenCentral()
         mavenLocal()
-        jcenter()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
             url("$rootDir/../node_modules/react-native/android")

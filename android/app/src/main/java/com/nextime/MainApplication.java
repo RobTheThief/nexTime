@@ -1,4 +1,4 @@
-package com.nextime;
+package com.robthethief.nextime;
 
 import android.app.Application;
 import android.content.Context;
@@ -11,25 +11,10 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import android.content.res.Configuration;
-import expo.modules.ApplicationLifecycleDispatcher;
-import expo.modules.ReactNativeHostWrapper;
-
-import com.rusel.RCTBluetoothSerial.*;
-
-import com.facebook.react.bridge.JSIModulePackage;
-import com.swmansion.reanimated.ReanimatedJSIModulePackage;
-
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
-      new ReactNativeHostWrapper(this, new ReactNativeHost(this) {
-
-        @Override
-        protected JSIModulePackage getJSIModulePackage() {
-          return new ReanimatedJSIModulePackage();
-        }
-
+      new ReactNativeHost(this) {
         @Override
         public boolean getUseDeveloperSupport() {
           return BuildConfig.DEBUG;
@@ -40,7 +25,7 @@ public class MainApplication extends Application implements ReactApplication {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
-          
+          // packages.add(new MyReactNativePackage());
           return packages;
         }
 
@@ -48,7 +33,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected String getJSMainModuleName() {
           return "index";
         }
-      });
+      };
 
   @Override
   public ReactNativeHost getReactNativeHost() {
@@ -60,7 +45,6 @@ public class MainApplication extends Application implements ReactApplication {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
-    ApplicationLifecycleDispatcher.onApplicationCreate(this);
   }
 
   /**
@@ -78,7 +62,7 @@ public class MainApplication extends Application implements ReactApplication {
          We use reflection here to pick up the class that initializes Flipper,
         since Flipper library is not available in release mode
         */
-        Class<?> aClass = Class.forName("com.nextime.ReactNativeFlipper");
+        Class<?> aClass = Class.forName("com.robthethief.nextime.ReactNativeFlipper");
         aClass
             .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
             .invoke(null, context, reactInstanceManager);
@@ -92,11 +76,5 @@ public class MainApplication extends Application implements ReactApplication {
         e.printStackTrace();
       }
     }
-  }
-
-  @Override
-  public void onConfigurationChanged(Configuration newConfig) {
-    super.onConfigurationChanged(newConfig);
-    ApplicationLifecycleDispatcher.onConfigurationChanged(this, newConfig);
   }
 }
