@@ -79,10 +79,10 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
         <AppHeader themeState={themeState} style={{height: '11.5%'}} navigation={navigation} />
 
         <View style={[styles.main, colors.mode[themeState].main]} >
-          <View style={[styles.settingContainer, colors.mode[themeState].container ]}>
+          <View style={[ styles.settingContainer, colors.mode[themeState].container ]}>
             <View style={styles.settingsHeader}>
-              <MaterialCommunityIcons name="tape-measure" size={18} color={colors.primaryLight} />
-              <AppText style={styles.settingsHeaderText} >Measurement System</AppText>
+              <MaterialCommunityIcons name="tape-measure" size={18} color={colors.mode[themeState].headers.color} />
+              <AppText style={[styles.settingsHeaderText, colors.mode[themeState].headers]} >Measurement System</AppText>
             </View>
             <View style={styles.controlContainer}>
               <AppText >Imperial</AppText>
@@ -100,8 +100,8 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
 
           <View style={[styles.settingContainer, colors.mode[themeState].container ]}>
             <View style={styles.settingsHeader}>
-              <MaterialCommunityIcons name="invert-colors" size={18} color={colors.primaryLight} />
-              <AppText style={styles.settingsHeaderText} >Colour Scheme</AppText>
+              <MaterialCommunityIcons name="invert-colors" size={18} color={colors.mode[themeState].headers.color} />
+              <AppText style={[styles.settingsHeaderText, colors.mode[themeState].headers]} >Colour Scheme</AppText>
             </View>
             <View style={styles.controlContainer}>
               <AppText >Dark Mode</AppText>
@@ -119,8 +119,8 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
 
           <View style={[styles.settingContainer, colors.mode[themeState].container ]}>
             <View style={styles.settingsHeader}>
-              <Fontisto name="bluetooth-b" size={18} color={colors.primaryLight} />
-              <AppText style={styles.settingsHeaderText} >Bluetooth Start</AppText>
+              <Fontisto name="bluetooth-b" size={18} color={colors.mode[themeState].headers.color} />
+              <AppText style={[styles.settingsHeaderText, colors.mode[themeState].headers]} >Bluetooth Start</AppText>
             </View>
             <View style={styles.controlContainer}>
               <AppText >OFF</AppText>
@@ -138,8 +138,8 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
 
           <View style={[styles.settingContainer, colors.mode[themeState].container ]}>
             <View style={styles.settingsHeader}>
-              <MaterialCommunityIcons name="restart" size={18} color={colors.primaryLight} />
-              <AppText style={styles.settingsHeaderText} >Start / Stop Reminder Service</AppText>
+              <MaterialCommunityIcons name="restart" size={18} color={colors.mode[themeState].headers.color} />
+              <AppText style={[styles.settingsHeaderText, colors.mode[themeState].headers]} >Start / Stop Reminder Service</AppText>
             </View>
               <View style={styles.controlContainer}>
                 <TouchableOpacity style={styles.startStopButton} onPress={ () => handleToggleService() }>
@@ -166,7 +166,6 @@ const styles = StyleSheet.create({
       },
     settingsHeaderText: {
         fontSize: 17,
-        color: colors.primaryLight,
         marginLeft: 5,
       },
     settingContainer: {

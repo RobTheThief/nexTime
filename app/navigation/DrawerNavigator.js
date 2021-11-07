@@ -15,32 +15,33 @@ const Drawer = createDrawerNavigator();
 const DrawerNavigator = ({setThemeState, themeState, numSystem, setNumSystem}) => {
   return (
     <Drawer.Navigator
-      drawerStyle={ [{width: "50%", borderRightColor: colors.secondary, borderRightWidth: 2},
-                    themeState && colors.mode[themeState].drawerThemeStyles
-                  ]}
       initialRouteName="Locations"
       edgeWidth={30}
       screenOptions = {{
-        headerShown: false
+        headerShown: false,
+        drawerStyle: { width: "60%",
+                       borderRightColor: colors.secondary,
+                       borderRightWidth: 2,
+                       backgroundColor: themeState && colors.mode[themeState].drawerThemeStyles.backgroundColor,
+                  },
       }}
-      //lazy={true}
     >
-      <Drawer.Screen name="Locations" >
+      <Drawer.Screen name="Locations" options={{ drawerLabelStyle: {fontSize: 19} }} >
         {(props) => <MapScreen  {...props} themeState={themeState} numSystem={numSystem} setNumSystem={setNumSystem} />}
       </Drawer.Screen>
 
-      <Drawer.Screen name='Connections' >
+      <Drawer.Screen name='Connections' options={{ drawerLabelStyle: {fontSize: 19} }} >
         {(props) => <ConnectionsNavigator  {...props} themeState={themeState} />}
       </Drawer.Screen>
 
-      <Drawer.Screen name='Settings'>
+      <Drawer.Screen name='Settings' options={{ drawerLabelStyle: {fontSize: 19} }}>
         {(props) => <SettingsScreen {...props}
                                     setThemeState={setThemeState}
                                     themeState={themeState} 
                                     setNumSystem={setNumSystem} 
                                     numSystem={numSystem} />}
       </Drawer.Screen> 
-      <Drawer.Screen name='Privacy Policy'>
+      <Drawer.Screen name='Privacy Policy' options={{ drawerLabelStyle: {fontSize: 20} }} >
         {(props) => <PrivacyPolicyScreen {...props}
                                     setThemeState={setThemeState}
                                     themeState={themeState} />}
@@ -53,12 +54,13 @@ const Tab = createBottomTabNavigator();
 const ConnectionsNavigator = ({ themeState}) => {
   return (
     <Tab.Navigator screenOptions= {{
-                          style: colors.mode[themeState].tabBar,
-                          headerShown: false
-                      }}
-                   tabStyle={{ fontSize: 12 }}
-                   //lazy={true}
-                    >
+                    tabBarStyle: {
+                      backgroundColor: colors.mode[themeState].tabBar.backgroundColor,
+                      height: '10%',
+                    },
+                    headerShown: false,
+                    }}>
+
       <Tab.Screen listeners ={{
                     tabPress: () => {
                       colors.btTabColor = colors.secondary;
@@ -85,9 +87,11 @@ const ConnectionsNavigator = ({ themeState}) => {
 const styles = StyleSheet.create({
   btTabLable: {
       fontSize: 15,
+      paddingBottom: 25,
     },
     wifiTabLable: {
       fontSize: 15,
+      paddingBottom: 25,
     },
 })
 

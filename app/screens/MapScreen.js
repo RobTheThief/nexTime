@@ -85,7 +85,7 @@ function MapScreen({ navigation, themeState, numSystem, setNumSystem }) {
 
   return (
     <>
-      <AppHeader themeState={themeState} navigation={ navigation }/>
+      <AppHeader themeState={themeState} style={{height: '11.5%'}} navigation={ navigation }/>
       {visible ? (
         <AddMarkerDetailsScreen
           addMarkerDetailVisibility={addMarkerDetailVisibility}

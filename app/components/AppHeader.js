@@ -11,9 +11,9 @@ function AppHeader({ navigation, style, themeState}) {
         <View style={[styles.headContainer, colors.mode[themeState].appHeader, style]}>
           <TouchableOpacity
             onPress={() => navigation.openDrawer()}
-            style={styles.drawerButton}
+            style={[styles.drawerButton, ]}
           >
-            <AntDesign name="menuunfold" color={colors.light} size={30} />
+            <AntDesign name="menuunfold" color={colors.primaryLight} size={30} />
           </TouchableOpacity>
 
           <View style={styles.headTextContainer}>
@@ -28,9 +28,12 @@ const styles = StyleSheet.create({
       alignItems: "center",
       justifyContent: "center",
       marginLeft: 20,
+      paddingRight: 30,
+      paddingLeft: 10,
+      paddingVertical: 20,
     },
   headContainer: {
-    height: "10%",
+    height: "11%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

@@ -169,7 +169,7 @@ const remindersEmptyList = () => (
 
   return (
     <>
-      <AppHeader themeState={themeState} style={{height: '11.5%'}} navigation={ navigation } />
+      <AppHeader themeState={themeState} style={{height: '12.8%'}} navigation={ navigation } />
       {visible ? (
         <AddWifiReminderDetailScreen
         addWifiReminderDetailVisibility={addWifiReminderDetail}
@@ -182,8 +182,8 @@ const remindersEmptyList = () => (
       <View style={colors.mode[themeState].main}>
         <View style={[styles.networkRemindersContainer, colors.mode[themeState].container]}>
           <View style={styles.networksHeader}>
-            <MaterialCommunityIcons name="reminder" size={18} color={colors.primaryLight} />
-            <AppText style={styles.networksHeaderText} >WIFI REMINDERS</AppText>
+            <MaterialCommunityIcons name="reminder" size={18} color={colors.mode[themeState].headers.color} />
+            <AppText style={[styles.networksHeaderText, colors.mode[themeState].headers]} >WIFI REMINDERS</AppText>
           </View>
           <FlatList
             ListEmptyComponent = {remindersEmptyList}
@@ -196,8 +196,8 @@ const remindersEmptyList = () => (
         </View>
         <View style={[styles.availableNetworksContainer, colors.mode[themeState].container]}>
           <View style={styles.networksHeader}>
-            <MaterialCommunityIcons name="devices" size={18} color={colors.primaryLight} />
-            <AppText style={styles.networksHeaderText} >AVAILABLE NETWORKS</AppText>
+            <MaterialCommunityIcons name="devices" size={18} color={colors.mode[themeState].headers.color} />
+            <AppText style={[styles.networksHeaderText, colors.mode[themeState].headers]} >AVAILABLE NETWORKS</AppText>
           </View>
           <FlatList
             contentContainerStyle={styles.listItems}
@@ -256,7 +256,6 @@ const styles = StyleSheet.create({
   },
   networksHeaderText: {
     fontSize: 17,
-    color: colors.primaryLight,
     marginLeft: 5,
   },
   networkRemindersContainer: {

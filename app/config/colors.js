@@ -34,6 +34,9 @@ const mode = {
     }, 
     switchText: {
       color: secondary,
+    },
+    headers: {
+      color: primaryLight,
     }
   },
 
@@ -53,14 +56,18 @@ const mode = {
     },
     slider: black,
     tabBar: {
-     
+      backgroundColor: light,
     },
     drawerThemeStyles: {
-      width: '50%'
+      width: '50%',
+      backgroundColor: light,
     }, 
     switchText: {
       color: primary,
-    } 
+    }, 
+    headers: {
+      color: primary,
+    }
   }  
 };
 

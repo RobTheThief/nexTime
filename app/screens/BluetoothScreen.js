@@ -194,7 +194,7 @@ function BluetoothScreen({navigation, themeState}) {
 
   return (
     <>
-      <AppHeader themeState={themeState} style={{height: '11.5%'}} navigation={navigation} />
+      <AppHeader themeState={themeState} style={{height: '12.8%'}} navigation={navigation} />
       {visible ? (
       <AddBtReminderDetailScreen 
         addBtReminderDetailVisibility={addBtReminderDetail}
@@ -209,8 +209,8 @@ function BluetoothScreen({navigation, themeState}) {
 
         <View style={[styles.btRemindersContainer, colors.mode[themeState].container]}>
           <View style={styles.devicesHeader}>
-            <MaterialCommunityIcons name="reminder" size={18} color={colors.primaryLight} />
-            <AppText style={styles.devicesHeaderText} >REMINDERS</AppText>
+            <MaterialCommunityIcons name="reminder" size={18} color={colors.mode[themeState].headers.color} />
+            <AppText style={[styles.devicesHeaderText, colors.mode[themeState].headers]} >REMINDERS</AppText>
           </View>
             <FlatList
               ListEmptyComponent = {remindersEmptyList}
@@ -224,8 +224,8 @@ function BluetoothScreen({navigation, themeState}) {
         
         <View style={[styles.pairedContainer, colors.mode[themeState].container]}>
           <View style={styles.devicesHeader}>
-            <MaterialCommunityIcons name="lan-connect" size={18} color={colors.primaryLight} />
-            <AppText style={styles.devicesHeaderText} >PAIRED DEVICES</AppText>
+            <MaterialCommunityIcons name="lan-connect" size={18} color={colors.mode[themeState].headers.color} />
+            <AppText style={[styles.devicesHeaderText, colors.mode[themeState].headers]} >PAIRED DEVICES</AppText>
           </View>
           <FlatList
             contentContainerStyle={styles.listItems}
@@ -238,8 +238,8 @@ function BluetoothScreen({navigation, themeState}) {
         </View>
         <View style={[styles.unPairedContainer, colors.mode[themeState].container]}>
           <View style={styles.devicesHeader}>
-            <MaterialCommunityIcons name="devices" size={18} color={colors.primaryLight} />
-            <AppText style={styles.devicesHeaderText} >UNPAIRED DEVICES</AppText>
+            <MaterialCommunityIcons name="devices" size={18} color={colors.mode[themeState].headers.color} />
+            <AppText style={[styles.devicesHeaderText, colors.mode[themeState].headers]} >UNPAIRED DEVICES</AppText>
           </View>
           <FlatList
             contentContainerStyle={styles.listItems}
@@ -290,7 +290,6 @@ const styles = StyleSheet.create({
     width: "100%",
     marginBottom: 10,
     marginTop: 20,
-    color: colors.primaryLight,
   },
   devicesHeaderText: {
     fontSize: 17,
