@@ -299,7 +299,7 @@ export default AddMarkerDetailsScreen;
 
 const styles = StyleSheet.create({
   buttons: {
-    marginTop: 480,
+    marginTop: 440,
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-evenly",
@@ -374,6 +374,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
+    position: 'relative',
+    bottom: 20,
   },
   switch: {
     position: "relative",
@@ -388,5 +390,7 @@ const styles = StyleSheet.create({
   slider: {
     width: "100%",
     height: 80,
+    position:'relative',
+    bottom: 10,
   },
 });

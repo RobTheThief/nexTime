@@ -142,7 +142,7 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
               <AppText style={[styles.settingsHeaderText, colors.mode[themeState].headers]} >Start / Stop Reminder Service</AppText>
             </View>
               <View style={styles.controlContainer}>
-                <TouchableOpacity style={styles.startStopButton} onPress={ () => handleToggleService() }>
+                <TouchableOpacity style={[styles.startStopButton, colors.mode[themeState].startStopButton]} onPress={ () => handleToggleService() }>
                 <AppText>Start / Stop</AppText>
                 </TouchableOpacity>
               </View>
@@ -177,7 +177,6 @@ const styles = StyleSheet.create({
         backgroundColor: colors.primary,
         padding: 7,
         borderWidth: 1,
-        borderColor: colors.primaryLight,
         borderRadius: 7,
       },
     controlContainer: {

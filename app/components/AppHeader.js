@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.primary,
-    borderBottomColor: colors.black,
     borderBottomWidth: 2,
   },
   headTextContainer: {

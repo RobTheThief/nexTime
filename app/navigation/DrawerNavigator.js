@@ -16,8 +16,8 @@ const DrawerNavigator = ({setThemeState, themeState, numSystem, setNumSystem}) =
   return (
     <Drawer.Navigator
       initialRouteName="Locations"
-      edgeWidth={30}
       screenOptions = {{
+        swipeEdgeWidth: 1,
         headerShown: false,
         drawerStyle: { width: "60%",
                        borderRightColor: colors.secondary,

@@ -14,7 +14,8 @@ const mode = {
       backgroundColor: black,
     },
     appHeader: {
-      backgroundColor: primary
+      backgroundColor: primary,
+      borderBottomColor: primaryLight,
     },
     buttonText: {
       color: secondary,
@@ -31,7 +32,10 @@ const mode = {
       color: secondary,
       fontColor: secondary,
       width: '50%'
-    }, 
+    },
+    startStopButton: {
+      borderColor: primaryLight,
+    },
     switchText: {
       color: secondary,
     },
@@ -46,7 +50,8 @@ const mode = {
       
     },
     appHeader: {
-      backgroundColor: primary
+      backgroundColor: primary,
+      borderBottomColor: black,
     },
     buttonText: {
       color: primary,
@@ -61,10 +66,13 @@ const mode = {
     drawerThemeStyles: {
       width: '50%',
       backgroundColor: light,
-    }, 
+    },
+    startStopButton: {
+      borderColor: black,
+    },
     switchText: {
       color: primary,
-    }, 
+    },
     headers: {
       color: primary,
     }

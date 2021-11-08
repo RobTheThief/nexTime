@@ -73,6 +73,8 @@ const startCheckLocation = (locations, taskAsyncMarkers) => {
         await storage.store("asyncMarkers", taskAsyncMarkers);
         var cleanupTrigger = false;
       }
+    }else {
+      sendNotificationImmediately('nexTime Permissions', 'nexTime Permissions have expired. Please re open the app and allow.');
     }
     resolve();
   });

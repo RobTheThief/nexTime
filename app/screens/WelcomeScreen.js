@@ -1,7 +1,7 @@
 import DrawerNavigator from "../navigation/DrawerNavigator";
 import { NavigationContainer } from "@react-navigation/native";
 import React from "react";
-import { StyleSheet, ImageBackground, Image, View, Text, Button } from "react-native";
+import { ActivityIndicator, StyleSheet, ImageBackground, Image, View, Text } from "react-native";
 
 import colors from "../config/colors";
 import nexTheme from "../config/drawerTheme";
@@ -13,14 +13,14 @@ function WelcomeScreen({ themeState, setThemeState, numSystem, setNumSystem , we
       {welcome ? (
           <ImageBackground
             source={require("../assets/background.jpg")}
-            style={styles.background}
-          >
+            style={styles.background}>
             <View style={styles.logoContainer}>
               <Image
                 source={require("../assets/nexTimeLogo.png")}
                 style={styles.logo}
               />
               <Text style={styles.tagline}>Next time you're there</Text>
+              <ActivityIndicator size="large" color={colors.secondary} style={styles.activityIndicator}/>
             </View>
           </ImageBackground>) 
           : ( <NavigationContainer theme={nexTheme} independent={true} >
@@ -35,6 +35,9 @@ function WelcomeScreen({ themeState, setThemeState, numSystem, setNumSystem , we
 }
 
 const styles = StyleSheet.create({
+  activityIndicator: {
+    height: 200,
+  },
   background: {
     flex: 1,
     alignItems: "center",
