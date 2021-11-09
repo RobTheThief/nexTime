@@ -18,8 +18,8 @@ const checkLocationTask = () => {
       distanceInterval: 1,
       showsBackgroundLocationIndicator: true,
       foregroundService: {
-          notificationTitle: 'nexTime location service running...',
-          notificationBody: 'To stop the service open the app and go to Settings.'
+          notificationTitle: 'Location service running. Tap to open and...',
+          notificationBody: 'give permissions then settings to stop/start service.'
       }
     });
     resolve();

@@ -69,23 +69,16 @@ export default function App() {
     return new Promise( async resolve => {
 
       await Location.requestForegroundPermissionsAsync();
-
-      await foregroundPermissionsStatus().then( async(foregroundStatus) => {
-        if (foregroundStatus ==! 'granted'){
-          alert(
-            "You will need to enable location permissions to get current location and for the reminders to work."
-          );
-          return;
-        }
+      const foreResult = await foregroundPermissionsStatus().then( async(foregroundStatus) => {
+        return foregroundStatus;
       });
       
-      await backgroundPermissionsStatus().then( async (backgroundStatus) => {
-        if (backgroundStatus == 'undetermined') {
-          await Location.requestBackgroundPermissionsAsync();
-        }
-      })
-
-      resolve();
+      await Location.requestBackgroundPermissionsAsync();
+      const backResult = await backgroundPermissionsStatus().then( async (backgroundStatus) => {
+        return backgroundStatus;
+      });
+      
+      resolve({foreResult: foreResult, backResult: backResult});
       });
   };
 
@@ -117,8 +110,8 @@ export default function App() {
 
   const backgroundLocationMessage = async () => {
         Alert.alert(
-          "Backgroung Location",
-          `To use the map and create reminders, allow nexTime to use your location all the time both in the FOREGROUND and then in the BACKGROUND.\n\nnextTime will use your location in the background to trigger reminders you have set.\n\nLocation information is only stored on your device and is never shared.`,
+          "      Backgroung Location",
+          `    To use the map and reminders,\n    allow permissions for location\n\n          WHILE USING THE APP\n\n                           and\n\n                  ALL THE TIME.\n\nnextTime will use your location in the background to trigger reminders you have set.\n\nLocation information is only stored on your device and is never shared.`,
           [
             {
               text: "OK",
@@ -155,8 +148,9 @@ export default function App() {
   };
 
   const requestPermissionAndLoadOptions = async () => {
-    await requestPermission();
-    await loadOptionsToMemAndSetAsync();
+    const result = await requestPermission();
+    (result.foreResult == 'granted' && result.backResult == 'granted') ?
+    await loadOptionsToMemAndSetAsync() : alert("You will need to enable location permissions to get current location and for the reminders to work.");
   };
 
   const stopService = () => {
