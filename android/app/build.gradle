@@ -139,7 +139,7 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 android {
 
     dexOptions {
-       javaMaxHeapSize "3g"
+        javaMaxHeapSize "4G"
     }
 
     ndkVersion rootProject.ext.ndkVersion

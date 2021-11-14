@@ -73,6 +73,8 @@ const firstPickNumSystem = () => {
 
 const formatStorage = () => {
   return new Promise( async resolve => {
+    await get("gpsReminded") == null && store('gpsReminded', true);
+    await get("asyncTime") == null && await store("asyncTime", {time : Date.now()});
     await get("options") == null && await store("options", {startBluetooth : false, measurementSys: 'not set yet', color: 'light', });
     await loadOptionsToMem();
     await get("asyncMarkers") == null && await store("asyncMarkers", []);

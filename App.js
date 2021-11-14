@@ -9,6 +9,7 @@ import colors from "./app/config/colors";
 import refreshData from "./app/utility/refreshData";
 import storage from './app/utility/storage';
 import WelcomeScreen from "./app/screens/WelcomeScreen";
+import nexTimeService from "./nexTimeService";
 
 
 Notifications.setNotificationHandler({
@@ -151,6 +152,7 @@ export default function App() {
     const result = await requestPermission();
     (result.foreResult == 'granted' && result.backResult == 'granted') ?
     await loadOptionsToMemAndSetAsync() : alert("You will need to enable location permissions to get current location and for the reminders to work.");
+    await storage.store('permissionsReminded', {recent: true, firstStart: true});
   };
 
   const stopService = () => {
@@ -164,6 +166,7 @@ export default function App() {
   React.useEffect(() => {
     refreshData.resetRefreshObj();   
     privacyPolicyMessage();
+    nexTimeService.startService();
   }, []);
 
   React.useLayoutEffect(() => {

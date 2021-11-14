@@ -10,6 +10,7 @@ import colors from '../config/colors';
 import refreshData from '../utility/refreshData';
 import storage from '../utility/storage';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import nexTimeService from '../../nexTimeService';
 
 function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNumSystem }) {
 
@@ -67,7 +68,12 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
   const handleToggleService = () => {
     return new Promise( async resolve => {
     var isRunning = await Location.hasStartedLocationUpdatesAsync('checkLocation');
-    isRunning ? await Location.stopLocationUpdatesAsync('checkLocation') : await appTasks.isServiceRunning();
+    if(isRunning) {
+      await Location.stopLocationUpdatesAsync('checkLocation')
+      nexTimeService.stopService();
+    }else {
+      await appTasks.isServiceRunning();
+    }
     isRunning = await Location.hasStartedLocationUpdatesAsync('checkLocation');
     Alert.alert('nexTime', `Reminder service ${isRunning ? 'Started' : 'Stopped'}`);
     resolve();

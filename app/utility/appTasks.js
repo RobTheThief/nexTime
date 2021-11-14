@@ -6,6 +6,7 @@ import geoFencing from './geoFencing';
 import { sendNotificationImmediately } from "./notifications";
 import storage from "./storage";
 import helpers from "./helpers";
+import nexTimeService from "../../nexTimeService";
 
 var warned = false;
   
@@ -17,10 +18,6 @@ const checkLocationTask = () => {
       timeInterval: 60000,
       distanceInterval: 1,
       showsBackgroundLocationIndicator: true,
-      foregroundService: {
-          notificationTitle: 'Location service running. Tap to open and...',
-          notificationBody: 'give permissions then settings to stop/start service.'
-      }
     });
     resolve();
   });
@@ -38,13 +35,14 @@ const toKeep = (reminder) => {
 
 const isServiceRunning = async () => {
   const running = await Location.hasStartedLocationUpdatesAsync('checkLocation');
-  !running && checkLocationTask();
+  if(!running){
+    checkLocationTask();
+    nexTimeService.startService();
+  }
 }
 
 const startCheckLocation = (locations, taskAsyncMarkers) => {
   return new Promise( async resolve => {
-    const {status} = await Location.getForegroundPermissionsAsync();
-    if (status === "granted") {
       var cleanupTrigger = false;
 
       for (let index = 0; index < taskAsyncMarkers.length; index++) {
@@ -73,9 +71,6 @@ const startCheckLocation = (locations, taskAsyncMarkers) => {
         await storage.store("asyncMarkers", taskAsyncMarkers);
         var cleanupTrigger = false;
       }
-    }else {
-      sendNotificationImmediately('nexTime Permissions', 'nexTime Permissions have expired. Please re open the app and allow.');
-    }
     resolve();
   });
 };
