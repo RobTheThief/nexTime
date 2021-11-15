@@ -181,55 +181,59 @@ function AddMarkerDetailsScreen({
               setTitle(text);
             }}
             defaultValue={getTitleInputValue()}
-          />
+            style={[styles.title, colors.mode[themeState].container, colors.mode[themeState].elevation]}
+            />
           <AppTextInput
             placeholder={"Description (Displayed in callout on Map Screen)"}
             onChangeText={(text) => setDesc(text)}
             defaultValue={getDescInputValue()}
+            style={[styles.description, colors.mode[themeState].container, colors.mode[themeState].elevation]}
           />
           <AppTextInput
             placeholder={"Notes eg. Shopping list..."}
             multiline={true}
             textAlignVertical={"top"}
             spellCheck={true}
-            style={styles.notes}
+            style={[styles.notes, colors.mode[themeState].elevation, colors.mode[themeState].notes]}
             onChangeText={(text) => setNotes(text)}
             defaultValue={getNotesInputValue()}
           />
-          <View style={styles.radiInputandTotal}>
-            <AppText style={styles.radiTotal}>
-              {radius < measurementSys.numRules[numSystem].unitDivider
-                ? "=  " + radius + measurementSys.numRules[numSystem].mOrFt
-                : "=  " +
-                  radius / measurementSys.numRules[numSystem].unitDivider +
-                  measurementSys.numRules[numSystem].kmOrMiles}
-            </AppText>
-
-            <View style={styles.radiusInput}>
-              <AppTextInput
-                style={styles.radiTextInput}
-                maxLength={7}
-                keyboardType={"number-pad"}
-                value={kmOrMilesRadius.toString()}
-                onChangeText={(value) => handleChangeRadiusText(value)}
-                defaultValue={radius.toString()}
-              />
-              <AppText style={styles.measureText}>
-                {measurementSys.numRules[numSystem].kmOrMiles}
+          <View style={[styles.setRadiousContainer, colors.mode[themeState].elevation,  colors.mode[themeState].setRadiousContainer]}>
+            <View style={styles.radiInputandTotal}>
+              <AppText style={[styles.radiTotal, colors.mode[themeState].radiTotal]}>
+                {radius < measurementSys.numRules[numSystem].unitDivider
+                  ? "=  " + radius + measurementSys.numRules[numSystem].mOrFt
+                  : "=  " +
+                    radius / measurementSys.numRules[numSystem].unitDivider +
+                    measurementSys.numRules[numSystem].kmOrMiles}
               </AppText>
+
+              <View style={styles.radiusInput}>
+                <AppTextInput
+                  style={[styles.radiTextInput, colors.mode[themeState].radiTextInput]}
+                  maxLength={7}
+                  keyboardType={"number-pad"}
+                  value={kmOrMilesRadius.toString()}
+                  onChangeText={(value) => handleChangeRadiusText(value)}
+                  defaultValue={radius.toString()}
+                />
+                <AppText style={[styles.measureText, colors.mode[themeState].measureText]}>
+                  {measurementSys.numRules[numSystem].kmOrMiles}
+                </AppText>
+              </View>
             </View>
+            <Slider
+              style={styles.slider}
+              minimumValue={100}
+              maximumValue={1000}
+              step={100}
+              minimumTrackTintColor={colors.primary}
+              maximumTrackTintColor={colors.mode[themeState].slider}
+              thumbTintColor={colors.primary}
+              value={radius}
+              onValueChange={(value) => handleChangeSlider(value)}
+            />
           </View>
-          <Slider
-            style={styles.slider}
-            minimumValue={100}
-            maximumValue={1000}
-            step={100}
-            minimumTrackTintColor={colors.primary}
-            maximumTrackTintColor={colors.mode[themeState].slider}
-            thumbTintColor={colors.primary}
-            value={radius}
-            onValueChange={(value) => handleChangeSlider(value)}
-          />
           <View style={styles.switchBox}>
             <View style={styles.switchContainer}>
               <AppText style={[styles.switchText, colors.mode[themeState].switchText]}>Repeat</AppText>
@@ -260,16 +264,14 @@ function AddMarkerDetailsScreen({
         <View style={styles.buttons}>
           <TouchableOpacity
             onPress={() => addMarkerDetailVisibility()}
-            style={styles.button}
-          >
+            style={[styles.button, colors.mode[themeState].button, colors.mode[themeState].elevation]}>
             <AntDesign name="leftcircle" color={colors.primary} size={29} />
             <AppText style={[styles.buttonText, colors.mode[themeState].buttonText]}>Go Back</AppText>
           </TouchableOpacity>
           {markers[id - 1] !== undefined && (
             <TouchableOpacity
               onPress={() => handleDeleteMarker()}
-              style={styles.button}
-            >
+              style={[styles.button, colors.mode[themeState].button, colors.mode[themeState].elevation]}>
               <MaterialCommunityIcons
                 name="map-marker-remove-variant"
                 size={30}
@@ -280,13 +282,11 @@ function AddMarkerDetailsScreen({
           )}
           <TouchableOpacity
             onPress={() => handleSubmitMarker()}
-            style={styles.button}
-          >
+            style={[styles.button, colors.mode[themeState].button, colors.mode[themeState].elevation]}>
             <FontAwesome5
               name="map-marked-alt"
               size={24}
-              color={colors.primary}
-            />
+              color={colors.primary}/>
             <AppText style={[styles.buttonText, colors.mode[themeState].buttonText]}>Submit</AppText>
           </TouchableOpacity>
         </View>
@@ -299,22 +299,35 @@ export default AddMarkerDetailsScreen;
 
 const styles = StyleSheet.create({
   buttons: {
-    marginTop: 440,
+    marginTop: '120%',
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-evenly",
     flex: 1,
     width: "100%",
-    position: "relative",
   },
   button: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    height: '35%',
+    width: '29%',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.primaryLight,
   },
   buttonText: {
     paddingLeft: 5,
     fontSize: 15,
+  },
+  description: {
+    height: '100%',
+    paddingLeft: 10,
+    paddingTop: 5,
+    borderWidth: 1,
+    borderColor: colors.primaryLight,
+    borderRadius: 20,
+    marginBottom: 10,
   },
   inputBox: {
     width: "100%",
@@ -323,26 +336,34 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     backgroundColor: colors.light,
   },
-  inputTextContainer: {
-    width: "90%",
-    height: "10%",
-    alignItems: "center",
-    marginVertical: 15,
-  },
-  measureText: {
-    position: "relative",
-    right: 27,
-    top: 15,
-  },
-  notes: {
-    borderColor: colors.primary,
-    borderWidth: 2,
-    height: 200,
-    paddingLeft: 5,
+  title: {
+    height: '100%',
+    paddingLeft: 10,
     paddingTop: 5,
-    borderBottomWidth: 1,
     borderWidth: 1,
     borderColor: colors.primaryLight,
+    borderRadius: 20,
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  inputTextContainer: {
+    width: "90%",
+    height: "9%",
+    alignItems: "center",
+  },
+  measureText: {
+    marginTop: 14,
+    position: "relative",
+    right: 33,
+  },
+  notes: {
+    height: '270%',
+    paddingLeft: 5,
+    paddingTop: 10,
+    borderWidth: 1,
+    borderColor: colors.primaryLight,
+    borderRadius: 20,
+    marginBottom: 10,
   },
   switchText: {
     paddingRight: 20,
@@ -353,17 +374,19 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center",
     width: "91%",
+    marginLeft: 20,
+    borderBottomWidth: 2,
+    borderBottomColor: colors.primaryLight,
+    position:'relative',
+    left: 8,
   },
   radiTotal: {
-    paddingLeft: 13,
-    position: "relative",
-    bottom: 5,
+    paddingLeft: 10,
   },
   radiTextInput: {
      width: "100%",
-     marginBottom: 10,
-     borderBottomWidth: 1,
-     borderBottomColor: colors.primaryLight
+     marginBottom: 0,
+     borderBottomWidth: 0,
   },
   radiusInput: {
     width: "30%",
@@ -374,8 +397,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
-    position: 'relative',
-    bottom: 20,
+    marginVertical: '5%',
   },
   switch: {
     position: "relative",
@@ -391,6 +413,14 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 80,
     position:'relative',
-    bottom: 10,
+    bottom: 16,
+  },
+  setRadiousContainer: {
+    width: "100%",
+    height: 100,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: colors.primaryLight,
+    borderRadius: 20,
   },
 });

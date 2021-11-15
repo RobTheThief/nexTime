@@ -66,8 +66,8 @@ public class nexTimeService extends Service {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Location service running. Tap to open and...")
-                .setContentText("go to settings to stop/start service.")
+                .setContentTitle("Location service running...")
+                .setContentText("Tap to open and go to settings to start/stop service.")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(contentIntent)
                 .setOngoing(true)

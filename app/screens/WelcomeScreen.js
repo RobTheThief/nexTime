@@ -36,7 +36,7 @@ function WelcomeScreen({ themeState, setThemeState, numSystem, setNumSystem , we
 
 const styles = StyleSheet.create({
   activityIndicator: {
-    height: 200,
+    height: '190%',
   },
   background: {
     flex: 1,
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     position: "absolute",
-    top: 190,
+    top: '24%',
     alignItems: "center",
   },
   tagline: {

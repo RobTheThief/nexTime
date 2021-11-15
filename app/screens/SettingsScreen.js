@@ -83,9 +83,8 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
     return (
     <>
         <AppHeader themeState={themeState} style={{height: '11.5%'}} navigation={navigation} />
-
         <View style={[styles.main, colors.mode[themeState].main]} >
-          <View style={[ styles.settingContainer, colors.mode[themeState].container ]}>
+          <View style={[ styles.settingContainer, colors.mode[themeState].container, colors.mode[themeState].elevation ]}>
             <View style={styles.settingsHeader}>
               <MaterialCommunityIcons name="tape-measure" size={18} color={colors.mode[themeState].headers.color} />
               <AppText style={[styles.settingsHeaderText, colors.mode[themeState].headers]} >Measurement System</AppText>
@@ -104,7 +103,7 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
             </View>
           </View>
 
-          <View style={[styles.settingContainer, colors.mode[themeState].container ]}>
+          <View style={[styles.settingContainer, colors.mode[themeState].container, colors.mode[themeState].elevation ]}>
             <View style={styles.settingsHeader}>
               <MaterialCommunityIcons name="invert-colors" size={18} color={colors.mode[themeState].headers.color} />
               <AppText style={[styles.settingsHeaderText, colors.mode[themeState].headers]} >Colour Scheme</AppText>
@@ -123,7 +122,7 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
             </View>
           </View>
 
-          <View style={[styles.settingContainer, colors.mode[themeState].container ]}>
+          <View style={[styles.settingContainer, colors.mode[themeState].container, colors.mode[themeState].elevation ]}>
             <View style={styles.settingsHeader}>
               <Fontisto name="bluetooth-b" size={18} color={colors.mode[themeState].headers.color} />
               <AppText style={[styles.settingsHeaderText, colors.mode[themeState].headers]} >Bluetooth Start</AppText>
@@ -142,13 +141,13 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
             </View>
           </View>
 
-          <View style={[styles.settingContainer, colors.mode[themeState].container ]}>
+          <View style={[styles.settingContainer, colors.mode[themeState].container, colors.mode[themeState].elevation ]}>
             <View style={styles.settingsHeader}>
               <MaterialCommunityIcons name="restart" size={18} color={colors.mode[themeState].headers.color} />
               <AppText style={[styles.settingsHeaderText, colors.mode[themeState].headers]} >Start / Stop Reminder Service</AppText>
             </View>
               <View style={styles.controlContainer}>
-                <TouchableOpacity style={[styles.startStopButton, colors.mode[themeState].startStopButton]} onPress={ () => handleToggleService() }>
+                <TouchableOpacity style={[styles.startStopButton, colors.mode[themeState].startStopButton, colors.mode[themeState].elevation]} onPress={ () => handleToggleService() }>
                 <AppText>Start / Stop</AppText>
                 </TouchableOpacity>
               </View>
@@ -161,13 +160,14 @@ function SettingsScreen({navigation, setThemeState, themeState, numSystem, setNu
 const styles = StyleSheet.create({
     main: {
       flex: 1,
+      paddingTop: 15,
     },
     settingsHeader: {
         flexDirection: 'row',
         alignItems: 'center',
         width: "100%",
-        marginBottom: 10,
-        marginTop: 20,
+        marginVertical:15,
+        marginLeft: 15,
         color: colors.primaryLight,
       },
     settingsHeaderText: {
@@ -176,20 +176,23 @@ const styles = StyleSheet.create({
       },
     settingContainer: {
         color: colors.primary,
-        borderBottomWidth: 1,
+        borderWidth: 1,
+        borderRadius: 25,
         marginHorizontal: 20,
+        marginVertical: 10,
       },
       startStopButton: {
         backgroundColor: colors.primary,
         padding: 7,
         borderWidth: 1,
-        borderRadius: 7,
+        borderRadius: 20,
       },
     controlContainer: {
         alignItems: 'center',
         justifyContent: 'flex-start',
         flexDirection: 'row',
         marginBottom: 10,
+        marginLeft: 15,
       },
 })
 

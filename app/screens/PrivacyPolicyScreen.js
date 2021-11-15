@@ -6,7 +6,7 @@ import AppHeader from '../components/AppHeader';
 import AppText from '../components/AppText';
 import colors from '../config/colors';
 
-function PrivacyPolicyScreen({navigation, setThemeState, themeState}) {
+function PrivacyPolicyScreen({navigation, themeState}) {
     return (
         
         <View style={styles.container}>
@@ -58,8 +58,9 @@ function PrivacyPolicyScreen({navigation, setThemeState, themeState}) {
 
 const styles = StyleSheet.create({
     text: {
-        paddingHorizontal: 10,
-        paddingBottom:75,
+        paddingHorizontal: '10%',
+        paddingBottom: '30%',
+        
     },
 })
 

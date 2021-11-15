@@ -17,11 +17,15 @@ const mode = {
       backgroundColor: primary,
       borderBottomColor: primaryLight,
     },
+    button: {
+      backgroundColor: black,
+    },
     buttonText: {
-      color: secondary,
+      color: primaryLight,
     },
     container: {
-      borderBottomColor: primaryLight
+      borderColor: primaryLight,
+      backgroundColor: black,
     },
     slider: white,
     tabBar: {
@@ -37,17 +41,36 @@ const mode = {
       borderColor: primaryLight,
     },
     switchText: {
-      color: secondary,
+      color: primaryLight,
     },
     headers: {
       color: primaryLight,
-    }
+    },
+    radiTotal: {
+      color: primaryLight
+    },
+    radiTextInput: {
+      color: primaryLight
+    },
+    measureText: {
+      color: primaryLight,
+    },
+    setRadiousContainer: {
+      backgroundColor: black,
+    },
+    notes: {
+      backgroundColor: black,
+    },
+    elevation: {
+      elevation: 15,
+      shadowColor: white,
+    },
   },
 
 
   light :{
     main: {
-      
+      backgroundColor: light,
     },
     appHeader: {
       backgroundColor: primary,
@@ -56,8 +79,12 @@ const mode = {
     buttonText: {
       color: primary,
     },
+    button: {
+      backgroundColor: light,
+    },
     container: {
-      
+      borderColor: primaryLight,
+      backgroundColor: light,
     },
     slider: black,
     tabBar: {
@@ -75,7 +102,26 @@ const mode = {
     },
     headers: {
       color: primary,
-    }
+    },
+    radiTotal: {
+      color: primary,
+    },
+    radiTextInput: {
+      color: primary,
+    },
+    measureText: {
+      color: primary,
+    },
+    setRadiousContainer: {
+      backgroundColor: light,
+    },
+    notes: {
+      backgroundColor: light,
+    },
+    elevation: {
+      elevation: 3,
+      shadowColor: primary,
+    },
   }  
 };
 

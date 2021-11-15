@@ -1,5 +1,6 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createDrawerNavigator } from "@react-navigation/drawer";
+import {AntDesign, Fontisto} from "@expo/vector-icons";
 import * as React from "react";
 import AppText from "../components/AppText";
 import { StyleSheet} from 'react-native';
@@ -67,7 +68,11 @@ const ConnectionsNavigator = ({ themeState}) => {
                       colors.wifiTabColor = colors.primaryLight;
                     },
                   }} 
-                  options={{title: () => {return <AppText style = {[styles.btTabLable, {color: colors.btTabColor,}]} >BLUETOOTH</AppText>}}}  name="Bluetooth" >
+                  options={{
+                    tabBarIcon: ({ color, size }) => (
+                      <Fontisto name="bluetooth-b" size={18} color={colors.mode[themeState].headers.color} />
+                    ),
+                    title: () => {return <AppText style = {[styles.btTabLable, {color: colors.btTabColor,}]} >BLUETOOTH</AppText>}}}  name="Bluetooth" >
                   {(props) => <BluetoothScreen  {...props} themeState={themeState} />}
       </Tab.Screen>
       <Tab.Screen listeners ={{
@@ -76,7 +81,11 @@ const ConnectionsNavigator = ({ themeState}) => {
                       colors.wifiTabColor = colors.secondary;
                     },
                   }} 
-                  options={{title: () => {return <AppText style = {[styles.wifiTabLable, {color: colors.wifiTabColor,}]} >WIFI</AppText>}}} name="Wifi" >
+                  options={{
+                    tabBarIcon: ({ color, size }) => (
+                      <AntDesign name="wifi" size={18} color={colors.mode[themeState].headers.color} />
+                    ),
+                    title: () => {return <AppText style = {[styles.wifiTabLable, {color: colors.wifiTabColor,}]} >WIFI</AppText>}}} name="Wifi" >
                   {(props) => <WifiScreen  {...props} themeState={themeState} />}
       </Tab.Screen>
     </Tab.Navigator>
@@ -87,11 +96,11 @@ const ConnectionsNavigator = ({ themeState}) => {
 const styles = StyleSheet.create({
   btTabLable: {
       fontSize: 15,
-      paddingBottom: 25,
+      paddingBottom: 10,
     },
     wifiTabLable: {
       fontSize: 15,
-      paddingBottom: 25,
+      paddingBottom: 10,
     },
 })
 

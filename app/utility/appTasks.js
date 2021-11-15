@@ -8,7 +8,8 @@ import storage from "./storage";
 import helpers from "./helpers";
 import nexTimeService from "../../nexTimeService";
 
-var warned = false;
+var btWarned = false;
+var wifiWarned = false;
   
 const checkLocationTask = () => {
   return new Promise( async resolve => {
@@ -86,11 +87,11 @@ const startCheckBluetoothAsync = ( taskAsyncBTDevices, startBluetooth ) => {
     var enable = false;
     enable = await helpers.enableBluetooth(wasEnabled, startBluetooth, BluetoothSerial);
 
-    wasEnabled && (warned = false);
-    if (!wasEnabled && !warned && !startBluetooth) {
-      warned = true;
-      return sendNotificationImmediately("nexTime Reminders", "Bluetooth must be on for your reminders to work");
-    } else if (!wasEnabled && warned === true) {
+    wasEnabled && (btWarned = false);
+    if (!wasEnabled && !btWarned && !startBluetooth) {
+      btWarned = true;
+      return sendNotificationImmediately("nexTime Reminders", "For the Bluetooth reminders you have set to work, Bluetooth must be turned on");
+    } else if (!wasEnabled && btWarned === true) {
       return;
     }
     
@@ -132,7 +133,6 @@ const startCheckBluetoothAsync = ( taskAsyncBTDevices, startBluetooth ) => {
   });
 };
 
-var wifiWarned = false;
 const startCheckWifi = (taskAsyncWifiNetworks) => {
   return new Promise( async resolve => {
     var cleanupTrigger = false;

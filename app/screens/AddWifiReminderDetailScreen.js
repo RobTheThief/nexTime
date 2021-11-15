@@ -89,7 +89,7 @@ function AddWifiReminderDetailScreen({
                     multiline={true}
                     textAlignVertical={"top"}
                     spellCheck={true}
-                    style={styles.notes}
+                    style={[styles.notes, colors.mode[themeState].container, colors.mode[themeState].elevation]}
                     onChangeText={(text) => setNotes(text)}
                     defaultValue={setNotesInputValue()}
                 />
@@ -119,11 +119,11 @@ function AddWifiReminderDetailScreen({
                     </View>
                 </View>
                 <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.buttons} onPress={() => addWifiReminderDetailVisibility() }>
+                        <TouchableOpacity style={[styles.buttons, colors.mode[themeState].button, colors.mode[themeState].elevation, {paddingLeft: 10}]} onPress={() => addWifiReminderDetailVisibility() }>
                             <AntDesign name="leftcircle" color={colors.primary} size={29} />
                             <AppText style={[styles.buttonText, colors.mode[themeState].buttonText]}>Go Back</AppText>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.buttons} onPress={() => remindWifi(pickedId, pickedTitle) }>
+                        <TouchableOpacity style={[styles.buttons, colors.mode[themeState].button, colors.mode[themeState].elevation]} onPress={() => remindWifi(pickedId, pickedTitle) }>
                             <AntDesign name="enter" color={colors.primary} size={29} />
                             <AppText style={[styles.buttonText, colors.mode[themeState].buttonText]} >Set Reminder</AppText>
                         </TouchableOpacity>
@@ -137,7 +137,12 @@ const styles = StyleSheet.create({
     buttons: {
         marginRight: 10,
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        height: '150%',
+        width: '40%',
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: colors.primaryLight,
     },
     buttonContainer: {
         justifyContent: 'center',
@@ -159,13 +164,11 @@ const styles = StyleSheet.create({
     },
     notes: {
         borderColor: colors.primaryLight,
-        borderBottomColor: colors.primaryLight,
-        borderWidth: 2,
-        height: 200,
-        paddingLeft: 5,
-        paddingTop: 5,
+        height: '40%',
+        paddingLeft: 10,
+        paddingTop: 10,
         borderWidth: 1,
-        borderBottomWidth: 1
+        borderRadius: 25,
     },
     switchBox: {
         width: "100%",

@@ -138,9 +138,12 @@ function WifiScreen({navigation, themeState}) {
       <TouchableOpacity
         onPress={() => addWifiReminderDetail(id, title)}
       >
-        <AppText style={styles.network}>
-          {title}
-        </AppText>
+        <View style={styles.swipeIconAndNetworkContainer} >
+          <AppText style={styles.network}>
+            {title}
+          </AppText>
+          <MaterialCommunityIcons name="arrow-left-thick" size={18} color={colors.primaryLight} />
+        </View>
       </TouchableOpacity>
     </View>
   );  
@@ -164,7 +167,7 @@ function WifiScreen({navigation, themeState}) {
 );
 
 const remindersEmptyList = () => (
-  <AppText style={styles.network} >Tap on an available network below to set a reminder</AppText>
+  <AppText style={styles.network} >Tap on an available network below to set{"\n"}a reminder</AppText>
 )
 
   return (
@@ -180,7 +183,7 @@ const remindersEmptyList = () => (
         themeState = {themeState}
       />) : (
       <View style={colors.mode[themeState].main}>
-        <View style={[styles.networkRemindersContainer, colors.mode[themeState].container]}>
+        <View style={[styles.networkRemindersContainer, colors.mode[themeState].container, colors.mode[themeState].elevation]}>
           <View style={styles.networksHeader}>
             <MaterialCommunityIcons name="reminder" size={18} color={colors.mode[themeState].headers.color} />
             <AppText style={[styles.networksHeaderText, colors.mode[themeState].headers]} >WIFI REMINDERS</AppText>
@@ -193,8 +196,9 @@ const remindersEmptyList = () => (
             persistentScrollbar = {true}
             renderItem={renderReminderItem}
             />
+          <View style={styles.underFlaflist}></View>
         </View>
-        <View style={[styles.availableNetworksContainer, colors.mode[themeState].container]}>
+        <View style={[styles.availableNetworksContainer, colors.mode[themeState].container, colors.mode[themeState].elevation]}>
           <View style={styles.networksHeader}>
             <MaterialCommunityIcons name="devices" size={18} color={colors.mode[themeState].headers.color} />
             <AppText style={[styles.networksHeaderText, colors.mode[themeState].headers]} >AVAILABLE NETWORKS</AppText>
@@ -208,6 +212,7 @@ const remindersEmptyList = () => (
             refreshing = {isFetching}
             renderItem={renderItem}
             />
+          <View style={styles.underFlaflist}></View>
         </View>
       </View>
       )}
@@ -217,10 +222,13 @@ const remindersEmptyList = () => (
 
 const styles = StyleSheet.create({
   availableNetworksContainer: {
-    height: "49%",
+    height: "43%",
     color: colors.primary,
     marginHorizontal: 20,
-    borderBottomWidth: 1,
+    borderWidth: 1,
+    borderRadius: 25,
+    marginHorizontal: 20,
+    marginTop: 10,
   },
   deleteButtonContainer: {
     flexDirection: 'row',
@@ -238,7 +246,9 @@ const styles = StyleSheet.create({
   },
   listItems: {
     marginRight: 20,
+    marginLeft: 17,
     width: '100%',
+    borderRadius: 25,
   },
   network: {
     fontSize: 15,
@@ -252,6 +262,7 @@ const styles = StyleSheet.create({
     width: "100%",
     marginBottom: 10,
     marginTop: 20,
+    marginLeft: 17,
     color: colors.primaryLight,
   },
   networksHeaderText: {
@@ -259,10 +270,21 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   networkRemindersContainer: {
-    height: "49%",
+    height: "43%",
     color: colors.primary,
     marginHorizontal: 20,
-    borderBottomWidth: 1,
+    borderWidth: 1,
+    borderRadius: 25,
+    marginHorizontal: 20,
+    marginTop: 20,
+  },
+  swipeIconAndNetworkContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '80%'
+  },
+  underFlaflist: {
+    marginVertical: 10,
   },
 });
 

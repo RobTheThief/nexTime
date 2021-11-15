@@ -156,9 +156,12 @@ function BluetoothScreen({navigation, themeState}) {
       <TouchableOpacity
         onPress={() => addBtReminderDetail(id, title)}
       >
+        <View style={styles.swipeIconAndDeviceContainer}>
         <AppText style={styles.device}>
           {title}
         </AppText>
+        <MaterialCommunityIcons name="arrow-left-thick" size={18} color={colors.primaryLight} />
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -189,7 +192,7 @@ function BluetoothScreen({navigation, themeState}) {
   );
 
   const remindersEmptyList = () => (
-    <AppText style={styles.device} >Tap on a paired or unpaired device to set a reminder</AppText>
+    <AppText style={styles.device} >Tap on a paired or unpaired device to set{"\n"}a reminder</AppText>
   )
 
   return (
@@ -207,7 +210,7 @@ function BluetoothScreen({navigation, themeState}) {
       ) : (
         <View style={colors.mode[themeState].main} > 
 
-        <View style={[styles.btRemindersContainer, colors.mode[themeState].container]}>
+        <View style={[styles.btRemindersContainer, colors.mode[themeState].container, colors.mode[themeState].elevation]}>
           <View style={styles.devicesHeader}>
             <MaterialCommunityIcons name="reminder" size={18} color={colors.mode[themeState].headers.color} />
             <AppText style={[styles.devicesHeaderText, colors.mode[themeState].headers]} >REMINDERS</AppText>
@@ -220,9 +223,10 @@ function BluetoothScreen({navigation, themeState}) {
               persistentScrollbar = {true}
               renderItem={renderReminderItem}
               />
+            <View style={styles.underFlaflist}></View> 
         </View>
         
-        <View style={[styles.pairedContainer, colors.mode[themeState].container]}>
+        <View style={[styles.pairedContainer, colors.mode[themeState].container, colors.mode[themeState].elevation]}>
           <View style={styles.devicesHeader}>
             <MaterialCommunityIcons name="lan-connect" size={18} color={colors.mode[themeState].headers.color} />
             <AppText style={[styles.devicesHeaderText, colors.mode[themeState].headers]} >PAIRED DEVICES</AppText>
@@ -235,8 +239,10 @@ function BluetoothScreen({navigation, themeState}) {
             renderItem={renderItem}
             scrollToOverflowEnabled={true}
             />
+         <View style={styles.underFlaflist}></View>
+
         </View>
-        <View style={[styles.unPairedContainer, colors.mode[themeState].container]}>
+        <View style={[styles.unPairedContainer, colors.mode[themeState].container, colors.mode[themeState].elevation]}>
           <View style={styles.devicesHeader}>
             <MaterialCommunityIcons name="devices" size={18} color={colors.mode[themeState].headers.color} />
             <AppText style={[styles.devicesHeaderText, colors.mode[themeState].headers]} >UNPAIRED DEVICES</AppText>
@@ -250,6 +256,7 @@ function BluetoothScreen({navigation, themeState}) {
             refreshing = {isFetching}
             renderItem={renderItem}
             />
+          <View style={styles.underFlaflist}></View>
         </View>
       </View>  
       )}
@@ -259,10 +266,12 @@ function BluetoothScreen({navigation, themeState}) {
 
 const styles = StyleSheet.create({
   btRemindersContainer: {
-    height: "31%",
+    height: "29%",
     color: colors.primary,
-    borderBottomWidth: 1,
+    borderWidth: 1,
+    borderRadius: 25,
     marginHorizontal: 20,
+    marginTop: 10,
   },
   deleteButtonContainer: {
     flexDirection: 'row',
@@ -284,12 +293,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 15,
   },
+  swipeIconAndDeviceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '80%'
+  },
   devicesHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     width: "100%",
     marginBottom: 10,
     marginTop: 20,
+    marginLeft: 20,
   },
   devicesHeaderText: {
     fontSize: 17,
@@ -297,19 +312,26 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   listItems: {
-    marginRight: 20,
+    marginHorizontal: 20,
     width: '100%',
   },
   pairedContainer: {
-    height: "31%",
+    height: "29%",
     marginHorizontal: 20,
-    borderBottomWidth: 1,
+    borderWidth: 1,
+    borderRadius: 25,
+    marginTop: 10,
+  },
+  underFlaflist: {
+    marginVertical: 10,
   },
   unPairedContainer: {
-    height: "31%",
+    height: "29%",
     color: colors.primary,
     marginHorizontal: 20,
-    borderBottomWidth: 1,
+    marginTop: 10,
+    borderWidth: 1,
+    borderRadius: 25,
   },
 });
 

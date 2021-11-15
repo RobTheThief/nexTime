@@ -27,10 +27,9 @@ const styles = StyleSheet.create({
   drawerButton: {
       alignItems: "center",
       justifyContent: "center",
-      marginLeft: 20,
       paddingRight: 30,
-      paddingLeft: 10,
-      paddingVertical: 20,
+      paddingLeft: 30,
+      paddingVertical: 24,
     },
   headContainer: {
     height: "11%",
