@@ -112,7 +112,7 @@ export default function App() {
   const backgroundLocationMessage = async () => {
         Alert.alert(
           "      Backgroung Location",
-          `    To use the map and reminders,\n    allow permissions for location\n\n          WHILE USING THE APP\n\n                           and\n\n                  ALL THE TIME.\n\nnextTime will use your location in the background to trigger reminders you have set.\n\nLocation information is only stored on your device and is never shared.`,
+          `    To use the map and reminders,\n    allow permissions for location\n\n          WHILE USING THE APP\n\n                           and\n\n                  ALL THE TIME.\n\nnextTime will use your location in\nthe background to trigger reminders\nyou have set.\n\nLocation information is only stored\non your device and is never shared.`,
           [
             {
               text: "OK",

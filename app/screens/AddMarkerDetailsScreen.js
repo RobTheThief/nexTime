@@ -170,34 +170,35 @@ function AddMarkerDetailsScreen({
     <KeyboardAvoidingView
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
-      enabled={Platform.OS === "ios" ? true : false}
-    >
-      <View style={[styles.inputBox, colors.mode[themeState].main]}>
-        <View style={styles.inputTextContainer}>
-          <AppTextInput
-            placeholder={"Title"}
-            onChangeText={(text) => {
-              if (text === "") text = undefined;
-              setTitle(text);
-            }}
-            defaultValue={getTitleInputValue()}
-            style={[styles.title, colors.mode[themeState].container, colors.mode[themeState].elevation]}
+      enabled={Platform.OS === "ios" ? true : false}>
+
+      <View style={[styles.mainWrapper, colors.mode[themeState].main]}>
+        <View style={styles.inputContainer}>
+            <AppTextInput
+              placeholder={"Title"}
+              onChangeText={(text) => {
+                if (text === "") text = undefined;
+                setTitle(text);
+              }}
+              defaultValue={getTitleInputValue()}
+              style={[styles.title, colors.mode[themeState].container, colors.mode[themeState].elevation]}
+              />
+            <AppTextInput
+              placeholder={"Description (Displayed in callout on Map Screen)"}
+              onChangeText={(text) => setDesc(text)}
+              defaultValue={getDescInputValue()}
+              style={[styles.description, colors.mode[themeState].container, colors.mode[themeState].elevation]}
             />
-          <AppTextInput
-            placeholder={"Description (Displayed in callout on Map Screen)"}
-            onChangeText={(text) => setDesc(text)}
-            defaultValue={getDescInputValue()}
-            style={[styles.description, colors.mode[themeState].container, colors.mode[themeState].elevation]}
-          />
-          <AppTextInput
-            placeholder={"Notes eg. Shopping list..."}
-            multiline={true}
-            textAlignVertical={"top"}
-            spellCheck={true}
-            style={[styles.notes, colors.mode[themeState].elevation, colors.mode[themeState].notes]}
-            onChangeText={(text) => setNotes(text)}
-            defaultValue={getNotesInputValue()}
-          />
+            <AppTextInput
+              placeholder={"Notes eg. Shopping list..."}
+              multiline={true}
+              textAlignVertical={"top"}
+              spellCheck={true}
+              style={[styles.notes, colors.mode[themeState].elevation, colors.mode[themeState].notes]}
+              onChangeText={(text) => setNotes(text)}
+              defaultValue={getNotesInputValue()}
+            />
+          
           <View style={[styles.setRadiousContainer, colors.mode[themeState].elevation,  colors.mode[themeState].setRadiousContainer]}>
             <View style={styles.radiInputandTotal}>
               <AppText style={[styles.radiTotal, colors.mode[themeState].radiTotal]}>
@@ -259,36 +260,35 @@ function AddMarkerDetailsScreen({
               />
             </View>
           </View>
-        </View>
-
-        <View style={styles.buttons}>
-          <TouchableOpacity
-            onPress={() => addMarkerDetailVisibility()}
-            style={[styles.button, colors.mode[themeState].button, colors.mode[themeState].elevation]}>
-            <AntDesign name="leftcircle" color={colors.primary} size={29} />
-            <AppText style={[styles.buttonText, colors.mode[themeState].buttonText]}>Go Back</AppText>
-          </TouchableOpacity>
-          {markers[id - 1] !== undefined && (
+          <View style={styles.buttons}>
             <TouchableOpacity
-              onPress={() => handleDeleteMarker()}
+              onPress={() => addMarkerDetailVisibility()}
               style={[styles.button, colors.mode[themeState].button, colors.mode[themeState].elevation]}>
-              <MaterialCommunityIcons
-                name="map-marker-remove-variant"
-                size={30}
-                color={colors.primary}
-              />
-              <AppText style={[styles.buttonText, colors.mode[themeState].buttonText]}>Delete</AppText>
+              <AntDesign name="leftcircle" color={colors.primary} size={29} />
+              <AppText style={[styles.buttonText, colors.mode[themeState].buttonText]}>Go Back</AppText>
             </TouchableOpacity>
-          )}
-          <TouchableOpacity
-            onPress={() => handleSubmitMarker()}
-            style={[styles.button, colors.mode[themeState].button, colors.mode[themeState].elevation]}>
-            <FontAwesome5
-              name="map-marked-alt"
-              size={24}
-              color={colors.primary}/>
-            <AppText style={[styles.buttonText, colors.mode[themeState].buttonText]}>Submit</AppText>
-          </TouchableOpacity>
+            {markers[id - 1] !== undefined && (
+              <TouchableOpacity
+                onPress={() => handleDeleteMarker()}
+                style={[styles.button, colors.mode[themeState].button, colors.mode[themeState].elevation]}>
+                <MaterialCommunityIcons
+                  name="map-marker-remove-variant"
+                  size={30}
+                  color={colors.primary}
+                />
+                <AppText style={[styles.buttonText, colors.mode[themeState].buttonText]}>Delete</AppText>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              onPress={() => handleSubmitMarker()}
+              style={[styles.button, colors.mode[themeState].button, colors.mode[themeState].elevation]}>
+              <FontAwesome5
+                name="map-marked-alt"
+                size={24}
+                color={colors.primary}/>
+              <AppText style={[styles.buttonText, colors.mode[themeState].buttonText]}>Submit</AppText>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </KeyboardAvoidingView>
@@ -299,29 +299,33 @@ export default AddMarkerDetailsScreen;
 
 const styles = StyleSheet.create({
   buttons: {
-    marginTop: '120%',
+    marginTop: '1%',
+    marginLeft: '3%',
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-evenly",
     flex: 1,
-    width: "100%",
+    
   },
   button: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    height: '35%',
+    height: '30%',
     width: '29%',
+    marginRight: '3%',
+    paddingHorizontal: 5,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: colors.primaryLight,
   },
   buttonText: {
-    paddingLeft: 5,
+    paddingHorizontal: 5,
     fontSize: 15,
   },
   description: {
-    height: '100%',
+    height: '9%',
+    width: '100%',
     paddingLeft: 10,
     paddingTop: 5,
     borderWidth: 1,
@@ -329,7 +333,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginBottom: 10,
   },
-  inputBox: {
+  mainWrapper: {
     width: "100%",
     height: "100%",
     alignItems: "center",
@@ -337,7 +341,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.light,
   },
   title: {
-    height: '100%',
+    height: '9%',
+    width: '100%',
     paddingLeft: 10,
     paddingTop: 5,
     borderWidth: 1,
@@ -346,10 +351,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
   },
-  inputTextContainer: {
+  inputContainer: {
     width: "90%",
-    height: "9%",
     alignItems: "center",
+    flex: 1,
   },
   measureText: {
     marginTop: 14,
@@ -357,7 +362,8 @@ const styles = StyleSheet.create({
     right: 33,
   },
   notes: {
-    height: '270%',
+    height: '30%',
+    width: '100%',
     paddingLeft: 5,
     paddingTop: 10,
     borderWidth: 1,
@@ -395,7 +401,7 @@ const styles = StyleSheet.create({
   switchBox: {
     width: "100%",
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     alignItems: "center",
     marginVertical: '5%',
   },

@@ -120,11 +120,11 @@ function AddBtReminderDetailScreen({
                     
                 </View>
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={[styles.buttons, colors.mode[themeState].button, colors.mode[themeState].elevation, {paddingLeft: 10}]} onPress={() => addBtReminderDetailVisibility() }>
+                    <TouchableOpacity style={[styles.button, colors.mode[themeState].button, colors.mode[themeState].elevation, {paddingLeft: 10}]} onPress={() => addBtReminderDetailVisibility() }>
                         <AntDesign name="leftcircle" color={colors.primary} size={29} />
                         <AppText style={[styles.buttonText, colors.mode[themeState].buttonText]}>Go Back</AppText>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.buttons, colors.mode[themeState].button, colors.mode[themeState].elevation]} onPress={() => remindBT(pickedId, pickedTitle) }>
+                    <TouchableOpacity style={[styles.button, colors.mode[themeState].button, colors.mode[themeState].elevation]} onPress={() => remindBT(pickedId, pickedTitle) }>
                         <AntDesign name="enter" color={colors.primary} size={29} />
                         <AppText style={[styles.buttonText, colors.mode[themeState].buttonText] } >Set Reminder</AppText>
                     </TouchableOpacity>
@@ -135,10 +135,11 @@ function AddBtReminderDetailScreen({
 }
 
 const styles = StyleSheet.create({
-    buttons: {
+    button: {
         marginRight: 10,
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: "center",
         height: '150%',
         width: '40%',
         borderRadius: 20,
